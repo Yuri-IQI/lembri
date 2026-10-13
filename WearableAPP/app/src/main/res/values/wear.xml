@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Capabilities que ESTE app (relógio) anuncia na rede Wear.
+    O celular procura por "lembri_wear" para saber para qual nó enviar mensagens.
+    Ver ContratoComunicacao.kt (e o espelho em MobileAPP/src/services/wear/contrato.ts).
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@array/android_wear_capabilities">
+    <string-array name="android_wear_capabilities" translatable="false">
+        <item>lembri_wear</item>
+    </string-array>
+</resources>

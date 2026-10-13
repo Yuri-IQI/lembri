@@ -10,6 +10,9 @@ android {
     }
 
     defaultConfig {
+        // IMPORTANTE: o Data Layer só entrega mensagens entre apps com o MESMO applicationId
+        // e assinados com a MESMA chave. O app mobile (Expo) usa este mesmo id em app.json
+        // (android.package) e o plugin `with-shared-debug-keystore` alinha a chave de debug.
         applicationId = "com.borabill.lembriwearable"
         minSdk = 36
         targetSdk = 37
@@ -42,7 +45,13 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.ui.tooling)
     implementation(libs.core.splashscreen)
+    // Data Layer API (MessageClient/CapabilityClient): comunicação com o celular
     implementation(libs.play.services.wearable)
+    // Permite usar `.await()` nas Tasks do Google Play Services dentro de coroutines
+    implementation(libs.kotlinx.coroutines.play.services)
+    // ViewModel + coleta de StateFlow respeitando o ciclo de vida no Compose
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.runtime.compose)
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
