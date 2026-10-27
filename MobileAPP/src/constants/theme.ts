@@ -42,7 +42,7 @@ export const Radius = {
 } as const;
 
 export const BorderWidth = {
-  thin: 1.5,
+  thin: 2,
   thick: 2.5,
 } as const;
 

@@ -34,7 +34,9 @@ export const BottomBarItem = ({ Icone, rotulo, isFocused, style, ...rest }: Bott
         height={36}
         preenchimento={isFocused ? theme.tabActive : 'transparent'}
       />
-      <ThemedText type="smallBold">{rotulo}</ThemedText>
+      <ThemedText type="smallBold" style={styles.rotulo}>
+        {rotulo}
+      </ThemedText>
     </Pressable>
   );
 };
@@ -44,6 +46,10 @@ const styles = StyleSheet.create({
     minHeight: 80,
     gap: 0,
     paddingHorizontal: Spacing.two,
+  },
+  rotulo: {
+    fontSize: 14,
+    lineHeight: 18,
   },
   item: {
     flex: 1,

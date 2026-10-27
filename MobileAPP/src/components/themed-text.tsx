@@ -26,71 +26,64 @@ export const ThemedText = ({ style, type = 'default', themeColor, ...rest }: The
   return <Text style={[{ color }, styles.base, styles[type], style]} {...rest} />;
 };
 
+// Escala do protótipo no Figma (lembri_proto).
 const styles = StyleSheet.create({
   base: {
     fontFamily: FontFamily,
   },
   default: {
-    fontSize: 19,
+    fontSize: 20,
     lineHeight: 26,
-    fontWeight: 400,
+    fontWeight: 500,
   },
   defaultBold: {
-    fontSize: 19,
+    fontSize: 20,
     lineHeight: 26,
-    fontWeight: 600,
+    fontWeight: 700,
   },
-  /** Horário em destaque no card de próximo lembrete (18:00). */
   display: {
-    fontSize: 52,
-    lineHeight: 60,
+    fontSize: 64,
+    lineHeight: 76,
     fontWeight: 400,
   },
-  /** Título de tela e de lembrete (Home, Lavar roupas). */
   title: {
-    fontSize: 30,
-    lineHeight: 36,
+    fontSize: 32,
+    lineHeight: 40,
     fontWeight: 700,
   },
-  /** Título de card de navegação (Lembretes, Exercícios). */
   headline: {
-    fontSize: 26,
-    lineHeight: 32,
+    fontSize: 36,
+    lineHeight: 44,
     fontWeight: 700,
   },
-  /** Título de item de lista (Tomar Remédio). */
   subheading: {
-    fontSize: 22,
-    lineHeight: 28,
+    fontSize: 24,
+    lineHeight: 30,
     fontWeight: 700,
   },
-  /** Informações de apoio (Há 25 min.). */
   small: {
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 20,
     fontWeight: 400,
   },
   smallBold: {
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 20,
     fontWeight: 700,
   },
-  /** Rótulo de seção em caixa alta (PRÓXIMO LEMBRETE, HORÁRIOS). */
   label: {
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 20,
     fontWeight: 600,
-    letterSpacing: 0.3,
     textTransform: 'uppercase',
   },
-  /** Texto de botão (Ver, Editar, Excluir). */
   button: {
-    fontSize: 22,
-    lineHeight: 28,
+    fontSize: 32,
+    lineHeight: 40,
     fontWeight: 700,
   },
   link: {
-    fontSize: 17,
+    fontSize: 18,
     lineHeight: 30,
     fontWeight: 600,
     textDecorationLine: 'underline',

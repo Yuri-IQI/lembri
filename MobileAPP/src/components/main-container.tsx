@@ -1,12 +1,31 @@
-import { StyleSheet, View, type ViewProps } from 'react-native';
+import { ScrollView, StyleSheet, View, type ViewProps } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-export const MainContainer = ({ style, ...rest }: ViewProps) => {
+type MainContainerProps = ViewProps & {
+  rolagem?: boolean;
+};
+
+export const MainContainer = ({ rolagem, style, children, ...rest }: MainContainerProps) => {
   const theme = useTheme();
 
-  return <View style={[styles.container, { backgroundColor: theme.background }, style]} {...rest} />;
+  if (rolagem) {
+    return (
+      <ScrollView
+        style={{ backgroundColor: theme.background }}
+        contentContainerStyle={[styles.container, styles.rolagem, style]}
+        {...rest}>
+        {children}
+      </ScrollView>
+    );
+  }
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }, style]} {...rest}>
+      {children}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -15,5 +34,10 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.four,
+  },
+  rolagem: {
+    flex: 0,
+    flexGrow: 1,
+    paddingBottom: Spacing.four,
   },
 });
