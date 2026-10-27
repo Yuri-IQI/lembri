@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDD Front-end — [Título da Tarefa / Funcionalidade] (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>SDD Front-end — [Título da Tarefa ou Funcionalidade]</h1>
+
+<div class="notice-block">
+  <strong>Arquivo de Exemplo / Template (Projeto Lembri):</strong> Este documento define o padrão de Especificação Técnica Front-end (SDD) para o aplicativo <strong>Lembri (React Native com Expo SDK 58, Zustand e dados mockados)</strong>. Ao planejar uma demanda real, gere <code>docs/plans/&lt;chave-tarefa&gt;-&lt;slug&gt;.html</code> a partir desta estrutura.
+</div>
+
+<div class="meta-block">
+  <p><strong>Tarefa:</strong> <code>[CHAVE_TAREFA]</code> — [Descrição da funcionalidade]</p>
+  <p><strong>Branch (Gitflow):</strong> <code>feat/&lt;nome-da-tarefa&gt;</code> (a partir de <code>develop</code> → PR para <code>develop</code>)</p>
+  <p><strong>Escopo:</strong> Front-end Mobile (React Native / Expo SDK 58) + Mocks + Wear OS</p>
+  <p><strong>Módulo:</strong> <code>&lt;LEMBRETES | EXERCICIOS | WEAR_CONNECTOR | CONFIGURACOES | STORES_MOCKS&gt;</code></p>
+  <p><strong>Data:</strong> YYYY-MM-DD</p>
+</div>
+
+<ol class="toc">
+  <li><a href="#s1">Contexto, Objetivo e Escopo Front-end</a></li>
+  <li><a href="#s2">Requisitos e Regras de Negócio (Casos de Borda)</a></li>
+  <li><a href="#s3">Estrutura de Arquivos e Componentes</a></li>
+  <li><a href="#s4">Modelagem de Dados e Tipos TypeScript (src/types/)</a></li>
+  <li><a href="#s5">Gerenciamento de Estado no Zustand e Mocks</a></li>
+  <li><a href="#s6">Front-end — Telas Expo Router e 5 Estados Visuais</a></li>
+  <li><a href="#s7">Acessibilidade Mobile (WCAG 2.2 Nível AAA — TouchTarget = 56dp)</a></li>
+  <li><a href="#s8">Integração com Relógio Wear OS (se aplicável)</a></li>
+  <li><a href="#s9">Casos de Teste e Verificação no Emulador</a></li>
+  <li><a href="#s10">Checklist Pré-PR</a></li>
+  <li><a href="#s11">Atualização da Documentação do Módulo</a></li>
+  <li><a href="#s12">Princípios de Desenvolvimento e Restrições</a></li>
+</ol>
+
+<hr>
+
+<h2 id="s1">1. Contexto, Objetivo e Escopo Front-end</h2>
+<p>Descreva o que a pessoa usuária fará no aplicativo smartphone (ou smartwatch):</p>
+<ul>
+  <li><strong>Objetivo:</strong> [Ação principal do usuário no celular/relógio]</li>
+  <li><strong>Entra no escopo:</strong> [Telas, componentes e stores a serem criadas/alteradas]</li>
+  <li><strong>Fora do escopo (YAGNI):</strong> [Funcionalidades especulativas que não entram nesta entrega]</li>
+</ul>
+
+<hr>
+
+<h2 id="s2">2. Requisitos e Regras de Negócio (Casos de Borda)</h2>
+<ul>
+  <li><strong>RF1 — [Cenário Principal]:</strong> <em>Dado</em> que o usuário acessa a tela, <em>Quando</em> preenche e toca em enviar, <em>Então</em> o item é inserido de forma imutável na store Zustand e exibido na lista.</li>
+  <li><strong>RF2 — [Alternância de Conclusão]:</strong> <em>Dado</em> um lembrete pendente, <em>Quando</em> tocado na lista ou concluído no relógio, <em>Então</em> o status muda para concluído com ícone e texto correspondente.</li>
+</ul>
+
+<hr>
+
+<h2 id="s3">3. Estrutura de Arquivos e Componentes</h2>
+<pre><code>MobileAPP/src/app/(tabs)/lembretes.tsx
+MobileAPP/src/stores/useLembretesStore.ts
+MobileAPP/src/mocks/lembretes.mock.ts
+MobileAPP/src/components/lembrete-card.tsx
+MobileAPP/src/types/lembrete.ts</code></pre>
+
+<hr>
+
+<h2 id="s4">4. Modelagem de Dados e Tipos TypeScript (src/types/)</h2>
+<pre><code class="language-typescript">export interface Lembrete {
+  id: string;
+  titulo: string;
+  horario: string;
+  concluido: boolean;
+  criadoEm: string;
+}
+</code></pre>
+
+<hr>
+
+<h2 id="s5">5. Gerenciamento de Estado no Zustand e Mocks</h2>
+<p>Definição da store reativa com ações imutáveis e dados mockados iniciais em <code>src/mocks/</code>.</p>
+
+<hr>
+
+<h2 id="s6">6. Front-end — Telas Expo Router e 5 Estados Visuais</h2>
+<p>Mapeamento das telas em <code>src/app/</code> e tratamento dos 5 estados visuais (Ideal, Carregando, Vazio, Erro, Parcial).</p>
+
+<hr>
+
+<h2 id="s7">7. Acessibilidade Mobile (WCAG 2.2 Nível AAA)</h2>
+<ul class="check">
+  <li><input type="checkbox"> Contraste aprimorado &gt;= 7:1 para texto normal e 4.5:1 para texto grande (1.4.6)</li>
+  <li><input type="checkbox"> Alvos de toque &gt;= 56dp (<code>TouchTarget</code>, mínimo 44x44dp AAA - 2.5.5)</li>
+  <li><input type="checkbox"> Rótulos autônomos e contextuais com <code>accessibilityLabel</code> (2.4.9)</li>
+  <li><input type="checkbox"> Prevenção de erros com reversão de exclusão (*Undo* de 5-10s) ou confirmação (3.3.6)</li>
+  <li><input type="checkbox"> Sem limites de tempo inflexíveis em fluxos (2.2.3)</li>
+  <li><input type="checkbox"> Apresentação visual com texto à esquerda e entrelinha &gt;= 1.5x (1.4.8)</li>
+  <li><input type="checkbox"> Status anunciado com texto e ícone (não apenas cor - 1.4.1)</li>
+</ul>
+
+<hr>
+
+<h2 id="s8">8. Integração com Relógio Wear OS (se aplicável)</h2>
+<p>Contrato de dados e envio de mensagens via <code>modules/wear-connector</code>.</p>
+
+<hr>
+
+<h2 id="s9">9. Casos de Teste e Verificação no Emulador</h2>
+<p>Testes de store Zustand e roteiro de teste interativo no emulador Android.</p>
+
+<hr>
+
+<h2 id="s10">10. Checklist Pré-PR</h2>
+<ul class="check">
+  <li><input type="checkbox"> Branch a partir de <code>develop</code> (<code>feat/...</code>) e commits Conventional Commits</li>
+  <li><input type="checkbox"> TypeScript estrito (sem <code>any</code>) e sem <code>console.log</code></li>
+  <li><input type="checkbox"> <code>node docs/scripts/lembri-check.mjs</code> rodando com zero bloqueantes</li>
+  <li><input type="checkbox"> Acessibilidade mobile validada (WCAG 2.2 AAA / TouchTarget = 56dp / Contraste 7:1)</li>
+</ul>
+
+<hr>
+
+<h2 id="s11">11. Atualização da Documentação do Módulo</h2>
+<p>Atualização de <code>docs/modulos/&lt;CHAVE_MODULO&gt;.html</code> conforme aplicável.</p>
+
+<hr>
+
+<h2 id="s12">12. Princípios de Desenvolvimento e Restrições</h2>
+<p>Subordinação estrita à skill <code>principios</code> (Padrões do projeto, Estado Zustand, Mocks, YAGNI, DRY, SOLID, KISS, Clean Code).</p>
+
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WEAR_CONNECTOR — Módulo do Wearable e Sincronização Wear OS (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>WEAR_CONNECTOR — Módulo do Wearable e Sincronização Wear OS</h1>
+
+<div class="meta-block">
+  <p><strong>Módulo:</strong> <code>WEAR_CONNECTOR</code></p>
+  <p><strong>Índice de referência:</strong> <code>docs/manuais/modulos.md</code> e <code>README.md</code></p>
+  <p><strong>App do Relógio:</strong> <code>WearableAPP/</code> (Kotlin 2.0 + Jetpack Compose for Wear OS / Material 3)</p>
+  <p><strong>Módulo Nativo Expo:</strong> <code>MobileAPP/modules/wear-connector/</code> (Continuous Native Generation)</p>
+  <p><strong>Camada de Serviço Mobile:</strong> <code>MobileAPP/src/services/wear/</code> (contrato.ts e wear-service.ts)</p>
+  <p><strong>Hook React:</strong> <code>MobileAPP/src/hooks/use-wear.ts</code></p>
+  <p><strong>Protocolo de Transporte:</strong> Google Play Services Wearable Data Layer API (MessageClient + CapabilityClient + NodeClient)</p>
+</div>
+
+<hr>
+
+<ol class="toc">
+  <li><a href="#visao-geral">1. Visão Geral e Papel do Wearable</a></li>
+  <li><a href="#arquitetura-relogio">2. Arquitetura do App no Relógio (WearableAPP)</a></li>
+  <li><a href="#fluxo-comunicacao">3. Fluxo de Comunicação e Contrato de Dados</a></li>
+  <li><a href="#modulo-nativo">4. Módulo Nativo Expo (MobileAPP/modules/wear-connector)</a></li>
+  <li><a href="#ergonomia-acessibilidade">5. Ergonomia e Acessibilidade no Pulso (Wear OS AAA)</a></li>
+  <li><a href="#pre-requisitos-testes">6. Pré-requisitos de Ambiente, Emuladores e Testes</a></li>
+</ol>
+
+<hr>
+
+<h2 id="visao-geral">1. Visão Geral e Papel do Wearable</h2>
+<p>O <strong>Lembri Wearable</strong> é uma aplicação nativa para smartwatches com <strong>Wear OS</strong> (desenvolvida em Kotlin com Jetpack Compose for Wear OS). O propósito principal do aplicativo no relógio é oferecer ao usuário:</p>
+<ul>
+  <li><strong>Acesso Instantâneo e Desembaraçado:</strong> Visualização de lembretes e tarefas no pulso sem a necessidade de retirar o celular do bolso;</li>
+  <li><strong>Conclusão em Um Toque:</strong> Marcar lembretes como concluídos diretamente na tela redonda do relógio com resposta visual imediata (checkmark ✓);</li>
+  <li><strong>Sincronização em Segundo Plano:</strong> Notificações e lembretes são entregues no relógio mesmo que a tela do aplicativo no celular esteja fechada (via <code>WearableListenerService</code>);</li>
+  <li><strong>Operação Offline Resiliente:</strong> O relógio mantém seu estado em memória através de <code>LembreteRepository</code> e notifica o celular quando a conexão for restabelecida.</li>
+</ul>
+
+<hr>
+
+<h2 id="arquitetura-relogio">2. Arquitetura do App no Relógio (WearableAPP)</h2>
+<p>O <code>WearableAPP</code> adota o padrão <strong>MVVM (Model-View-ViewModel)</strong> com <strong>Unidirectional Data Flow (UDF)</strong> e injeção manual de dependências via <code>AppContainer</code>:</p>
+
+<pre><code>WearableAPP/app/src/main/java/com/borabill/lembriwearable/
+├── LembriWearApplication.kt       # Application class: instancia o AppContainer singleton
+├── di/
+│   └── AppContainer.kt            # Cria instâncias únicas de CelularDataSource e LembreteRepository
+├── data/
+│   ├── model/
+│   │   └── Lembrete.kt            # Modelos Lembrete e Confirmacao + serialização JSON
+│   ├── comunicacao/
+│   │   ├── ContratoComunicacao.kt # Constantes de paths e capabilities
+│   │   ├── CelularDataSource.kt   # Envio de mensagens ao celular via MessageClient
+│   │   └── LembriWearListenerService.kt # Serviço background para escutar mensagens recebidas
+│   └── repository/
+│       └── LembreteRepository.kt  # Fonte da verdade em StateFlow para a UI
+└── presentation/
+    ├── MainActivity.kt            # Ponto de entrada nativo: injeta ViewModel na Screen
+    ├── LembretesViewModel.kt      # Observa StateFlow do repositório e expõe UiState
+    ├── LembretesScreen.kt         # Interface Compose for Wear OS (Material 3 stateless)
+    └── theme/
+        └── Theme.kt               # Tokens de cor e tipografia otimizados para telas OLED
+</code></pre>
+
+<h3>Destaques de Implementação da UI no Relógio:</h3>
+<ul>
+  <li><strong><code>ScreenScaffold</code> &amp; <code>EdgeButton</code>:</strong> Fornece o layout padrão do Wear OS Material 3, posicionando a ação de "Atualizar Conexão" na curvatura inferior da tela redonda;</li>
+  <li><strong><code>TransformingLazyColumn</code>:</strong> Lista otimizada para displays circulares que escala e rotaciona os itens suavemente à medida que passam pelas bordas da tela;</li>
+  <li><strong>Feedback Visual Imediato:</strong> O botão do lembrete é desabilitado e transita para <code>"Concluído ✓"</code> no milissegundo do clique, disparando a confirmação ao celular de forma assíncrona.</li>
+</ul>
+
+<hr>
+
+<h2 id="fluxo-comunicacao">3. Fluxo de Comunicação e Contrato de Dados</h2>
+<p>A sincronização é bidirecional e ocorre através da <strong>Wearable Data Layer API</strong> do Google Play Services:</p>
+
+<pre><code>Celular (MobileAPP - React Native)                  Relógio (WearableAPP - Kotlin)
+─────────────────────────────────                  ──────────────────────────────
+[Usuário cria lembrete]
+          │
+          ▼
+wearService.enviarLembrete()
+          │
+  /lembri/lembrete (JSON) ─────────────────────────▶ LembriWearListenerService
+  { id, titulo, horario }                                   │
+                                                            ▼
+                                                    LembreteRepository.receber()
+                                                            │
+                                                            ▼
+                                                    StateFlow atualiza UI
+                                                            │
+                                                  [Usuário toca no lembrete]
+                                                            │
+                                                            ▼
+                                                    LembreteRepository.concluir()
+                                                            │
+Atualiza Store Zustand ◀────── /lembri/confirmacao ─────────┘
+Status: "Concluído no relógio ✓"   { lembreteId, concluidoEm }
+</code></pre>
+
+<h3>Contrato Compartilhado e Espelhado:</h3>
+<p>O contrato é rigorosamente sincronizado entre os dois projetos:</p>
+<ul>
+  <li><strong>Mobile (TypeScript):</strong> <code>MobileAPP/src/services/wear/contrato.ts</code></li>
+  <li><strong>Wearable (Kotlin):</strong> <code>WearableAPP/.../data/comunicacao/ContratoComunicacao.kt</code></li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Constante</th>
+      <th scope="col">Valor</th>
+      <th scope="col">Finalidade</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>CAPABILITY_MOBILE</code></td>
+      <td><code>"lembri_mobile"</code></td>
+      <td>Capability anunciada pelo app companion do celular em <code>res/values/wear.xml</code></td>
+    </tr>
+    <tr>
+      <td><code>CAPABILITY_WEAR</code></td>
+      <td><code>"lembri_wear"</code></td>
+      <td>Capability anunciada pelo relógio em <code>res/values/wear.xml</code></td>
+    </tr>
+    <tr>
+      <td><code>PATH_LEMBRETE</code></td>
+      <td><code>"/lembri/lembrete"</code></td>
+      <td>Celular envia lembrete para ser renderizado no relógio</td>
+    </tr>
+    <tr>
+      <td><code>PATH_CONFIRMACAO</code></td>
+      <td><code>"/lembri/confirmacao"</code></td>
+      <td>Relógio notifica o celular que o item foi concluído no pulso</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="modulo-nativo">4. Módulo Nativo Expo (MobileAPP/modules/wear-connector)</h2>
+<p>Para permitir que o React Native 0.88 / Expo SDK 58 se comunique com as APIs nativas do Android, foi criado o módulo nativo customizado <code>wear-connector</code>:</p>
+<ul>
+  <li><strong><code>WearConnectorModule.kt</code>:</strong> Implementa chamadas nativas em Kotlin utilizando <code>Wearable.getMessageClient</code>, <code>Wearable.getCapabilityClient</code> e <code>Wearable.getNodeClient</code>;</li>
+  <li><strong><code>with-shared-debug-keystore.js</code>:</strong> Plugin de configuração do Expo que garante que o APK de debug do celular seja assinado com a mesma chave (<code>~/.android/debug.keystore</code>) do Android Studio, requisito obrigatório para o Google Play Services parear os apps;</li>
+  <li><strong>Fallback Resiliente:</strong> Caso a capability não propague de imediato no emulador, o módulo detecta os nós pareados diretamente via <code>NodeClient.getConnectedNodes()</code>.</li>
+</ul>
+
+<hr>
+
+<h2 id="ergonomia-acessibilidade">5. Ergonomia e Acessibilidade no Pulso (Wear OS AAA)</h2>
+<p>Assim como o aplicativo mobile respeita <strong>WCAG 2.2 AAA</strong>, o app do relógio foi arquitetado com base em princípios rigorosos de usabilidade e ergonomia para wearables:</p>
+<ol>
+  <li><strong>Contraste OLED Máximo:</strong> Fundo preto puro (<code>#000000</code>) com textos em alto contraste para economia de bateria e legibilidade sob luz solar direta;</li>
+  <li><strong>Alvos de Toque no Pulso:</strong> Botões ocupam a largura total da tela redonda (<code>fillMaxWidth</code>) e utilizam <code>transformedHeight</code> para evitar toques incorretos;</li>
+  <li><strong>Hierarquia Tipográfica Clara:</strong> Título em negrito com horário destacado e indicador textual explícito de status (<code>"Concluído ✓"</code>);</li>
+  <li><strong>Prevenção de Toques Acidentais:</strong> Itens já concluídos tornam-se inativos (<code>enabled = false</code>) para prevenir cliques redundantes no pulso;</li>
+  <li><strong>Sem Limites de Tempo Inflexíveis:</strong> As notificações e lembretes permanecem disponíveis na lista do relógio até que o usuário decida interagir.</li>
+</ol>
+
+<hr>
+
+<h2 id="pre-requisitos-testes">6. Pré-requisitos de Ambiente, Emuladores e Testes</h2>
+<p>Para executar e depurar a solução completa integrada, utilize dois terminais em PowerShell devido às exigências distintas de JDK:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Aplicação</th>
+      <th scope="col">JDK Necessário</th>
+      <th scope="col">Comando de Inicialização</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Terminal 1: WearableAPP</strong></td>
+      <td>JBR do Android Studio (JDK 21)</td>
+      <td><code>$env:JAVA_HOME = "$env:LOCALAPPDATA\Programs\Android Studio\jbr"; .\gradlew.bat :app:installDebug</code></td>
+    </tr>
+    <tr>
+      <td><strong>Terminal 2: MobileAPP</strong></td>
+      <td>JDK 17 (C:\Program Files\Java\jdk-17)</td>
+      <td><code>$env:JAVA_HOME = "C:\Program Files\Java\jdk-17"; npx expo run:android --device Pixel_10_Pro</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A depuração no relógio pode ser acompanhada via Logcat filtrado:</p>
+<pre><code class="language-powershell">&amp; "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" -s emulator-5556 logcat -s LembriWearListener CelularDataSource</code></pre>
+
+</body>
+</html>

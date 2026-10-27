@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LEMBRETES — Gestão de Lembretes (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>LEMBRETES — Gestão de Lembretes</h1>
+
+<div class="meta-block">
+  <p><strong>Módulo:</strong> <code>LEMBRETES</code></p>
+  <p><strong>Índice de referência:</strong> <code>docs/manuais/modulos.md</code></p>
+  <p><strong>Telas Expo Router:</strong> <code>MobileAPP/src/app/(tabs)/index.tsx</code>, <code>MobileAPP/src/app/(tabs)/lembretes.tsx</code></p>
+  <p><strong>Componentes UI:</strong> <code>MobileAPP/src/components/</code> (ThemedText, Card, MainContainer, App-bar)</p>
+  <p><strong>Stores Zustand:</strong> <code>MobileAPP/src/stores/useLembretesStore.ts</code></p>
+  <p><strong>Mocks &amp; Fixtures:</strong> <code>MobileAPP/src/mocks/lembretes.mock.ts</code></p>
+  <p><strong>Serviço Wearable:</strong> <code>MobileAPP/src/services/wear/</code> (Wearable Data Layer API)</p>
+</div>
+
+<hr>
+
+<h2>1. Visão Geral do Módulo</h2>
+<p>O módulo de <strong>Lembretes</strong> é o núcleo da experiência do aplicativo Lembri. Ele permite que o usuário crie lembretes de rotina ou medicamentos rapidamente em seu smartphone, visualize o status de conexão com relógios Wear OS, envie os lembretes para o pulso e acompanhe confirmações de conclusão em tempo real.</p>
+
+<hr>
+
+<h2>2. Telas e Fluxos no Expo Router</h2>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Rota Expo</th>
+      <th scope="col">Arquivo</th>
+      <th scope="col">Responsabilidade</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/(tabs)</code></td>
+      <td><code>MobileAPP/src/app/(tabs)/index.tsx</code></td>
+      <td>Painel principal: status de conexão com o relógio, formulário de adição rápida e lista recente de lembretes enviados</td>
+    </tr>
+    <tr>
+      <td><code>/(tabs)/lembretes</code></td>
+      <td><code>MobileAPP/src/app/(tabs)/lembretes.tsx</code></td>
+      <td>Histórico completo, filtros por status (todos, pendentes, concluídos) e agendamento</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2>3. Gerenciamento de Estado no Zustand</h2>
+<p>O estado do módulo é controlado de forma centralizada e imutável pela store <code>useLembretesStore</code>:</p>
+<pre><code class="language-typescript">interface LembretesState {
+  lembretes: Lembrete[];
+  filtro: 'todos' | 'pendentes' | 'concluidos';
+  isLoading: boolean;
+  erro: string | null;
+
+  adicionarLembrete: (titulo: string, horario?: string) => Lembrete;
+  toggleConcluido: (id: string) => void;
+  removerLembrete: (id: string) => void;
+  definirFiltro: (filtro: 'todos' | 'pendentes' | 'concluidos') => void;
+  sincronizarComRelogio: (id: string, concluidoNoRelogio: boolean) => void;
+  resetarParaMocks: () => void;
+}
+</code></pre>
+
+<hr>
+
+<h2>4. Catálogo de Componentes e Tokens Visuais</h2>
+<ul>
+  <li><code>ThemedText</code>: Variantes <code>title</code>, <code>subheading</code>, <code>label</code>, <code>small</code> e <code>button</code>;</li>
+  <li><code>Card</code>: Superfície branca com bordas arredondadas (<code>Radius.lg = 16</code>) e borda sutil;</li>
+  <li><code>TouchTarget</code>: Alvo mínimo de toque padronizado em <strong>56dp</strong>;</li>
+  <li><code>Colors</code>: Contraste acessível em preto, branco e tons de cinza funcionais.</li>
+</ul>
+
+<hr>
+
+<h2>5. Massa de Dados Mockados e Fixtures</h2>
+<p>Localizada em <code>MobileAPP/src/mocks/lembretes.mock.ts</code>, a fixture inicial provê dados pré-populados para testes no emulador, com itens pendentes e concluídos em diferentes horários do dia.</p>
+
+<hr>
+
+<h2>6. Acessibilidade Mobile (WCAG 2.2 AAA)</h2>
+<ul>
+  <li>Contraste aprimorado mínimo de 7:1 para texto normal e 4.5:1 para texto grande (1.4.6);</li>
+  <li>Todos os botões contam com área de toque mínima de 56dp (<code>TouchTarget</code>, superando o mínimo de 44x44dp AAA);</li>
+  <li>Botões com ícones utilizam <code>accessibilityRole="button"</code> e <code>accessibilityLabel</code> autônomo e contextual (2.4.9);</li>
+  <li>Ações de exclusão contam com mecanismo de reversão (*Undo* de 5-10s) ou confirmação explícita (3.3.6);</li>
+  <li>Sem limite de tempo inflexível nos fluxos (2.2.3);</li>
+  <li>Conclusão indicada por texto explicativo ("Concluído no relógio ✓" / "Pendente") além de cor;</li>
+  <li>Compatibilidade integral com TalkBack e VoiceOver.</li>
+</ul>
+
+<hr>
+
+<h2>7. Sincronização com Relógio Wear OS</h2>
+<p>A sincronização é bidirecional via <code>modules/wear-connector</code>:</p>
+<ul>
+  <li><strong>Celular → Relógio:</strong> Mensagem na rota <code>/lembrete</code> com payload contendo <code>{ id, titulo, horario }</code>;</li>
+  <li><strong>Relógio → Celular:</strong> Mensagem na rota <code>/confirmacao</code> com payload <code>{ id, concluido: true }</code>, disparando atualização imediata na store Zustand.</li>
+</ul>
+
+</body>
+</html>
