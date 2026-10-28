@@ -426,7 +426,8 @@ function generateRevisao(targetKeyRaw, args) {
   <li><a href="#r2">Matriz de Conformidade Arquitetural</a></li>
   <li><a href="#r3">Auditoria de Estado Zustand e Mocks</a></li>
   <li><a href="#r4">Auditoria de Acessibilidade Mobile (WCAG 2.2 AAA)</a></li>
-  <li><a href="#r5">Resultado da Pré-Auditoria Automatizada (lembri-check.mjs)</a></li>
+  <li><a href="#r5">Auditoria das 10 Heurísticas de Usabilidade de Nielsen</a></li>
+  <li><a href="#r6">Resultado da Pré-Auditoria Automatizada (lembri-check.mjs)</a></li>
 </ol>
 
 <hr>
@@ -452,6 +453,7 @@ function generateRevisao(targetKeyRaw, args) {
     <tr><td>Imutabilidade no Zustand e Seletores Otimizados</td><td><span class="badge-ok">🟢 OK</span></td><td>[Evidência]</td></tr>
     <tr><td>Design Tokens (theme.ts / TouchTarget = 56)</td><td><span class="badge-ok">🟢 OK</span></td><td>[Evidência]</td></tr>
     <tr><td>Acessibilidade Mobile WCAG 2.2 AAA (contraste 7:1 e alvos)</td><td><span class="badge-ok">🟢 OK</span></td><td>[Evidência]</td></tr>
+    <tr><td>10 Heurísticas de Usabilidade de Nielsen (Mobile UX)</td><td><span class="badge-ok">🟢 OK</span></td><td>[Evidência conforme heuristicas-nielsen.md]</td></tr>
   </tbody>
 </table>
 
@@ -467,7 +469,34 @@ function generateRevisao(targetKeyRaw, args) {
 
 <hr>
 
-<h2 id="r5">5. Resultado da Pré-Auditoria Automatizada (<code>lembri-check.mjs</code>)</h2>
+<h2 id="r5">5. Auditoria das 10 Heurísticas de Usabilidade de Nielsen (Mobile UX)</h2>
+<p>Auditoria baseada em <code>.agents/skills/principios/references/heuristicas-nielsen.md</code>:</p>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Heurística</th>
+      <th scope="col">Status</th>
+      <th scope="col">Evidência na UI / Código</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Visibilidade do status do sistema</td><td><span class="badge-ok">🟢 OK</span></td><td>[Feedback imediato, status Wear OS e loading]</td></tr>
+    <tr><td>2</td><td>Correspondência com o mundo real</td><td><span class="badge-ok">🟢 OK</span></td><td>[Linguagem natural PT-BR sem jargões técnicos]</td></tr>
+    <tr><td>3</td><td>Controle e liberdade do usuário (Undo)</td><td><span class="badge-ok">🟢 OK</span></td><td>[Reversibilidade de exclusão e restauração]</td></tr>
+    <tr><td>4</td><td>Consistência e padrões</td><td><span class="badge-ok">🟢 OK</span></td><td>[Uso estrito de theme.ts e componentes base]</td></tr>
+    <tr><td>5</td><td>Prevenção de erros</td><td><span class="badge-ok">🟢 OK</span></td><td>[Botões inativos quando vazios e alvos 56dp]</td></tr>
+    <tr><td>6</td><td>Reconhecimento em vez de memorização</td><td><span class="badge-ok">🟢 OK</span></td><td>[Dados e filtros visíveis sem exigir memorização]</td></tr>
+    <tr><td>7</td><td>Flexibilidade e eficiência de uso</td><td><span class="badge-ok">🟢 OK</span></td><td>[Atalhos rápidos e integração com relógio]</td></tr>
+    <tr><td>8</td><td>Design estético e minimalista</td><td><span class="badge-ok">🟢 OK</span></td><td>[Máximo 2 linhas por card e zero ruído visual]</td></tr>
+    <tr><td>9</td><td>Diagnóstico e recuperação de erros</td><td><span class="badge-ok">🟢 OK</span></td><td>[Mensagens claras e orientadas à ação]</td></tr>
+    <tr><td>10</td><td>Ajuda e documentação contextual</td><td><span class="badge-ok">🟢 OK</span></td><td>[Estados vazios acolhedores e labels acessíveis]</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r6">6. Resultado da Pré-Auditoria Automatizada (<code>lembri-check.mjs</code>)</h2>
 <p>Executado com zero bloqueantes.</p>
 
 </body>

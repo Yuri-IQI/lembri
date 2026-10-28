@@ -118,6 +118,7 @@ Nenhuma destas circunstâncias autoriza assumir:
 
 Os princípios valem integralmente, com atenção especial a:
 - **Fluxo e UX:** Consulte `references/ux-fluxo.md` antes de codar para definir feedback imediato, affordance, prevenção de toques acidentais, reversibilidade de ações (*Undo*) e tratamento de estados vazios.
+- **As 10 Heurísticas de Usabilidade de Nielsen (Mandatórias):** Consulte e aplique `references/heuristicas-nielsen.md` (Visibilidade do status, mundo real, controle do usuário e Undo, consistência, prevenção de erros, reconhecimento vs memorização, flexibilidade, design minimalista, diagnóstico de erros e ajuda contextual).
 - **Componentes e Estilização:** Consulte `references/ui-componentes.md` para uso de `StyleSheet.create`, design tokens de `theme.ts` e tratamento dos **5 estados visuais** (Ideal, Carregando/Skeleton, Vazio, Erro e Parcial).
 
 ### Acessibilidade Mobile — WCAG 2.2 Nível AAA Obrigatório

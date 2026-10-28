@@ -23,6 +23,7 @@ Antes de planejar, codificar, refatorar, corrigir defeitos ou revisar código, c
 - [Planejamento de Tarefas e SDD Front-end](.agents/skills/principios/references/planejamento.md)
 - [UI e Componentes em React Native (React 19 + Expo)](.agents/skills/principios/references/ui-componentes.md)
 - [UX e Fluxos Operacionais Mobile (Lembri + Wear OS)](.agents/skills/principios/references/ux-fluxo.md)
+- [As 10 Heurísticas de Usabilidade de Nielsen (Mobile & Acessibilidade)](.agents/skills/principios/references/heuristicas-nielsen.md)
 
 ### Skills Operacionais do Fluxo SDD (`.agents/skills/`)
 > **Regra de Subordinação Obrigatória:** Ao executar qualquer uma das skills abaixo, o agente é **obrigado** a carregar e obedecer integralmente à skill canônica **[`principios`](.agents/skills/principios/SKILL.md)** e às suas referências (`Passo 0` bloqueante).

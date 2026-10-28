@@ -102,9 +102,10 @@
   <li><a href="#r4">4. Auditoria de Estado Zustand, Mocks e Imutabilidade</a></li>
   <li><a href="#r5">5. Auditoria de Acessibilidade Mobile (WCAG 2.2 AAA & TouchTarget 56dp)</a></li>
   <li><a href="#r6">6. Auditoria de Integração com Hardware Wear OS</a></li>
-  <li><a href="#r7">7. Relatório das Ferramentas Automatizadas de QA (lembri-check.mjs & tsc)</a></li>
-  <li><a href="#r8">8. Apontamentos e Sugestões de Melhoria (em Diff)</a></li>
-  <li><a href="#r9">9. Parecer Final e Assinatura Técnica</a></li>
+  <li><a href="#r7">7. Auditoria das 10 Heurísticas de Usabilidade de Nielsen (Mobile UX)</a></li>
+  <li><a href="#r8">8. Relatório das Ferramentas Automatizadas de QA (lembri-check.mjs & tsc)</a></li>
+  <li><a href="#r9">9. Apontamentos e Sugestões de Melhoria (em Diff) — Status: Aplicados</a></li>
+  <li><a href="#r10">10. Parecer Final e Assinatura Técnica</a></li>
 </ol>
 
 <hr>
@@ -284,6 +285,11 @@ Commits na branch: 5 commits estruturados rigorosamente em Conventional Commits<
       <td><span class="badge-ok">🟢 OK</span></td>
       <td>Alvos de toque com <code>TouchTarget = 56</code> (56×56dp), contraste de texto superior a 7:1, reversibilidade de exclusões via Undo (Critério 3.3.6) e rótulos autônomos para leitores de tela.</td>
     </tr>
+    <tr>
+      <td><strong>10 Heurísticas de Usabilidade de Nielsen</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>100% de conformidade com as 10 heurísticas documentadas em <code>references/heuristicas-nielsen.md</code> (status transparente, Undo, consistência com <code>theme.ts</code> e estados vazios).</td>
+    </tr>
   </tbody>
 </table>
 
@@ -381,7 +387,85 @@ Commits na branch: 5 commits estruturados rigorosamente em Conventional Commits<
 
 <hr>
 
-<h2 id="r7">7. Relatório das Ferramentas Automatizadas de QA</h2>
+<h2 id="r7">7. Auditoria das 10 Heurísticas de Usabilidade de Nielsen (Mobile UX)</h2>
+<p>Auditoria mandatória baseada no documento canônico de referência <code>.agents/skills/principios/references/heuristicas-nielsen.md</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Heurística de Nielsen</th>
+      <th scope="col">Status</th>
+      <th scope="col">Evidência e Avaliação Técnica no CARD-21</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1</strong></td>
+      <td><strong>Visibilidade do status do sistema</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Feedback tátil imediato em todos os botões (<code>pressed &amp;&amp; styles.botaoPressionado</code>), card explícito de status do relógio Wear OS (conectado/buscando) e sinalização em tempo real de itens concluídos no relógio ou no celular.</td>
+    </tr>
+    <tr>
+      <td><strong>2</strong></td>
+      <td><strong>Correspondência com o mundo real</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Vocabulário natural em português sem jargões de engenharia (ex: "Tomar remédio", "Lavar roupas", "Pendente", "Concluído", "Próximos Lembretes"). Ícones intuitivos alinhados ao protótipo do Figma.</td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td><strong>Controle e liberdade do usuário (Undo)</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Ação de exclusão 100% reversível através do banner de <em>Desfazer</em> (WCAG 3.3.6), alternância imediata de conclusão (Reabrir) e ação <code>resetarParaMocks</code> para restaurar a base de testes a qualquer momento.</td>
+    </tr>
+    <tr>
+      <td><strong>4</strong></td>
+      <td><strong>Consistência e padrões</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Aderência total aos tokens do <code>src/constants/theme.ts</code> (cores, tipografia Inter, espaçamentos e raios), componentes reutilizáveis padronizados (<code>Card</code>, <code>ThemedText</code>, <code>MainContainer</code>).</td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td><strong>Prevenção de erros</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Botão "Adicionar lembrete" desabilitado (<code>opacity: 0.4</code> e <code>disabled={!titulo.trim()}</code>) quando o campo está vazio, prevenindo envios acidentais em branco; alvos de toque com <code>TouchTarget = 56</code> (56×56dp) evitando toques errôneos; desassociação segura de categorias sem apagar os lembretes do usuário (RN-04).</td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td><strong>Reconhecimento em vez de memorização</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Lista de lembretes pendentes visível diretamente na Home; abas de filtro ativas claramente destacadas; categorias identificadas por badges; placeholder autoexplicativo ("Ex.: Tomar remédio").</td>
+    </tr>
+    <tr>
+      <td><strong>7</strong></td>
+      <td><strong>Flexibilidade e eficiência de uso</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Fluxo expresso de cadastro no topo da Home; submissão direta pelo teclado com <code>onSubmitEditing</code>; conclusão com um toque direto no card; sincronização automática com o pulso via Wearable Data Layer API.</td>
+    </tr>
+    <tr>
+      <td><strong>8</strong></td>
+      <td><strong>Design estético e minimalista</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Cards limpos, sem excesso de texto ou ornamentos visuais desnecessários; máximo de 2 linhas por bloco; espaçamento equilibrado e tipografia legível.</td>
+    </tr>
+    <tr>
+      <td><strong>9</strong></td>
+      <td><strong>Diagnóstico e recuperação de erros</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Mensagens amigáveis orientadas à ação (ex: aviso quando nenhum relógio está conectado, sem exibir exceções de baixo nível ou rastros de pilha).</td>
+    </tr>
+    <tr>
+      <td><strong>10</strong></td>
+      <td><strong>Ajuda e documentação contextual</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Estados vazios acolhedores em todas as abas (Home, Lembretes e Exercícios) com explicação e botão de restauração; suporte completo a leitores de tela com <code>accessibilityRole</code> e <code>accessibilityLabel</code> informando o contexto do item.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r8">8. Relatório das Ferramentas Automatizadas de QA</h2>
 <ul>
   <li><strong>Checagem Estática com <code>lembri-check.mjs</code>:</strong>
     <pre><code>Pré-Auditoria Automatizada Front-end — Projeto Lembri
@@ -397,7 +481,7 @@ Compilação TypeScript: 🟢 Zero erros de tipagem</code></pre>
 
 <hr>
 
-<h2 id="r8">8. Apontamentos e Sugestões de Melhoria (em Diff) — Status: Aplicados</h2>
+<h2 id="r9">9. Apontamentos e Sugestões de Melhoria (em Diff) — Status: Aplicados</h2>
 
 <h3>Apontamento 1 (Qualidade de Tema): Remoção de Hexadecimal Hardcoded em <code>lembretes.tsx</code> [RESOLVIDO]</h3>
 <p>O estilo <code>cardUndo</code> foi refatorado para consumir nativamente as propriedades de cor de superfície do componente <code>Card</code>, eliminando o valor hexadecimal estático.</p>
@@ -432,10 +516,10 @@ Compilação TypeScript: 🟢 Zero erros de tipagem</code></pre>
 
 <hr>
 
-<h2 id="r9">9. Parecer Final e Assinatura Técnica</h2>
+<h2 id="r10">10. Parecer Final e Assinatura Técnica</h2>
 <div class="verdict-approved">
   <strong>PARECER TÉCNICO: APROVADO (100% CONFORME)</strong><br>
-  Com os dois ajustes mecânicos de refatoração devidamente aplicados e validados por <code>tsc</code>, <code>expo lint</code> e <code>lembri-check.mjs</code>, a branch <code>feat/criar-dados-mockados</code> atinge 100% de conformidade com a skill canônica <code>principios</code> e os requisitos do <strong>CARD-21</strong>. Recomendado o merge imediato na branch <code>develop</code>.
+  Com os ajustes mecânicos aplicados, conformidade estrita com as <strong>10 Heurísticas de Usabilidade de Nielsen</strong> e validação automatizada impecável por <code>tsc</code>, <code>expo lint</code> e <code>lembri-check.mjs</code>, a branch <code>feat/criar-dados-mockados</code> atinge 100% de conformidade com a skill canônica <code>principios</code> e os requisitos do <strong>CARD-21</strong>. Recomendado o merge imediato na branch <code>develop</code>.
 </div>
 
 </body>
