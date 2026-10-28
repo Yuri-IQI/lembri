@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Módulo STORES_MOCKS — Infraestrutura de Estado e Mocks (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>Módulo STORES_MOCKS — Infraestrutura de Estado e Mocks</h1>
+
+<div class="meta-block">
+  <p><strong>Módulo:</strong> <code>STORES_MOCKS</code></p>
+  <p><strong>Domínios Atendidos:</strong> Lembretes, Categorias/Tipos, Exercícios Cognitivos e Wearable Sync</p>
+  <p><strong>Arquivos de Estado (Zustand):</strong> <code>MobileAPP/src/stores/</code></p>
+  <p><strong>Massa de Dados & Fixtures:</strong> <code>MobileAPP/src/mocks/</code></p>
+  <p><strong>Tipagem Estrita TypeScript:</strong> <code>MobileAPP/src/types/</code></p>
+  <p><strong>Data de Atualização:</strong> 2026-10-27 (Entrega do CARD-21)</p>
+</div>
+
+<ol class="toc">
+  <li><a href="#s1">1. Visão Geral do Módulo</a></li>
+  <li><a href="#s2">2. Modelagem de Entidades e Tipos TypeScript (src/types/)</a></li>
+  <li><a href="#s3">3. Gerenciamento de Estado no Zustand (src/stores/)</a></li>
+  <li><a href="#s4">4. Massa de Dados Mockados e Fixtures do Figma (src/mocks/)</a></li>
+  <li><a href="#s5">5. Integração com Telas Expo Router (5 Estados Visuais)</a></li>
+  <li><a href="#s6">6. Acessibilidade Mobile Mandatória (WCAG 2.2 Nível AAA)</a></li>
+  <li><a href="#s7">7. Sincronização Wear OS e Contratos de Hardware</a></li>
+</ol>
+
+<hr>
+
+<h2 id="s1">1. Visão Geral do Módulo</h2>
+<p>O módulo <strong>STORES_MOCKS</strong> é a espinha dorsal de dados e reatividade do aplicativo <strong>Lembri</strong>. Como o aplicativo adota o paradigma <em>front-end first</em> com dados desacoplados e majoritariamente mockados, este módulo provê contratos estritos em TypeScript, fixtures fiéis ao protótipo do Figma e stores globais imutáveis no <strong>Zustand</strong> com capacidade de restauração (<code>resetarParaMocks</code>) e reversibilidade de exclusão (<em>Undo</em>).</p>
+
+<hr>
+
+<h2 id="s2">2. Modelagem de Entidades e Tipos TypeScript (src/types/)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Arquivo</th>
+      <th scope="col">Interfaces / Tipos</th>
+      <th scope="col">Propósito no Lembri</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>lembrete.ts</code></td>
+      <td><code>Lembrete</code>, <code>FiltroLembrete</code>, <code>CriarLembreteInput</code></td>
+      <td>Define a estrutura de lembretes diários (id, título, horário, tipoId, flags de conclusão no celular e no relógio Wear OS).</td>
+    </tr>
+    <tr>
+      <td><code>tipo-lembrete.ts</code></td>
+      <td><code>TipoLembrete</code>, <code>CriarTipoLembreteInput</code></td>
+      <td>Categorias temáticas para lembretes (Saúde, Casa, Trabalho, Pessoal) com cores hexadecimais de alto contraste (7:1).</td>
+    </tr>
+    <tr>
+      <td><code>exercicio.ts</code></td>
+      <td><code>Exercicio</code>, <code>TentativaExercicio</code>, <code>RegistrarTentativaInput</code>, <code>NivelExercicio</code></td>
+      <td>Exercícios de estímulo cognitivo ("Sequências", "Ordenação", "Associações", "Lista de compras"), cálculo de streak e histórico.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s3">3. Gerenciamento de Estado no Zustand (src/stores/)</h2>
+
+<h3>A. <code>useLembretesStore.ts</code></h3>
+<ul>
+  <li><strong>Estado:</strong> <code>lembretes: Lembrete[]</code>, <code>filtro: FiltroLembrete</code>, <code>ultimoExcluido: Lembrete | null</code>, <code>isLoading: boolean</code>, <code>erro: string | null</code>;</li>
+  <li><strong>Ações:</strong>
+    <ul>
+      <li><code>adicionarLembrete(inputOrTitulo, horario)</code>: inserção imutável no início da lista;</li>
+      <li><code>editarLembrete(id, input)</code>: atualização mantendo a posição original;</li>
+      <li><code>removerLembrete(id)</code>: remoção imutável com armazenamento em <code>ultimoExcluido</code> para suporte a Undo (WCAG 3.3.6);</li>
+      <li><code>desfazerExclusao()</code>: restauração imediata do último item removido;</li>
+      <li><code>toggleConcluido(id)</code>: alternância reativa do status de conclusão;</li>
+      <li><code>marcarConcluidoWear(id)</code>: marca como concluído com sinalização de origem no Wear OS (<code>concluidoNoWear: true</code>);</li>
+      <li><code>sincronizarComRelogio(id, concluidoNoRelogio)</code>: compatibilidade com respostas da Data Layer API;</li>
+      <li><code>desassociarTipo(tipoId)</code>: remove vínculo de categoria sem deletar os lembretes (RN-04);</li>
+      <li><code>definirFiltro(filtro)</code>: define o critério de exibição (todos, pendentes, concluídos);</li>
+      <li><code>resetarParaMocks()</code>: restaura o estado para as 4 fixtures iniciais do Figma.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>B. <code>useTiposLembreteStore.ts</code></h3>
+<ul>
+  <li><strong>Estado:</strong> <code>tipos: TipoLembrete[]</code>;</li>
+  <li><strong>Ações:</strong> <code>adicionarTipo</code>, <code>removerTipo</code> (desassocia automaticamente os lembretes vinculados via <code>useLembretesStore.getState().desassociarTipo</code>), <code>obterTipoPorId</code> e <code>resetarParaMocks</code>.</li>
+</ul>
+
+<h3>C. <code>useExerciciosStore.ts</code></h3>
+<ul>
+  <li><strong>Estado:</strong> <code>exercicios: Exercicio[]</code>, <code>historico: TentativaExercicio[]</code>;</li>
+  <li><strong>Ações:</strong>
+    <ul>
+      <li><code>registrarTentativa(exercicioId, acertos, totalQuestoes, tempoGastoSegundos)</code>: calcula a pontuação percentual, adiciona ao histórico e incrementa o <code>streakDias</code> se o resultado for satisfatório;</li>
+      <li><code>obterHistoricoPorExercicio(exercicioId)</code>: histórico filtrado por exercício;</li>
+      <li><code>obterExercicioPorId(exercicioId)</code>: consulta direta por ID;</li>
+      <li><code>resetarParaMocks()</code>: restaura exercícios e histórico para o padrão do Figma.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr>
+
+<h2 id="s4">4. Massa de Dados Mockados e Fixtures do Figma (src/mocks/)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Arquivo</th>
+      <th scope="col">Constante Principal</th>
+      <th scope="col">Fábrica (Factory)</th>
+      <th scope="col">Conteúdo Base</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>lembretes.mock.ts</code></td>
+      <td><code>lembretesIniciaisMock</code></td>
+      <td><code>criarLembreteMock()</code></td>
+      <td>"Tomar remédio" (08:00 - Concluído no relógio ✓), "Lavar roupas" (10:30), "Beber 500ml de água" (14:00), "Pagar conta de energia" (16:00).</td>
+    </tr>
+    <tr>
+      <td><code>tipos-lembrete.mock.ts</code></td>
+      <td><code>tiposLembreteIniciaisMock</code></td>
+      <td><code>criarTipoLembreteMock()</code></td>
+      <td>Saúde (#0284C7), Casa (#D97706), Trabalho (#4B5563), Pessoal (#059669).</td>
+    </tr>
+    <tr>
+      <td><code>exercicios.mock.ts</code></td>
+      <td><code>exerciciosIniciaisMock</code></td>
+      <td><code>criarExercicioMock()</code></td>
+      <td>"Sequências" (Streak: 5), "Ordenação" (Streak: 3), "Associações" (Streak: 7), "Lista de compras" (Streak: 2).</td>
+    </tr>
+    <tr>
+      <td><code>historico-tentativas.mock.ts</code></td>
+      <td><code>historicoIniciaisMock</code></td>
+      <td><code>criarTentativaMock()</code></td>
+      <td>Tentativas anteriores com pontuações percentuais (100%, 80%, 100%) para validação de métricas cognitivas.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s5">5. Integração com Telas Expo Router (5 Estados Visuais)</h2>
+<ul>
+  <li><strong>Tela Inicial (<code>src/app/(tabs)/index.tsx</code>):</strong> consome lembretes pendentes reativos da store e sincroniza com o formulário de envio Wear;</li>
+  <li><strong>Tela de Lembretes (<code>src/app/(tabs)/lembretes.tsx</code>):</strong> consome a listagem com filtro ativo (todos, pendentes, concluídos) e banner de Undo;</li>
+  <li><strong>Tela de Exercícios (<code>src/app/(tabs)/exercicios.tsx</code>):</strong> consome o catálogo de exercícios, exibe streaks reativos e permite praticar/registrar tentativas;</li>
+  <li><strong>5 Estados Visuais Atendidos:</strong> Ideal (cards renderizados com tipografia e tokens), Carregando (indicadores visuais), Vazio (cards informativos com botão de restaurar mocks), Erro (mensagens amigáveis) e Parcial (sinalização clara de itens concluídos no relógio vs. celular).</li>
+</ul>
+
+<hr>
+
+<h2 id="s6">6. Acessibilidade Mobile Mandatória (WCAG 2.2 Nível AAA)</h2>
+<ul>
+  <li><strong>Contraste Aprimorado (1.4.6):</strong> relação mínima de 7:1 para todos os textos das telas e cores hexadecimais de categorias;</li>
+  <li><strong>Alvo de Toque Aprimorado (2.5.5):</strong> todos os botões, chips e áreas clicáveis possuem tamanho mínimo padronizado de <strong>56×56dp</strong> (<code>TouchTarget = 56</code>);</li>
+  <li><strong>Prevenção de Erros Aprimorada (3.3.6):</strong> remoções de lembretes salvam o estado em <code>ultimoExcluido</code> e exibem banner com opção imediata de <em>Desfazer</em>;</li>
+  <li><strong>Propósito Autônomo (2.4.9):</strong> todos os botões utilizam <code>accessibilityRole="button"</code> e <code>accessibilityLabel</code> autoexplicativo (ex: <code>"Marcar Lavar roupas como concluído"</code>).</li>
+</ul>
+
+<hr>
+
+<h2 id="s7">7. Sincronização Wear OS e Contratos de Hardware</h2>
+<p>Os dados de <code>src/types/lembrete.ts</code> são 100% interoperáveis com <code>src/services/wear/contrato.ts</code>. Quando uma mensagem de confirmação do relógio chega via <code>/lembri/confirmacao</code>, o hook <code>useWear</code> aciona diretamente <code>useLembretesStore.getState().sincronizarComRelogio(lembreteId, true)</code>, refletindo imediatamente na interface do celular.</p>
+
+</body>
+</html>
