@@ -73,7 +73,7 @@
 </div>
 
 <div class="verdict-approved">
-  Veredito da Revisão: APROVADO COM RESSALVAS MENORES (PRONTO PARA MERGE APÓS PEQUENO AJUSTE DE TOKEN)
+  Veredito da Revisão: APROVADO (100% CONFORME E PRONTO PARA MERGE)
 </div>
 
 <div class="summary-grid">
@@ -82,11 +82,11 @@
     <span class="label">🔴 Bloqueantes</span>
   </div>
   <div class="summary-card">
-    <span class="count" style="color: #d97706;">1</span>
-    <span class="label">🟡 Atenção / Sugestão</span>
+    <span class="count" style="color: #d97706;">0</span>
+    <span class="label">🟡 Atenção</span>
   </div>
   <div class="summary-card">
-    <span class="count" style="color: #16a34a;">14</span>
+    <span class="count" style="color: #16a34a;">15</span>
     <span class="label">🟢 Conformes (OK)</span>
   </div>
   <div class="summary-card">
@@ -276,8 +276,8 @@ Commits na branch: 5 commits estruturados rigorosamente em Conventional Commits<
     </tr>
     <tr>
       <td><strong>Design Tokens (theme.ts)</strong></td>
-      <td><span class="badge-warn">🟡 ATENÇÃO</span></td>
-      <td>Quase 100% dos estilos utilizam <code>theme.ts</code>. Identificada 1 ocorrência pontual de cor hexadecimal hardcoded (<code>backgroundColor: '#F8F9FA'</code> em <code>styles.cardUndo</code> de <code>lembretes.tsx</code>).</td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>100% dos estilos utilizam <code>theme.ts</code>. A cor hardcoded residual em <code>lembretes.tsx</code> foi prontamente refatorada para utilizar os tokens e estilos base de <code>Card</code>.</td>
     </tr>
     <tr>
       <td><strong>Acessibilidade WCAG 2.2 AAA</strong></td>
@@ -397,25 +397,21 @@ Compilação TypeScript: 🟢 Zero erros de tipagem</code></pre>
 
 <hr>
 
-<h2 id="r8">8. Apontamentos e Sugestões de Melhoria (em Diff)</h2>
+<h2 id="r8">8. Apontamentos e Sugestões de Melhoria (em Diff) — Status: Aplicados</h2>
 
-<h3>Apontamento 1 (Menor / Qualidade de Tema): Remoção de Hexadecimal Hardcoded em <code>lembretes.tsx</code></h3>
-<p>Na estilização do card de Undo (linha 301 de <code>src/app/(tabs)/lembretes.tsx</code>), há um valor hexadecimal literal <code>#F8F9FA</code>. Para aderência irrestrita aos princípios do projeto, deve-se usar <code>theme.surface</code> ou token de <code>theme.ts</code>.</p>
+<h3>Apontamento 1 (Qualidade de Tema): Remoção de Hexadecimal Hardcoded em <code>lembretes.tsx</code> [RESOLVIDO]</h3>
+<p>O estilo <code>cardUndo</code> foi refatorado para consumir nativamente as propriedades de cor de superfície do componente <code>Card</code>, eliminando o valor hexadecimal estático.</p>
 
 <pre><code>// MobileAPP/src/app/(tabs)/lembretes.tsx
-@@ -301,3 +301,3 @@
-   cardUndo: {
-     flexDirection: 'row',
-     alignItems: 'center',
-     justifyContent: 'space-between',
-     marginBottom: Spacing.two,
-<span class="diff-del">-    backgroundColor: '#F8F9FA',</span>
-<span class="diff-add">+    backgroundColor: theme.surface, // Ou dinâmico via style inline com useTheme()</span>
-   },
+@@ -184,3 +184,3 @@
+-        &lt;Card style={[styles.cardUndo, { borderColor: theme.border }]}&gt;
++        &lt;Card style={styles.cardUndo}&gt;
+@@ -301,3 +301,0 @@
+-    backgroundColor: '#F8F9FA',
 </code></pre>
 
-<h3>Apontamento 2 (Otimização de Render): Memoização de <code>lembretesPendentes</code> em <code>index.tsx</code></h3>
-<p>Em <code>src/app/(tabs)/index.tsx</code>, a filtragem <code>state.lembretes.filter((item) => !item.concluido)</code> ocorre dentro do seletor. Embora o <code>useShallow</code> compare rasamente, a melhor prática é extrair <code>lembretes</code> da store e aplicar <code>useMemo</code> na tela, igual ao padrão exemplar já adotado em <code>lembretes.tsx</code>.</p>
+<h3>Apontamento 2 (Otimização de Render): Memoização de <code>lembretesPendentes</code> em <code>index.tsx</code> [RESOLVIDO]</h3>
+<p>Em <code>src/app/(tabs)/index.tsx</code>, a filtragem foi desacoplada do seletor e encapsulada em <code>useMemo</code> com dependência em <code>lembretes</code>, padronizando a convenção reativa com <code>lembretes.tsx</code>.</p>
 
 <pre><code>// MobileAPP/src/app/(tabs)/index.tsx
 @@ -23,7 +23,10 @@
@@ -438,8 +434,8 @@ Compilação TypeScript: 🟢 Zero erros de tipagem</code></pre>
 
 <h2 id="r9">9. Parecer Final e Assinatura Técnica</h2>
 <div class="verdict-approved">
-  <strong>PARECER TÉCNICO: APROVADO COM RESSALVAS MENORES</strong><br>
-  A entrega cumpre integralmente os requisitos do <strong>CARD-21</strong> e do plano SDD. A infraestrutura de stores e fixtures é robusta, limpa, bem documentada e 100% acessível (WCAG 2.2 AAA). Os apontamentos levantados são de refinamento cosmético e não impedem a abertura do Pull Request para <code>develop</code>.
+  <strong>PARECER TÉCNICO: APROVADO (100% CONFORME)</strong><br>
+  Com os dois ajustes mecânicos de refatoração devidamente aplicados e validados por <code>tsc</code>, <code>expo lint</code> e <code>lembri-check.mjs</code>, a branch <code>feat/criar-dados-mockados</code> atinge 100% de conformidade com a skill canônica <code>principios</code> e os requisitos do <strong>CARD-21</strong>. Recomendado o merge imediato na branch <code>develop</code>.
 </div>
 
 </body>
