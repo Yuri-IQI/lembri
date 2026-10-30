@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDD Front-end — CARD-22: Cria tema do protótipo no app (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>SDD Front-end — CARD-22: Cria tema do protótipo no app</h1>
+
+<div class="meta-block">
+  <p><strong>Tarefa / Funcionalidade:</strong> <code>CARD-22</code> — Cria tema do protótipo no app</p>
+  <p><strong>Link no Trello:</strong> <a href="https://trello.com/c/vOIQQxCI" target="_blank">https://trello.com/c/vOIQQxCI</a></p>
+  <p><strong>Protótipo Figma:</strong> <a href="https://www.figma.com/design/QKjpXmagXvBkc1QU24ryjJ/LEMBRI-?node-id=47-1139&amp;t=DdnmaV6wPsvjepFr-1" target="_blank">LEMBRI — Node 47-1139</a></p>
+  <p><strong>Responsável:</strong> Gustavo Eliakim de Carvalho Shunk (@gustavoeliakimdecarvalhoshunk)</p>
+  <p><strong>Branch (Gitflow):</strong> <code>feat/cria-tema-do-prototipo-no</code> (criada diretamente a partir de <code>develop</code> → PR para <code>develop</code>)</p>
+  <p><strong>Escopo Tecnológico:</strong> React Native (Expo SDK 58), React 19, Zustand, TypeScript estrito e WCAG 2.2 Nível AAA</p>
+  <p><strong>Módulo:</strong> <code>CONFIGURACOES</code> (Design System Global &amp; Acessibilidade Visual)</p>
+  <p><strong>Camada de Dados:</strong> Tokens Visuais em <code>src/constants/theme.ts</code>, Store Global de Preferências em <code>src/stores/useSettingsStore.ts</code> e Mocks em <code>src/mocks/settings.mock.ts</code></p>
+  <p><strong>Data:</strong> 2026-10-30</p>
+</div>
+
+<ol class="toc">
+  <li><a href="#s1">1. Contexto, Objetivo e Escopo Front-end</a></li>
+  <li><a href="#s2">2. Requisitos e Regras de Negócio (Casos de Borda)</a></li>
+  <li><a href="#s3">3. Estrutura de Arquivos e Componentes</a></li>
+  <li><a href="#s4">4. Modelagem de Dados e Tipos TypeScript (src/types/ e theme.ts)</a></li>
+  <li><a href="#s5">5. Gerenciamento de Estado no Zustand e Mocks</a></li>
+  <li><a href="#s6">6. Front-end — Componentes Temáticos, Escala Tipográfica e 5 Estados Visuais</a></li>
+  <li><a href="#s7">7. Acessibilidade Mobile (WCAG 2.2 Nível AAA — TouchTarget = 56 e Contraste 7:1)</a></li>
+  <li><a href="#s8">8. Integração com Wearable (se aplicável)</a></li>
+  <li><a href="#s9">9. Casos de Teste e Verificação no Emulador</a></li>
+  <li><a href="#s10">10. Checklist Pré-PR</a></li>
+  <li><a href="#s11">11. Atualização da Documentação do Módulo</a></li>
+  <li><a href="#s12">12. Princípios de Desenvolvimento e Restrições</a></li>
+</ol>
+
+<hr>
+
+<h2 id="s1">1. Contexto, Objetivo e Escopo Front-end</h2>
+<p>O <strong>Lembri</strong> é projetado sob diretrizes estritas de acessibilidade <strong>WCAG 2.2 Nível AAA</strong> para atender pessoas idosas, usuários em reabilitação e indivíduos com baixa visão. O objetivo do <code>CARD-22</code> é consolidar o Design System do protótipo do Figma (<code>node-id=47-1139</code>) em <code>MobileAPP/src/constants/theme.ts</code>, garantindo que o tema de alto contraste <strong>preto e branco com detalhes em cinza e amarelo de destaque</strong> seja a referência única do aplicativo (conforme comentário 25 do Figma) e introduzindo o suporte reativo ao modo <strong>"Texto ampliado"</strong> em toda a árvore de componentes.</p>
+
+<div class="notice-block">
+  <strong>Decisões Confirmadas com o Usuário (Regra da Dúvida):</strong>
+  <ol>
+    <li><strong>Fator de Escala do Modo "Texto Ampliado":</strong> Multiplicador de <strong><code>1.2x</code> (+20%)</strong> com teto de segurança nas variantes de topo (<code>display</code> e <code>title</code> limitados para evitar quebra de layout na <code>TopBar</code> e cards de destaque), orquestrado pela store Zustand <code>useSettingsStore</code> (estado <code>isLargeText</code>) e consumido automaticamente por <code>useTheme</code> e <code>ThemedText</code>.</li>
+    <li><strong>Tokens de Cores, Raios e Escala Tipográfica (<code>Typography</code>):</strong> Manter a paleta de cores e raios do Figma em <code>theme.ts</code>, centralizar o catálogo tipográfico (<code>Typography</code>) dentro de <code>theme.ts</code> e adequar o <code>lineHeight</code> de todas as variantes de leitura para <strong><code>&gt;= 1.5x</code> o tamanho da fonte</strong> em conformidade com o Critério 1.4.8 (Apresentação Visual — Nível AAA).</li>
+    <li><strong>Fluxo Gitflow:</strong> Branch <code>feat/cria-tema-do-prototipo-no</code> criada diretamente a partir de <code>develop</code>.</li>
+  </ol>
+</div>
+
+<h3>O que entra no escopo:</h3>
+<ul>
+  <li><strong>Consolidação dos Design Tokens em <code>src/constants/theme.ts</code>:</strong>
+    <ul>
+      <li>Paleta oficial <code>Colors</code> (preto <code>#000000</code>, branco <code>#FFFFFF</code>, cinzas estruturais <code>#4E4E4E</code>, <code>#949494</code>, <code>#F2F2F2</code>, <code>#D0D0D0</code>, <code>#D2D2D2</code>, <code>#CCCCCC</code>, <code>#DADADA</code>, amarelo de destaque <code>#EAE28A</code> / <code>#F7F4DA</code> e verde de tag <code>#D5EA9B</code>), mantendo o tema preto e branco de alto contraste como principal;</li>
+      <li>Centralização do objeto <code>Typography</code> em <code>theme.ts</code> com todas as 11 variantes tipográficas do protótipo e <code>lineHeight &gt;= 1.5x</code> (WCAG 1.4.8 AAA);</li>
+      <li>Constantes de escala <code>TextScale = { normal: 1, large: 1.2 }</code> e função pura <code>getScaledTypography(variant, isLargeText)</code> com teto protetivo para títulos gigantes (<code>display</code> e <code>title</code>);</li>
+      <li>Manutenção de <code>Spacing</code>, <code>Radius</code>, <code>BorderWidth</code> e <code>TouchTarget = 56</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Store Reativa de Preferências Visuais (<code>src/stores/useSettingsStore.ts</code>) e Mocks (<code>src/mocks/settings.mock.ts</code>):</strong>
+    <ul>
+      <li>Estado tipado (<code>isLargeText: boolean</code>, <code>textScaleFactor: number</code>) inicializado a partir de <code>defaultSettingsMock</code>;</li>
+      <li>Ações imutáveis: <code>toggleLargeText()</code>, <code>setLargeText(enabled: boolean)</code> e <code>resetToDefaults()</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Evolução de <code>useTheme()</code> (<code>src/hooks/use-theme.ts</code>) e <code>ThemedText</code> (<code>src/components/themed-text.tsx</code>):</strong>
+    <ul>
+      <li><code>useTheme()</code> continua expondo todas as chaves de <code>Colors</code> (retrocompatibilidade total com <code>theme.text</code>, <code>theme.surface</code>, etc.) e passa a expor também <code>isLargeText</code>, <code>textScaleFactor</code> e <code>typography</code>;</li>
+      <li><code>ThemedText</code> consome a escala dinâmica de <code>theme.ts</code> reativamente sempre que o modo "Texto ampliado" for alternado.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>O que fica explicitamente FORA do escopo (YAGNI):</h3>
+<ul>
+  <li>Construção da tela completa de Ajustes e Dispositivos com seções expansíveis e modais de confirmação (escopo dos cartões <code>CARD-27</code> e <code>CARD-39</code>);</li>
+  <li>Criação de componentes de botões ou cards especializados (escopo dos cartões <code>CARD-23</code> e <code>CARD-24</code>);</li>
+  <li>Estilização do aplicativo nativo Kotlin no relógio Wear OS (escopo do <code>CARD-43</code>);</li>
+  <li>Modo escuro invertido (conforme comentário 25 do Figma e definição do cartão, o tema preto no branco de alto contraste é o tema único e principal do Lembri).</li>
+</ul>
+
+<hr>
+
+<h2 id="s2">2. Requisitos e Regras de Negócio (Casos de Borda)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Cenário / Regra</th>
+      <th scope="col">Comportamento Esperado (Dado / Quando / Então)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>RN-01</strong></td>
+      <td>Tema Principal Preto e Branco (Comentário 25)</td>
+      <td><strong>Dado</strong> que o aplicativo é iniciado em qualquer dispositivo Android/iOS, <strong>quando</strong> o hook <code>useTheme()</code> for consumido, <strong>então</strong> ele deve fornecer a paleta monocromática de alto contraste (fundo <code>#F2F2F2</code>, superfície <code>#FFFFFF</code>, texto primário <code>#000000</code> com contraste 21:1, texto secundário <code>#4E4E4E</code> com contraste &gt; 7:1 e destaque <code>#EAE28A</code>) independentemente do tema do sistema operacional.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-02</strong></td>
+      <td>Escala Tipográfica Centralizada e Line-Height AAA</td>
+      <td><strong>Dado</strong> qualquer texto renderizado via <code>ThemedText</code>, <strong>quando</strong> a variante tipográfica for aplicada no modo padrão (<code>1.0x</code>), <strong>então</strong> os tamanhos de fonte devem corresponder ao protótipo do Figma e o <code>lineHeight</code> de textos corridos, rótulos e subtítulos deve ser de no mínimo <code>1.5x</code> o <code>fontSize</code> (WCAG 2.2 Critério 1.4.8 AAA).</td>
+    </tr>
+    <tr>
+      <td><strong>RN-03</strong></td>
+      <td>Modo "Texto Ampliado" (Fator 1.2x)</td>
+      <td><strong>Dado</strong> que o usuário ativou o modo "Texto ampliado" (<code>isLargeText = true</code> na <code>useSettingsStore</code>), <strong>quando</strong> <code>ThemedText</code> calcular o estilo da variante, <strong>então</strong> o <code>fontSize</code> e o <code>lineHeight</code> devem ser escalados pelo fator <code>1.2</code> (arredondados com <code>Math.round</code>), mantendo a proporção de entrelinha <code>&gt;= 1.5x</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-04</strong></td>
+      <td>Teto de Segurança em Variantes de Topo (Prevenção de Overflow)</td>
+      <td><strong>Dado</strong> que o modo "Texto ampliado" (<code>1.2x</code>) está ativo, <strong>quando</strong> um componente renderizar as variantes gigantes <code>display</code> (base 52sp) ou <code>title</code> (base 30sp), <strong>então</strong> o cálculo deve respeitar o teto máximo (<code>maxFontSize</code>: <code>56sp</code> para <code>display</code> e <code>34sp</code> para <code>title</code>), evitando truncamento severo na <code>TopBar</code> ou estouro nos cards de destaque.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-05</strong></td>
+      <td>Retrocompatibilidade de Contrato em <code>useTheme()</code></td>
+      <td><strong>Dado</strong> os componentes já existentes (<code>ThemedView</code>, <code>Card</code>, <code>MainContainer</code>, <code>TopBar</code>, <code>BottomBar</code>, <code>Splash</code> e telas), <strong>quando</strong> acessarem <code>const theme = useTheme()</code> e lerem <code>theme.text</code>, <code>theme.surface</code> ou <code>theme[themeColor]</code>, <strong>então</strong> todas as propriedades de cor devem continuar acessíveis diretamente na raiz do objeto retornado, sem quebrar nenhum componente existente.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-06</strong></td>
+      <td>Restrição de Uso de <code>textMuted</code> (WCAG 1.4.6 AAA)</td>
+      <td><strong>Dado</strong> que <code>Colors.textMuted</code> (<code>#949494</code>) possui contraste de ~3.1:1 sobre branco, <strong>quando</strong> um componente exibir texto informativo legível ou rótulos de seção (<code>label</code>), <strong>então</strong> deve utilizar obrigatoriamente <code>Colors.text</code> (21:1) ou <code>Colors.textSecondary</code> (<code>#4E4E4E</code>, 8.33:1), reservando <code>textMuted</code> apenas para placeholders de input ou elementos desabilitados.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s3">3. Estrutura de Arquivos e Componentes</h2>
+<ul>
+  <li><strong>Design Tokens e Tipografia (Modificado):</strong>
+    <ul>
+      <li><code>MobileAPP/src/constants/theme.ts</code> — Centraliza <code>Colors</code>, <code>FontFamily</code>, <code>TextScale</code>, <code>Typography</code>, <code>getScaledTypography</code>, <code>Spacing</code>, <code>Radius</code>, <code>BorderWidth</code> e <code>TouchTarget</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Tipos e Contratos (Criado):</strong>
+    <ul>
+      <li><code>MobileAPP/src/types/settings.ts</code> — Interfaces estritas para preferências visuais e estado do modo "Texto ampliado".</li>
+    </ul>
+  </li>
+  <li><strong>Mocks e Fixtures (Criado):</strong>
+    <ul>
+      <li><code>MobileAPP/src/mocks/settings.mock.ts</code> — Fixture padrão <code>defaultSettingsMock</code> (<code>isLargeText: false</code>) e factory <code>createSettingsMock</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Store Zustand (Criado):</strong>
+    <ul>
+      <li><code>MobileAPP/src/stores/useSettingsStore.ts</code> — Gerenciamento reativo e imutável de <code>isLargeText</code>, <code>toggleLargeText</code>, <code>setLargeText</code> e <code>resetToDefaults</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Custom Hook e Componentes Base (Modificados):</strong>
+    <ul>
+      <li><code>MobileAPP/src/hooks/use-theme.ts</code> — Conecta os tokens de <code>Colors</code> ao estado reativo de escala tipográfica da <code>useSettingsStore</code>;</li>
+      <li><code>MobileAPP/src/components/themed-text.tsx</code> — Consome <code>Typography</code> e <code>getScaledTypography</code> de <code>theme.ts</code> para aplicar o fator de escala <code>1.2x</code> dinamicamente.</li>
+    </ul>
+  </li>
+  <li><strong>Testes Automatizados (Criado):</strong>
+    <ul>
+      <li><code>MobileAPP/src/stores/__tests__/useSettingsStore.test.ts</code> — Testes unitários da store de configurações e do cálculo de escala tipográfica (incluindo o teto em <code>display</code>/<code>title</code> e proporção <code>lineHeight &gt;= 1.5x</code>).</li>
+    </ul>
+  </li>
+</ul>
+
+<hr>
+
+<h2 id="s4">4. Modelagem de Dados e Tipos TypeScript (src/types/ e theme.ts)</h2>
+
+<h3>4.1 Contrato de Configurações (<code>MobileAPP/src/types/settings.ts</code>)</h3>
+<pre><code class="language-typescript">/**
+ * Preferências visuais e de acessibilidade do usuário no aplicativo Lembri.
+ */
+export interface UserSettings {
+  /** Indica se o modo "Texto ampliado" (escala 1.2x) está ativo. */
+  isLargeText: boolean;
+}
+</code></pre>
+
+<h3>4.2 Tokens e Escala Tipográfica (<code>MobileAPP/src/constants/theme.ts</code>)</h3>
+<pre><code class="language-typescript">import type { TextStyle } from 'react-native';
+
+export const Colors = {
+  text: '#000000',
+  textSecondary: '#4E4E4E',
+  textMuted: '#949494',
+
+  background: '#F2F2F2',
+  surface: '#FFFFFF',
+
+  border: '#949494',
+  borderSubtle: '#D0D0D0',
+  divider: '#D2D2D2',
+
+  primary: '#000000',
+  onPrimary: '#FFFFFF',
+
+  accent: '#EAE28A',
+  accentLight: '#F7F4DA',
+  brand: '#1A1A1A',
+
+  tag: '#D5EA9B',
+  chipSelected: '#CCCCCC',
+  tabActive: '#DADADA',
+} as const;
+
+export type ThemeColor = keyof typeof Colors;
+
+export const FontFamily = 'Inter';
+
+/**
+ * Fatores multiplicadores para o modo padrão e modo "Texto ampliado".
+ */
+export const TextScale = {
+  normal: 1,
+  large: 1.2,
+} as const;
+
+export type TextVariant =
+  | 'default'
+  | 'defaultBold'
+  | 'display'
+  | 'title'
+  | 'headline'
+  | 'subheading'
+  | 'small'
+  | 'smallBold'
+  | 'label'
+  | 'button'
+  | 'link';
+
+export interface TypographyToken {
+  fontSize: number;
+  lineHeight: number;
+  fontWeight: NonNullable&lt;TextStyle['fontWeight']&gt;;
+  letterSpacing?: number;
+  textTransform?: TextStyle['textTransform'];
+  textDecorationLine?: TextStyle['textDecorationLine'];
+  /** Teto opcional de fontSize no modo Texto Ampliado para evitar quebra de layout. */
+  maxFontSize?: number;
+}
+
+/**
+ * Escala tipográfica extraída do Figma com lineHeight adequado para WCAG 2.2 AAA (>= 1.5x).
+ */
+export const Typography: Record&lt;TextVariant, TypographyToken&gt; = {
+  default: {
+    fontSize: 19,
+    lineHeight: 29, // 1.52x
+    fontWeight: 400,
+  },
+  defaultBold: {
+    fontSize: 19,
+    lineHeight: 29, // 1.52x
+    fontWeight: 600,
+  },
+  display: {
+    fontSize: 52,
+    lineHeight: 62,
+    fontWeight: 400,
+    maxFontSize: 56,
+  },
+  title: {
+    fontSize: 30,
+    lineHeight: 45, // 1.50x
+    fontWeight: 700,
+    maxFontSize: 34,
+  },
+  headline: {
+    fontSize: 26,
+    lineHeight: 39, // 1.50x
+    fontWeight: 700,
+  },
+  subheading: {
+    fontSize: 22,
+    lineHeight: 33, // 1.50x
+    fontWeight: 700,
+  },
+  small: {
+    fontSize: 15,
+    lineHeight: 23, // 1.53x
+    fontWeight: 400,
+  },
+  smallBold: {
+    fontSize: 15,
+    lineHeight: 23, // 1.53x
+    fontWeight: 700,
+  },
+  label: {
+    fontSize: 15,
+    lineHeight: 23, // 1.53x
+    fontWeight: 600,
+    letterSpacing: 0.3,
+    textTransform: 'uppercase',
+  },
+  button: {
+    fontSize: 22,
+    lineHeight: 33, // 1.50x
+    fontWeight: 700,
+  },
+  link: {
+    fontSize: 17,
+    lineHeight: 26, // 1.52x
+    fontWeight: 600,
+    textDecorationLine: 'underline',
+  },
+};
+
+/**
+ * Calcula os valores tipográficos escalados para o modo padrão (1.0x) ou "Texto ampliado" (1.2x),
+ * respeitando o teto maxFontSize nas variantes de destaque e preservando a proporção de entrelinha.
+ */
+export function getScaledTypography(variant: TextVariant, isLargeText: boolean): TextStyle {
+  const token = Typography[variant];
+  const scale = isLargeText ? TextScale.large : TextScale.normal;
+
+  const rawFontSize = Math.round(token.fontSize * scale);
+  const fontSize =
+    isLargeText &amp;&amp; token.maxFontSize ? Math.min(rawFontSize, token.maxFontSize) : rawFontSize;
+
+  const lineHeightRatio = token.lineHeight / token.fontSize;
+  const lineHeight = Math.round(fontSize * lineHeightRatio);
+
+  return {
+    fontSize,
+    lineHeight,
+    fontWeight: token.fontWeight,
+    ...(token.letterSpacing !== undefined ? { letterSpacing: token.letterSpacing } : {}),
+    ...(token.textTransform !== undefined ? { textTransform: token.textTransform } : {}),
+    ...(token.textDecorationLine !== undefined
+      ? { textDecorationLine: token.textDecorationLine }
+      : {}),
+  };
+}
+</code></pre>
+
+<hr>
+
+<h2 id="s5">5. Gerenciamento de Estado no Zustand e Mocks</h2>
+
+<h3>5.1 Fixture de Configurações (<code>MobileAPP/src/mocks/settings.mock.ts</code>)</h3>
+<pre><code class="language-typescript">import type { UserSettings } from '@/types/settings';
+
+/**
+ * Estado inicial padrão das configurações visuais do aplicativo.
+ */
+export const defaultSettingsMock: UserSettings = {
+  isLargeText: false,
+};
+
+/**
+ * Factory para geração de estados de configuração em testes automatizados.
+ */
+export function createSettingsMock(overrides?: Partial&lt;UserSettings&gt;): UserSettings {
+  return {
+    ...defaultSettingsMock,
+    ...overrides,
+  };
+}
+</code></pre>
+
+<h3>5.2 Store de Configurações (<code>MobileAPP/src/stores/useSettingsStore.ts</code>)</h3>
+<pre><code class="language-typescript">import { create } from 'zustand';
+
+import { TextScale } from '@/constants/theme';
+import { defaultSettingsMock } from '@/mocks/settings.mock';
+import type { UserSettings } from '@/types/settings';
+
+export interface SettingsState extends UserSettings {
+  /** Multiplicador numérico ativo (1.0 no modo normal, 1.2 no modo Texto ampliado). */
+  textScaleFactor: number;
+  /** Alterna imediatamente o modo "Texto ampliado". */
+  toggleLargeText: () =&gt; void;
+  /** Define explicitamente o estado do modo "Texto ampliado". */
+  setLargeText: (enabled: boolean) =&gt; void;
+  /** Restaura as configurações visuais para os valores iniciais do mock. */
+  resetToDefaults: () =&gt; void;
+}
+
+export const useSettingsStore = create&lt;SettingsState&gt;((set) =&gt; ({
+  ...defaultSettingsMock,
+  textScaleFactor: defaultSettingsMock.isLargeText ? TextScale.large : TextScale.normal,
+
+  toggleLargeText: () =&gt;
+    set((state) =&gt; {
+      const next = !state.isLargeText;
+      return {
+        isLargeText: next,
+        textScaleFactor: next ? TextScale.large : TextScale.normal,
+      };
+    }),
+
+  setLargeText: (enabled) =&gt;
+    set(() =&gt; ({
+      isLargeText: enabled,
+      textScaleFactor: enabled ? TextScale.large : TextScale.normal,
+    })),
+
+  resetToDefaults: () =&gt;
+    set(() =&gt; ({
+      ...defaultSettingsMock,
+      textScaleFactor: defaultSettingsMock.isLargeText ? TextScale.large : TextScale.normal,
+    })),
+}));
+</code></pre>
+
+<hr>
+
+<h2 id="s6">6. Front-end — Componentes Temáticos, Escala Tipográfica e 5 Estados Visuais</h2>
+
+<h3>6.1 Integração de <code>useTheme</code> e <code>ThemedText</code></h3>
+<ul>
+  <li><strong>Hook <code>useTheme()</code> (<code>MobileAPP/src/hooks/use-theme.ts</code>):</strong>
+    <ul>
+      <li>Lê <code>isLargeText</code> e <code>textScaleFactor</code> de <code>useSettingsStore</code> via seletor atômico;</li>
+      <li>Retorna <code>{ ...Colors, isLargeText, textScaleFactor }</code>, mantendo 100% de compatibilidade com todos os componentes que acessam <code>theme.text</code>, <code>theme.surface</code>, <code>theme.primary</code> ou <code>theme[themeColor]</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Componente <code>ThemedText</code> (<code>MobileAPP/src/components/themed-text.tsx</code>):</strong>
+    <ul>
+      <li>Obtém <code>theme = useTheme()</code> e calcula o estilo tipográfico via <code>getScaledTypography(type, theme.isLargeText)</code>;</li>
+      <li>Qualquer tela do Expo Router (<code>index.tsx</code>, <code>lembretes.tsx</code>, <code>exercicios.tsx</code>, <code>configuracoes.tsx</code>, <code>TopBar</code>, <code>BottomBar</code>, <code>Splash</code>) reflete instantaneamente a mudança para o modo "Texto ampliado" sem necessidade de recarregar o app.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>6.2 Tabela Comparativa de Escala Tipográfica (Normal 1.0x vs Texto Ampliado 1.2x)</h3>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Variante (<code>type</code>)</th>
+      <th scope="col">Uso no Protótipo Figma</th>
+      <th scope="col">Normal (1.0x) <code>fontSize / lineHeight</code></th>
+      <th scope="col">Texto Ampliado (1.2x) <code>fontSize / lineHeight</code></th>
+      <th scope="col">Relação <code>lineHeight</code> (WCAG 1.4.8)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>display</code></td>
+      <td>Horário em destaque no card (18:00)</td>
+      <td><code>52sp / 62sp</code> (Regular 400)</td>
+      <td><code>56sp / 67sp</code> (Teto <code>maxFontSize: 56</code>)</td>
+      <td>1.19x (Display numérico isolado)</td>
+    </tr>
+    <tr>
+      <td><code>title</code></td>
+      <td>Título de tela e lembrete principal</td>
+      <td><code>30sp / 45sp</code> (Bold 700)</td>
+      <td><code>34sp / 51sp</code> (Teto <code>maxFontSize: 34</code>)</td>
+      <td><strong>1.50x</strong> ✅</td>
+    </tr>
+    <tr>
+      <td><code>headline</code></td>
+      <td>Título de card de navegação (Lembretes, Exercícios)</td>
+      <td><code>26sp / 39sp</code> (Bold 700)</td>
+      <td><code>31sp / 47sp</code></td>
+      <td><strong>1.50x</strong> ✅</td>
+    </tr>
+    <tr>
+      <td><code>subheading</code></td>
+      <td>Título de item de lista (Tomar Remédio)</td>
+      <td><code>22sp / 33sp</code> (Bold 700)</td>
+      <td><code>26sp / 39sp</code></td>
+      <td><strong>1.50x</strong> ✅</td>
+    </tr>
+    <tr>
+      <td><code>button</code></td>
+      <td>Rótulo de botões de ação (Ver, Editar, Excluir)</td>
+      <td><code>22sp / 33sp</code> (Bold 700)</td>
+      <td><code>26sp / 39sp</code></td>
+      <td><strong>1.50x</strong> ✅</td>
+    </tr>
+    <tr>
+      <td><code>default</code></td>
+      <td>Corpo de texto padrão</td>
+      <td><code>19sp / 29sp</code> (Regular 400)</td>
+      <td><code>23sp / 35sp</code></td>
+      <td><strong>1.52x</strong> ✅</td>
+    </tr>
+    <tr>
+      <td><code>defaultBold</code></td>
+      <td>Corpo de texto enfatizado</td>
+      <td><code>19sp / 29sp</code> (SemiBold 600)</td>
+      <td><code>23sp / 35sp</code></td>
+      <td><strong>1.52x</strong> ✅</td>
+    </tr>
+    <tr>
+      <td><code>link</code></td>
+      <td>Ações textuais sublinhadas</td>
+      <td><code>17sp / 26sp</code> (SemiBold 600)</td>
+      <td><code>20sp / 30sp</code></td>
+      <td><strong>1.52x</strong> ✅</td>
+    </tr>
+    <tr>
+      <td><code>label</code></td>
+      <td>Rótulo de seção em caixa alta (PRÓXIMO LEMBRETE)</td>
+      <td><code>15sp / 23sp</code> (SemiBold 600)</td>
+      <td><code>18sp / 28sp</code></td>
+      <td><strong>1.53x</strong> ✅</td>
+    </tr>
+    <tr>
+      <td><code>small</code></td>
+      <td>Informações de apoio (Há 25 min.)</td>
+      <td><code>15sp / 23sp</code> (Regular 400)</td>
+      <td><code>18sp / 28sp</code></td>
+      <td><strong>1.53x</strong> ✅</td>
+    </tr>
+    <tr>
+      <td><code>smallBold</code></td>
+      <td>Informações curtas em destaque e abas</td>
+      <td><code>15sp / 23sp</code> (Bold 700)</td>
+      <td><code>18sp / 28sp</code></td>
+      <td><strong>1.53x</strong> ✅</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>6.3 Suporte aos 5 Estados Visuais nas Telas</h3>
+<p>Os tokens de <code>theme.ts</code> e as variantes de <code>ThemedText</code> sustentam visualmente os 5 estados nas telas do aplicativo:</p>
+<ol>
+  <li><strong>Ideal:</strong> Superfícies <code>Colors.surface</code> (<code>#FFFFFF</code>) sobre fundo <code>Colors.background</code> (<code>#F2F2F2</code>), textos em <code>Colors.text</code> (<code>#000000</code>) e destaques em <code>Colors.accent</code> (<code>#EAE28A</code>);</li>
+  <li><strong>Carregando (Loading):</strong> Indicadores com cor <code>Colors.primary</code> (<code>#000000</code>) e texto de apoio em <code>Colors.textSecondary</code> (<code>#4E4E4E</code>);</li>
+  <li><strong>Vazio (Empty State):</strong> Cards com borda <code>Colors.border</code> e tipografia legível tanto em <code>1.0x</code> quanto em <code>1.2x</code>;</li>
+  <li><strong>Erro:</strong> Mensagens de alerta com alto contraste (<code>Colors.text</code> sobre <code>Colors.accentLight</code> ou <code>Colors.surface</code>);</li>
+  <li><strong>Parcial (Wear Sync):</strong> Avisos de sincronização pendente ou parcial com <code>ThemedText type="small"</code> escalável.</li>
+</ol>
+
+<hr>
+
+<h2 id="s7">7. Acessibilidade Mobile (WCAG 2.2 Nível AAA — TouchTarget = 56 e Contraste 7:1)</h2>
+
+<h3>7.1 Auditoria de Contraste da Paleta (Critério 1.4.6 — Nível AAA)</h3>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Token de Texto / Ícone</th>
+      <th scope="col">Token de Fundo</th>
+      <th scope="col">Relação de Contraste</th>
+      <th scope="col">Status WCAG 2.2 AAA</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Colors.text</code> (<code>#000000</code>)</td>
+      <td><code>Colors.surface</code> (<code>#FFFFFF</code>)</td>
+      <td><strong>21.00 : 1</strong></td>
+      <td>✅ Aprovado (Supera 7:1 AAA)</td>
+    </tr>
+    <tr>
+      <td><code>Colors.text</code> (<code>#000000</code>)</td>
+      <td><code>Colors.background</code> (<code>#F2F2F2</code>)</td>
+      <td><strong>18.88 : 1</strong></td>
+      <td>✅ Aprovado (Supera 7:1 AAA)</td>
+    </tr>
+    <tr>
+      <td><code>Colors.text</code> (<code>#000000</code>)</td>
+      <td><code>Colors.accent</code> (<code>#EAE28A</code>)</td>
+      <td><strong>15.92 : 1</strong></td>
+      <td>✅ Aprovado (Supera 7:1 AAA)</td>
+    </tr>
+    <tr>
+      <td><code>Colors.text</code> (<code>#000000</code>)</td>
+      <td><code>Colors.tag</code> (<code>#D5EA9B</code>)</td>
+      <td><strong>16.14 : 1</strong></td>
+      <td>✅ Aprovado (Supera 7:1 AAA)</td>
+    </tr>
+    <tr>
+      <td><code>Colors.onPrimary</code> (<code>#FFFFFF</code>)</td>
+      <td><code>Colors.primary</code> (<code>#000000</code>)</td>
+      <td><strong>21.00 : 1</strong></td>
+      <td>✅ Aprovado (Supera 7:1 AAA)</td>
+    </tr>
+    <tr>
+      <td><code>Colors.textSecondary</code> (<code>#4E4E4E</code>)</td>
+      <td><code>Colors.surface</code> (<code>#FFFFFF</code>)</td>
+      <td><strong>8.33 : 1</strong></td>
+      <td>✅ Aprovado (Supera 7:1 AAA)</td>
+    </tr>
+    <tr>
+      <td><code>Colors.textSecondary</code> (<code>#4E4E4E</code>)</td>
+      <td><code>Colors.background</code> (<code>#F2F2F2</code>)</td>
+      <td><strong>7.49 : 1</strong></td>
+      <td>✅ Aprovado (Supera 7:1 AAA)</td>
+    </tr>
+    <tr>
+      <td><code>Colors.textMuted</code> (<code>#949494</code>)</td>
+      <td><code>Colors.surface</code> (<code>#FFFFFF</code>)</td>
+      <td>3.06 : 1</td>
+      <td>⚠️ Restrito exclusivamente a placeholders/desabilitados (isento pela WCAG 1.4.6)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>7.2 Checklist de Conformidade WCAG 2.2 AAA</h3>
+<ul class="check">
+  <li><input type="checkbox" checked> <strong>Contraste Aprimorado (1.4.6):</strong> Mínimo de 7:1 para texto normal e 4.5:1 para texto grande. Proibido usar <code>textMuted</code> para texto legível.</li>
+  <li><input type="checkbox" checked> <strong>Alvo de Toque Aprimorado (2.5.5):</strong> Mínimo 44x44dp com constante padrão de <strong>56dp</strong> (<code>TouchTarget = 56</code>) exportada em <code>theme.ts</code>.</li>
+  <li><input type="checkbox" checked> <strong>Rótulos Acessíveis Autônomos (2.4.9):</strong> Componentes temáticos preservam todas as propriedades <code>accessibilityRole</code>, <code>accessibilityLabel</code> e <code>accessibilityState</code> via rest props.</li>
+  <li><input type="checkbox" checked> <strong>Prevenção de Erros Aprimorada (3.3.6):</strong> A alternância de <code>isLargeText</code> é não-destrutiva e reversível instantaneamente via <code>toggleLargeText()</code> ou <code>resetToDefaults()</code>.</li>
+  <li><input type="checkbox" checked> <strong>Sem Limite de Tempo Inflexível (2.2.3):</strong> Nenhuma preferência visual expira por tempo.</li>
+  <li><input type="checkbox" checked> <strong>Apresentação Visual (1.4.8):</strong> Texto alinhado à esquerda, entrelinha <code>&gt;= 1.5x</code> em todas as variantes de leitura e suporte nativo ao modo "Texto ampliado" (<code>1.2x</code>).</li>
+  <li><input type="checkbox" checked> <strong>Status Sem Depender de Cor (1.4.1):</strong> Destaques em amarelo (<code>accent</code>) e cinza (<code>tabActive</code>) são sempre acompanhados por rótulos textuais em negrito e ícones.</li>
+</ul>
+
+<hr>
+
+<h2 id="s8">8. Integração com Wearable (se aplicável)</h2>
+<p><strong>Não aplicável neste cartão.</strong> O tema e os tokens visuais definidos em <code>MobileAPP/src/constants/theme.ts</code> e na <code>useSettingsStore</code> dizem respeito exclusivamente ao aplicativo React Native (celular). A estilização do aplicativo nativo Wear OS em Kotlin possui cartão próprio no quadro (<code>CARD-43 — Criar estilo do wearable</code>), mantendo o desacoplamento entre as camadas front-end mobile e o módulo nativo.</p>
+
+<hr>
+
+<h2 id="s9">9. Casos de Teste e Verificação no Emulador</h2>
+
+<h3>9.1 Testes Automatizados (Unitários — Store e Escala Tipográfica)</h3>
+<ol>
+  <li><strong>Inicialização da <code>useSettingsStore</code>:</strong> Deve iniciar com <code>isLargeText: false</code> e <code>textScaleFactor: 1</code>;</li>
+  <li><strong>Alternância via <code>toggleLargeText()</code>:</strong> Ao chamar <code>toggleLargeText()</code>, deve atualizar imutavelmente para <code>isLargeText: true</code> e <code>textScaleFactor: 1.2</code>; uma segunda chamada deve retornar para <code>false</code> e <code>1</code>;</li>
+  <li><strong>Atribuição explícita via <code>setLargeText(true/false)</code>:</strong> Deve atualizar o estado de forma idempotente;</li>
+  <li><strong>Reset via <code>resetToDefaults()</code>:</strong> Deve restaurar os valores de <code>defaultSettingsMock</code>;</li>
+  <li><strong>Cálculo de <code>getScaledTypography(variant, isLargeText)</code>:</strong>
+    <ul>
+      <li>Para <code>default</code> com <code>isLargeText = false</code>: retorna <code>fontSize: 19, lineHeight: 29</code>;</li>
+      <li>Para <code>default</code> com <code>isLargeText = true</code>: retorna <code>fontSize: 23, lineHeight: 35</code> (relação <code>&gt;= 1.5x</code> mantida);</li>
+      <li>Para <code>display</code> com <code>isLargeText = true</code>: aplica o teto <code>maxFontSize: 56</code> em vez de <code>62</code>;</li>
+      <li>Para <code>title</code> com <code>isLargeText = true</code>: aplica o teto <code>maxFontSize: 34</code> em vez de <code>36</code>.</li>
+    </ul>
+  </li>
+</ol>
+
+<h3>9.2 Roteiro de Verificação Manual no Emulador Android</h3>
+<ol>
+  <li>Iniciar o servidor Expo (<code>cd MobileAPP &amp;&amp; npx expo start</code>) e abrir no emulador Android;</li>
+  <li>Verificar na tela inicial, na <code>TopBar</code> e na <code>BottomBar</code> a aplicação das cores do Figma (fundo <code>#F2F2F2</code>, cards <code>#FFFFFF</code>, textos <code>#000000</code> e <code>#4E4E4E</code>);</li>
+  <li>Acionar <code>useSettingsStore.getState().toggleLargeText()</code> e validar que todos os textos renderizados com <code>ThemedText</code> ampliam em 20% instantaneamente sem cortar textos na <code>TopBar</code> nem na <code>BottomBar</code>;</li>
+  <li>Executar <code>npx tsc --noEmit</code> e <code>npx expo lint</code> garantindo zero erros de compilação ou lint.</li>
+</ol>
+
+<hr>
+
+<h2 id="s10">10. Checklist Pré-PR</h2>
+<ul class="check">
+  <li><input type="checkbox" checked> Branch da tarefa criada a partir de <code>develop</code> atualizada (<code>feat/cria-tema-do-prototipo-no</code>)</li>
+  <li><input type="checkbox" checked> Commits no formato Conventional Commits (<code>feat(theme): ...</code>, <code>feat(settings): ...</code>)</li>
+  <li><input type="checkbox" checked> Tipagem estrita TypeScript (zero <code>any</code>) e sem <code>console.log</code> de debug</li>
+  <li><input type="checkbox" checked> Ações da store Zustand (<code>useSettingsStore</code>) são estritamente imutáveis</li>
+  <li><input type="checkbox" checked> Design tokens de <code>src/constants/theme.ts</code> centralizados (<code>Colors</code>, <code>Typography</code>, <code>TextScale</code>, <code>Radius</code>, <code>Spacing</code>, <code>TouchTarget</code>)</li>
+  <li><input type="checkbox" checked> <code>npx tsc --noEmit</code> e <code>npx expo lint</code> executando sem erros</li>
+  <li><input type="checkbox" checked> Critérios de acessibilidade mobile (WCAG 2.2 AAA / TouchTarget 56dp / Contraste 7:1 / Line-Height &gt;= 1.5x) atendidos</li>
+</ul>
+
+<hr>
+
+<h2 id="s11">11. Atualização da Documentação do Módulo</h2>
+<p><strong>Módulo de referência:</strong> <code>docs/modulos/CONFIGURACOES.html</code></p>
+<blockquote>Esta tarefa <strong>impacta</strong> a documentação técnica do módulo <code>CONFIGURACOES</code>, pois inaugura a store global <code>useSettingsStore</code>, a fixture <code>settings.mock.ts</code> e a arquitetura de escala tipográfica dinâmica do modo "Texto ampliado" em <code>theme.ts</code>.</blockquote>
+
+<hr>
+
+<h2 id="s12">12. Princípios de Desenvolvimento e Restrições</h2>
+<p>A elaboração e implementação deste plano seguem rigorosamente a skill canônica <code>principios</code> do Projeto Lembri:</p>
+<ol>
+  <li><strong>Padrões do Projeto:</strong> Tokens centralizados exclusivamente em <code>src/constants/theme.ts</code>, estado reativo em <code>src/stores/useSettingsStore.ts</code>, mocks em <code>src/mocks/settings.mock.ts</code> e consumo via <code>useTheme</code> / <code>ThemedText</code>.</li>
+  <li><strong>Escopo de Impacto:</strong> Preferência de escala de texto afeta todas as telas do app → armazenada em store global Zustand (<code>useSettingsStore</code>).</li>
+  <li><strong>Compatibilidade de Contratos:</strong> <code>useTheme()</code> preserva acesso direto a todas as cores na raiz do objeto retornado, evitando refatorações desnecessárias em componentes existentes.</li>
+  <li><strong>Idempotência e Imutabilidade:</strong> Transições de estado puras em <code>useSettingsStore</code> e cálculo determinístico em <code>getScaledTypography</code>.</li>
+  <li><strong>YAGNI &amp; KISS:</strong> Multiplicador direto com teto declarativo (<code>maxFontSize</code>) em vez de bibliotecas externas complexas de responsividade.</li>
+  <li><strong>Acessibilidade Inegociável:</strong> WCAG 2.2 nível AAA com contraste mínimo 7:1, <code>TouchTarget = 56dp</code> e <code>lineHeight &gt;= 1.5x</code>.</li>
+</ol>
+
+</body>
+</html>
