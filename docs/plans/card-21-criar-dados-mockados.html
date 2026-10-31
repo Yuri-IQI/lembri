@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDD Front-end — CARD-21: Criar dados mockados (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>SDD Front-end — CARD-21: Criar dados mockados</h1>
+
+<div class="meta-block">
+  <p><strong>Tarefa / Funcionalidade:</strong> <code>CARD-21</code> — Criar dados mockados</p>
+  <p><strong>Link no Trello:</strong> <a href="https://trello.com/c/oHlUjEgQ" target="_blank">https://trello.com/c/oHlUjEgQ</a></p>
+  <p><strong>Responsável:</strong> Gustavo Eliakim de Carvalho Shunk (@gustavoeliakimdecarvalhoshunk)</p>
+  <p><strong>Branch (Gitflow):</strong> <code>feat/criar-dados-mockados</code> (criada a partir de <code>develop</code> → PR para <code>develop</code>)</p>
+  <p><strong>Escopo Tecnológico:</strong> React Native (Expo SDK 58), React 19, Zustand, TypeScript estrito e WCAG 2.2 AAA</p>
+  <p><strong>Módulo:</strong> <code>STORES_MOCKS</code> (impacta também <code>LEMBRETES</code> e <code>EXERCICIOS</code>)</p>
+  <p><strong>Camada de Dados:</strong> Majoritariamente Mockada (Fixtures em <code>src/mocks/</code> e Stores em <code>src/stores/</code>)</p>
+  <p><strong>Data:</strong> 2026-10-27</p>
+</div>
+
+<ol class="toc">
+  <li><a href="#s1">1. Contexto, Objetivo e Escopo Front-end</a></li>
+  <li><a href="#s2">2. Requisitos e Regras de Negócio (Casos de Borda)</a></li>
+  <li><a href="#s3">3. Estrutura de Arquivos e Componentes</a></li>
+  <li><a href="#s4">4. Modelagem de Dados e Tipos TypeScript (src/types/)</a></li>
+  <li><a href="#s5">5. Gerenciamento de Estado no Zustand e Mocks</a></li>
+  <li><a href="#s6">6. Front-end — Telas Expo Router e 5 Estados Visuais</a></li>
+  <li><a href="#s7">7. Acessibilidade Mobile (WCAG 2.2 Nível AAA — TouchTarget = 56)</a></li>
+  <li><a href="#s8">8. Integração com Wearable (se aplicável)</a></li>
+  <li><a href="#s9">9. Casos de Teste e Verificação no Emulador</a></li>
+  <li><a href="#s10">10. Checklist Pré-PR</a></li>
+  <li><a href="#s11">11. Atualização da Documentação do Módulo</a></li>
+  <li><a href="#s12">12. Princípios de Desenvolvimento e Restrições</a></li>
+</ol>
+
+<hr>
+
+<h2 id="s1">1. Contexto, Objetivo e Escopo Front-end</h2>
+<p>O <strong>Lembri</strong> é um aplicativo mobile focado na experiência do usuário (front-end) com dados desacoplados e majoritariamente mockados. A finalidade do <code>CARD-21</code> é estruturar e fornecer a infraestrutura canônica de dados de demonstração (fixtures) e stores reativas no <strong>Zustand</strong>, permitindo que todas as telas do aplicativo funcionem de verdade durante testes, gravações e apresentações.</p>
+
+<h3>O que entra no escopo:</h3>
+<ul>
+  <li><strong>Contratos de Domínio Tipados (<code>src/types/</code>):</strong>
+    <ul>
+      <li><code>Lembrete</code>: id, título, horário, tipo/categoria, status de conclusão, data de criação e flag de sincronização com relógio;</li>
+      <li><code>TipoLembrete</code>: id, nome, cor do tema e contagem de lembretes vinculados;</li>
+      <li><code>Exercicio</code>: id, título ("Sequências", "Ordenação", "Associações", "Lista de compras"), descrição, streak de dias, nível e tempo estimado;</li>
+      <li><code>TentativaExercicio</code>: id, exercicioId, data/hora, tempo gasto em segundos, acertos, total e pontuação.</li>
+    </ul>
+  </li>
+  <li><strong>Fixtures e Massa de Dados Realista (<code>src/mocks/</code>):</strong>
+    <ul>
+      <li>População com os textos idênticos ao protótipo do Figma ("Lavar roupas", "Tomar remédio", "Pagar contas", "Alongamento matinal");</li>
+      <li>Fábricas de geração de mocks parametrizadas (<code>criarLembreteMock</code>, <code>criarExercicioMock</code>) para facilitar testes;</li>
+      <li>Cenários completos cobrindo: lista com múltiplos itens, itens pendentes, itens concluídos no celular, itens concluídos no relógio e lista vazia.</li>
+    </ul>
+  </li>
+  <li><strong>Stores Reativas no Zustand (<code>src/stores/</code>):</strong>
+    <ul>
+      <li><code>useLembretesStore.ts</code>: CRUD completo (adicionar, editar, excluir com suporte a desfazer/undo, alternar conclusão e filtragem granular);</li>
+      <li><code>useTiposLembreteStore.ts</code>: Gestão de categorias com contagem reativa de itens associados;</li>
+      <li><code>useExerciciosStore.ts</code>: Listagem dos exercícios do Figma, cálculo de streak e registro de histórico de tentativas no frame de review.</li>
+    </ul>
+  </li>
+  <li><strong>Ação de Reset para Mocks:</strong> Todas as stores devem possuir o método <code>resetarParaMocks()</code> para restaurar a demonstração ao estado limpo a qualquer momento.</li>
+</ul>
+
+<h3>O que fica explicitamente FORA do escopo (YAGNI):</h3>
+<ul>
+  <li>Implementação das telas visuais completas de edição avançada (escopo dos cartões #26, #33, #34, #35);</li>
+  <li>Backend real com banco de dados PostgreSQL ou servidor Express;</li>
+  <li>Persistência pesada via SQLite (AsyncStorage configurado apenas como camada de suporte opcional via middleware do Zustand).</li>
+</ul>
+
+<hr>
+
+<h2 id="s2">2. Requisitos e Regras de Negócio (Casos de Borda)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Cenário / Regra</th>
+      <th scope="col">Comportamento Esperado (Dado / Quando / Então)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>RN-01</strong></td>
+      <td>Criação de Lembrete</td>
+      <td><strong>Dado</strong> um título e horário válidos, <strong>quando</strong> o usuário adicionar um lembrete, <strong>então</strong> um novo item é inserido no início da lista com ID único (UUID/timestamp) e status <code>concluido: false</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-02</strong></td>
+      <td>Edição de Lembrete</td>
+      <td><strong>Dado</strong> um lembrete existente, <strong>quando</strong> o usuário alterar título, horário ou tipo, <strong>então</strong> o registro correspondente é atualizado imutavelmente sem reordenar a lista.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-03</strong></td>
+      <td>Exclusão Reversível (Undo)</td>
+      <td><strong>Dado</strong> um lembrete, <strong>quando</strong> o usuário excluí-lo, <strong>então</strong> o item é removido da lista ativa e salvo em <code>ultimoExcluido</code>, permitindo que a ação <code>desfazerExclusao()</code> o restaure na posição original (WCAG AAA 3.3.6).</td>
+    </tr>
+    <tr>
+      <td><strong>RN-04</strong></td>
+      <td>Exclusão de Tipo de Lembrete</td>
+      <td><strong>Dado</strong> um tipo associado a 3 lembretes, <strong>quando</strong> o usuário tentar excluí-lo, <strong>então</strong> o sistema deve desassociar os lembretes (definindo <code>tipoId: null</code>) sem excluir os lembretes em si.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-05</strong></td>
+      <td>Conclusão e Sincronização Wear OS</td>
+      <td><strong>Dado</strong> um lembrete pendente, <strong>quando</strong> receber confirmação do relógio (<code>/lembri/confirmacao</code>) ou toque na tela, <strong>então</strong> transitar para <code>concluido: true</code> e registrar <code>concluidoNoWear: true</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-06</strong></td>
+      <td>Registro de Tentativa de Exercício</td>
+      <td><strong>Dado</strong> um exercício ("Sequências"), <strong>quando</strong> o usuário finalizar a execução, <strong>então</strong> adicionar uma nova entrada no histórico e incrementar o <code>streakDias</code> se for o primeiro treino do dia.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-07</strong></td>
+      <td>Restauração de Fábrica (Reset)</td>
+      <td><strong>Dado</strong> um estado modificado na demonstração, <strong>quando</strong> invocar <code>resetarParaMocks()</code>, <strong>então</strong> recarregar 100% das fixtures originais do Figma.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s3">3. Estrutura de Arquivos e Componentes</h2>
+
+<pre><code>MobileAPP/src/
+├── types/
+│   ├── lembrete.ts                  # Entidades Lembrete, FiltroLembrete e DTOs de criação
+│   ├── tipo-lembrete.ts             # Entidade TipoLembrete (categoria e cor acessível)
+│   └── exercicio.ts                 # Entidades Exercicio, TentativaExercicio e ResumoExecucao
+├── mocks/
+│   ├── lembretes.mock.ts            # Fixtures do Figma: "Lavar roupas", "Tomar remédio", etc.
+│   ├── tipos-lembrete.mock.ts       # Categorias: "Saúde", "Casa", "Trabalho", "Pessoal"
+│   ├── exercicios.mock.ts           # 4 Exercícios: Sequências, Ordenação, Associações, Compras
+│   └── historico-tentativas.mock.ts # Dados de execuções anteriores para o frame de detalhes
+└── stores/
+    ├── useLembretesStore.ts         # Store Zustand de lembretes com CRUD e Undo
+    ├── useTiposLembreteStore.ts     # Store Zustand de tipos com contadores reativos
+    └── useExerciciosStore.ts        # Store Zustand de exercícios, streaks e histórico
+</code></pre>
+
+<hr>
+
+<h2 id="s4">4. Modelagem de Dados e Tipos TypeScript (src/types/)</h2>
+
+<h3>A. Tipos de Lembretes e Categorias (<code>src/types/lembrete.ts</code> e <code>tipo-lembrete.ts</code>)</h3>
+<pre><code class="language-typescript">export type FiltroLembrete = 'todos' | 'pendentes' | 'concluidos';
+
+export interface TipoLembrete {
+  id: string;
+  nome: string;
+  corHex: string; // Ex: '#0284C7' (contraste 7:1 garantido)
+  icone?: string;
+}
+
+export interface Lembrete {
+  id: string;
+  titulo: string;
+  horario: string; // Ex: "08:00"
+  tipoId?: string;
+  concluido: boolean;
+  concluidoNoWear?: boolean;
+  criadoEm: string; // ISO 8601
+}
+
+export interface CriarLembreteInput {
+  titulo: string;
+  horario: string;
+  tipoId?: string;
+}
+</code></pre>
+
+<h3>B. Tipos de Exercícios e Histórico (<code>src/types/exercicio.ts</code>)</h3>
+<pre><code class="language-typescript">export type NivelExercicio = 'facil' | 'medio' | 'dificil';
+
+export interface Exercicio {
+  id: string;
+  titulo: string; // "Sequências", "Ordenação", "Associações", "Lista de compras"
+  descricao: string;
+  streakDias: number; // Sequência de dias consecutivos
+  nivel: NivelExercicio;
+  duracaoEstimadaMinutos: number;
+  icone: string;
+}
+
+export interface TentativaExercicio {
+  id: string;
+  exercicioId: string;
+  dataHora: string; // ISO 8601
+  tempoGastoSegundos: number;
+  acertos: number;
+  totalQuestoes: number;
+  pontuacaoPercentual: number; // 0 a 100
+}
+</code></pre>
+
+<hr>
+
+<h2 id="s5">5. Gerenciamento de Estado no Zustand e Mocks</h2>
+
+<h3>A. Store de Lembretes com Reversibilidade (<code>src/stores/useLembretesStore.ts</code>)</h3>
+<p>Implementa ações estritamente imutáveis e estado temporário de Undo conforme critério <strong>WCAG 3.3.6</strong>:</p>
+<pre><code class="language-typescript">interface LembretesState {
+  lembretes: Lembrete[];
+  filtro: FiltroLembrete;
+  ultimoExcluido: Lembrete | null;
+
+  // Ações
+  adicionarLembrete: (input: CriarLembreteInput) => Lembrete;
+  editarLembrete: (id: string, input: Partial<CriarLembreteInput>) => void;
+  removerLembrete: (id: string) => void;
+  desfazerExclusao: () => void;
+  toggleConcluido: (id: string) => void;
+  marcarConcluidoWear: (id: string) => void;
+  definirFiltro: (filtro: FiltroLembrete) => void;
+  resetarParaMocks: () => void;
+}
+</code></pre>
+
+<h3>B. Store de Exercícios e Histórico (<code>src/stores/useExerciciosStore.ts</code>)</h3>
+<pre><code class="language-typescript">interface ExerciciosState {
+  exercicios: Exercicio[];
+  historico: TentativaExercicio[];
+
+  // Ações
+  registrarTentativa: (exercicioId: string, acertos: number, total: number, tempoSegundos: number) => TentativaExercicio;
+  obterHistoricoPorExercicio: (exercicioId: string) => TentativaExercicio[];
+  resetarParaMocks: () => void;
+}
+</code></pre>
+
+<h3>C. Mocks com Dados do Figma</h3>
+<ul>
+  <li><code>lembretesIniciaisMock</code>:
+    <ol>
+      <li><strong>"Tomar remédio"</strong> — 08:00 (Saúde / Concluído no relógio ✓)</li>
+      <li><strong>"Lavar roupas"</strong> — 10:30 (Casa / Pendente)</li>
+      <li><strong>"Beber 500ml de água"</strong> — 14:00 (Saúde / Pendente)</li>
+      <li><strong>"Pagar conta de energia"</strong> — 16:00 (Pessoal / Pendente)</li>
+    </ol>
+  </li>
+  <li><code>exerciciosIniciaisMock</code>:
+    <ol>
+      <li><strong>"Sequências"</strong> — Descobrir o padrão numérico e de cores (Streak: 5 dias, Nível: fácil)</li>
+      <li><strong>"Ordenação"</strong> — Organizar itens cronologicamente (Streak: 3 dias, Nível: médio)</li>
+      <li><strong>"Associações"</strong> — Relacionar palavras e conceitos (Streak: 7 dias, Nível: fácil)</li>
+      <li><strong>"Lista de compras"</strong> — Memorização de itens de supermercado (Streak: 2 dias, Nível: médio)</li>
+    </ol>
+  </li>
+</ul>
+
+<hr>
+
+<h2 id="s6">6. Front-end — Telas Expo Router e 5 Estados Visuais</h2>
+<p>As telas passam a consumir as stores Zustand através do hook <code>useShallow</code>:</p>
+
+<ol>
+  <li><strong>Tela Inicial (<code>src/app/(tabs)/index.tsx</code>):</strong>
+    Consome os lembretes recentes não concluídos para exibição imediata abaixo do card do relógio.
+  </li>
+  <li><strong>Tela de Lembretes (<code>src/app/(tabs)/lembretes.tsx</code>):</strong>
+    Consome a lista completa com filtro ativo (<code>todos</code>, <code>pendentes</code>, <code>concluidos</code>).
+  </li>
+  <li><strong>Tela de Exercícios (<code>src/app/(tabs)/exercicios.tsx</code>):</strong>
+    Consome os 4 cards de exercício do Figma exibindo badges com a contagem de dias (streak).
+  </li>
+</ol>
+
+<h3>Os 5 Estados Visuais Garantidos:</h3>
+<ul>
+  <li><strong>Ideal:</strong> Cards temáticos com textos legíveis e ícones corretos;</li>
+  <li><strong>Carregando:</strong> Indicadores nativos quando alguma ação simulada levar milissegundos;</li>
+  <li><strong>Vazio:</strong> Mensagem acolhedora com botão *"Criar primeiro lembrete"* quando a lista for esvaziada;</li>
+  <li><strong>Erro:</strong> Alerta amigável e opção de restaurar dados de teste via <code>resetarParaMocks()</code>;</li>
+  <li><strong>Parcial:</strong> Sinalização clara quando um lembrete foi concluído no celular mas ainda está pendente de sincronização com o relógio.</li>
+</ul>
+
+<hr>
+
+<h2 id="s7">7. Acessibilidade Mobile (WCAG 2.2 Nível AAA)</h2>
+<ul class="check">
+  <li><input type="checkbox" checked> <strong>Contraste Aprimorado (1.4.6):</strong> Todas as cores de categorias e textos respeitam o contraste de <strong>7:1</strong> sobre fundos claros (ex: `#0284C7` para azul, `#4E4E4E` para secundário).</li>
+  <li><input type="checkbox" checked> <strong>Prevenção de Erros Aprimorada (3.3.6):</strong> Ações de exclusão no Zustand salvam <code>ultimoExcluido</code> para permitir desfazer imediato via Snackbar (5 a 10s).</li>
+  <li><input type="checkbox" checked> <strong>Sem Limite de Tempo Inflexível (2.2.3):</strong> A execução de exercícios e edição de lembretes não possui timeouts que descartem dados.</li>
+  <li><input type="checkbox" checked> <strong>Propósito Autônomo (2.4.9):</strong> Mocks incluem propriedades semânticas prontas para <code>accessibilityLabel</code> autônomo (ex: `"Excluir lembrete Lavar roupas"`).</li>
+  <li><input type="checkbox" checked> <strong>Apresentação Visual (1.4.8):</strong> Textos alinhados à esquerda e espaçamento entre linhas padrão &gt;= 1.5x.</li>
+  <li><input type="checkbox" checked> <strong>Status Não Dependente de Cor (1.4.1):</strong> Conclusão sempre indicada por texto e ícone (✓).</li>
+</ul>
+
+<hr>
+
+<h2 id="s8">8. Integração com Wearable</h2>
+<p>Os contratos criados em <code>src/types/lembrete.ts</code> são 100% compatíveis com o módulo de transporte <code>src/services/wear/contrato.ts</code>. Quando um lembrete mockado for acionado para envio ao relógio, os campos <code>{ id, titulo, horario }</code> trafegam diretamente pela rota <code>/lembri/lembrete</code> da Wearable Data Layer API.</p>
+
+<hr>
+
+<h2 id="s9">9. Casos de Teste e Verificação no Emulador</h2>
+
+<ol>
+  <li><strong>Testes Unitários de Stores Zustand:</strong>
+    <ul>
+      <li>Validar que <code>adicionarLembrete</code> insere item imutavelmente e incrementa a contagem;</li>
+      <li>Validar que <code>toggleConcluido</code> alterna o status sem mutação direta de array;</li>
+      <li>Validar que <code>removerLembrete</code> seguido de <code>desfazerExclusao</code> recupera o item exato;</li>
+      <li>Validar que <code>registrarTentativa</code> calcula a pontuação percentual e salva no histórico;</li>
+      <li>Validar que <code>resetarParaMocks</code> restaura fielmente o estado do Figma.</li>
+    </ul>
+  </li>
+  <li><strong>Verificação Estática Automatizada:</strong>
+    <ul>
+      <li><code>npx tsc --noEmit</code> no MobileAPP (zero erros de tipo, tipagem estrita sem <code>any</code>);</li>
+      <li><code>node docs/scripts/lembri-check.mjs --all</code> (zero bloqueantes e zero alertas).</li>
+    </ul>
+  </li>
+  <li><strong>Teste Interativo no Emulador Android Studio:</strong>
+    <ul>
+      <li>Navegar pelas abas e verificar a renderização dos dados mockados nos cards;</li>
+      <li>Testar exclusão e reversão com o botão de desfazer.</li>
+    </ul>
+  </li>
+</ol>
+
+<hr>
+
+<h2 id="s10">10. Checklist Pré-PR</h2>
+<ul class="check">
+  <li><input type="checkbox"> Branch criada a partir de <code>develop</code> (<code>feat/criar-dados-mockados</code>) com PR apontando para <code>develop</code></li>
+  <li><input type="checkbox"> Commits no formato Conventional Commits (ex: <code>feat(mocks): adicionar fixtures de exercicios e tipos do figma</code>)</li>
+  <li><input type="checkbox"> Tipagem estrita TypeScript (zero <code>any</code>, zero <code>@ts-ignore</code>)</li>
+  <li><input type="checkbox"> Stores Zustand totalmente imutáveis (sem mutação direta de arrays)</li>
+  <li><input type="checkbox"> Conformidade estrita com WCAG 2.2 Nível AAA (contraste 7:1, reversibilidade de exclusão)</li>
+  <li><input type="checkbox"> Execução com zero erros de <code>node docs/scripts/lembri-check.mjs</code> e <code>npx tsc --noEmit</code></li>
+</ul>
+
+<hr>
+
+<h2 id="s11">11. Atualização da Documentação do Módulo</h2>
+<p><strong>Módulo de referência:</strong> <code>docs/modulos/STORES_MOCKS.html</code></p>
+<blockquote>Esta tarefa <strong>impacta diretamente</strong> a documentação técnica do módulo <code>STORES_MOCKS</code>, devendo registrar as novas fixtures e stores adicionadas.</blockquote>
+
+<hr>
+
+<h2 id="s12">12. Princípios de Desenvolvimento e Restrições</h2>
+<p>A implementação deste plano obedece integralmente à skill canônica <code>principios</code>:</p>
+<ol>
+  <li><strong>Padrões do Projeto:</strong> Camadas bem definidas (Types → Mocks → Stores Zustand → Telas Expo Router).</li>
+  <li><strong>Escopo de Impacto:</strong> Mocks e stores isoladas de APIs externas, facilitando futuras migrações sem retrabalho na interface.</li>
+  <li><strong>Imutabilidade:</strong> Operações imutáveis com spread e métodos não destrutivos (<code>filter</code>, <code>map</code>).</li>
+  <li><strong>YAGNI:</strong> Sem criação de endpoints Express ou bancos relacionais; o foco é a fidelidade front-end ao protótipo do Figma.</li>
+  <li><strong>Acessibilidade Inegociável:</strong> WCAG 2.2 Nível AAA garantida desde os dados e estados.</li>
+</ol>
+
+</body>
+</html>
