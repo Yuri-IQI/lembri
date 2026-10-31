@@ -49,11 +49,11 @@
 
 <div class="meta-block">
   <p><strong>Módulo:</strong> <code>STORES_MOCKS</code></p>
-  <p><strong>Domínios Atendidos:</strong> Lembretes, Categorias/Tipos, Exercícios Cognitivos e Wearable Sync</p>
+  <p><strong>Domínios Atendidos:</strong> Lembretes, Categorias/Tipos, Exercícios Cognitivos, Configurações de Acessibilidade e Wearable Sync</p>
   <p><strong>Arquivos de Estado (Zustand):</strong> <code>MobileAPP/src/stores/</code></p>
   <p><strong>Massa de Dados & Fixtures:</strong> <code>MobileAPP/src/mocks/</code></p>
   <p><strong>Tipagem Estrita TypeScript:</strong> <code>MobileAPP/src/types/</code></p>
-  <p><strong>Data de Atualização:</strong> 2026-10-27 (Entrega do CARD-21)</p>
+  <p><strong>Data de Atualização:</strong> 2026-10-31 (Entrega do CARD-29)</p>
 </div>
 
 <ol class="toc">
@@ -98,6 +98,11 @@
       <td><code>exercicio.ts</code></td>
       <td><code>Exercicio</code>, <code>TentativaExercicio</code>, <code>RegistrarTentativaInput</code>, <code>NivelExercicio</code></td>
       <td>Exercícios de estímulo cognitivo ("Sequências", "Ordenação", "Associações", "Lista de compras"), cálculo de streak e histórico.</td>
+    </tr>
+    <tr>
+      <td><code>settings.ts</code></td>
+      <td><code>UserSettings</code></td>
+      <td>Preferências do usuário (escala de texto ampliado <code>isLargeText</code> e controle de exibição de boas-vindas <code>hasSeenSplash</code>).</td>
     </tr>
   </tbody>
 </table>
@@ -144,6 +149,20 @@
   </li>
 </ul>
 
+<h3>D. <code>useSettingsStore.ts</code></h3>
+<ul>
+  <li><strong>Estado:</strong> <code>isLargeText: boolean</code>, <code>textScaleFactor: number</code>, <code>hasSeenSplash: boolean</code>;</li>
+  <li><strong>Persistência:</strong> AsyncStorage com middleware <code>persist</code> do Zustand (<code>partialize</code> grava exclusivamente <code>hasSeenSplash</code>);</li>
+  <li><strong>Ações:</strong>
+    <ul>
+      <li><code>toggleLargeText()</code>: alterna o multiplicador entre 1.0 e 1.2;</li>
+      <li><code>setLargeText(enabled)</code>: atribuição explícita de escala;</li>
+      <li><code>markSplashSeen()</code>: marca a tela de boas-vindas como visualizada (idempotente);</li>
+      <li><code>resetToDefaults()</code>: restaura escala visual sem resetar <code>hasSeenSplash</code>.</li>
+    </ul>
+  </li>
+</ul>
+
 <hr>
 
 <h2 id="s4">4. Massa de Dados Mockados e Fixtures do Figma (src/mocks/)</h2>
@@ -181,6 +200,12 @@
       <td><code>historicoIniciaisMock</code></td>
       <td><code>criarTentativaMock()</code></td>
       <td>Tentativas anteriores com pontuações percentuais (100%, 80%, 100%) para validação de métricas cognitivas.</td>
+    </tr>
+    <tr>
+      <td><code>settings.mock.ts</code></td>
+      <td><code>defaultSettingsMock</code></td>
+      <td><code>createSettingsMock()</code></td>
+      <td>Configurações padrão (<code>isLargeText: false</code>, <code>hasSeenSplash: false</code>) e fábrica de testes.</td>
     </tr>
   </tbody>
 </table>
