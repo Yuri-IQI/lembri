@@ -89,6 +89,7 @@
     <li><strong>Fator de Escala do Modo "Texto Ampliado":</strong> Multiplicador de <strong><code>1.2x</code> (+20%)</strong> com teto de segurança nas variantes de topo (<code>display</code> e <code>title</code> limitados para evitar quebra de layout na <code>TopBar</code> e cards de destaque), orquestrado pela store Zustand <code>useSettingsStore</code> (estado <code>isLargeText</code>) e consumido automaticamente por <code>useTheme</code> e <code>ThemedText</code>.</li>
     <li><strong>Tokens de Cores, Raios e Escala Tipográfica (<code>Typography</code>):</strong> Manter a paleta de cores e raios do Figma em <code>theme.ts</code>, centralizar o catálogo tipográfico (<code>Typography</code>) dentro de <code>theme.ts</code> e adequar o <code>lineHeight</code> de todas as variantes de leitura para <strong><code>&gt;= 1.5x</code> o tamanho da fonte</strong> em conformidade com o Critério 1.4.8 (Apresentação Visual — Nível AAA).</li>
     <li><strong>Fluxo Gitflow:</strong> Branch <code>feat/cria-tema-do-prototipo-no</code> criada diretamente a partir de <code>develop</code>.</li>
+    <li><strong>Consolidação de Estilos Soltos Pós-Merge da Main:</strong> Formalização de tokens de borda (<code>hairline: 1</code> e <code>regular: 2</code> em <code>BorderWidth</code>), cor de categoria de saúde (<code>tagSaude: '#FF8181'</code> em <code>Colors</code>), dimensões estruturais (<code>ComponentSize</code>) e helper de gradiente (<code>Gradients.proximoLembrete</code>) em <code>theme.ts</code>, refatorando todos os novos componentes para eliminar números mágicos e estilos soltos.</li>
   </ol>
 </div>
 
@@ -96,10 +97,13 @@
 <ul>
   <li><strong>Consolidação dos Design Tokens em <code>src/constants/theme.ts</code>:</strong>
     <ul>
-      <li>Paleta oficial <code>Colors</code> (preto <code>#000000</code>, branco <code>#FFFFFF</code>, cinzas estruturais <code>#4E4E4E</code>, <code>#949494</code>, <code>#F2F2F2</code>, <code>#D0D0D0</code>, <code>#D2D2D2</code>, <code>#CCCCCC</code>, <code>#DADADA</code>, amarelo de destaque <code>#EAE28A</code> / <code>#F7F4DA</code> e verde de tag <code>#D5EA9B</code>), mantendo o tema preto e branco de alto contraste como principal;</li>
+      <li>Paleta oficial <code>Colors</code> (preto <code>#000000</code>, branco <code>#FFFFFF</code>, cinzas estruturais <code>#4E4E4E</code>, <code>#949494</code>, <code>#F2F2F2</code>, <code>#D0D0D0</code>, <code>#D2D2D2</code>, <code>#CCCCCC</code>, <code>#DADADA</code>, amarelo de destaque <code>#EAE28A</code> / <code>#F7F4DA</code>, verde de tag <code>#D5EA9B</code> e tag de saúde <code>#FF8181</code>), mantendo o tema preto e branco de alto contraste como principal;</li>
       <li>Centralização do objeto <code>Typography</code> em <code>theme.ts</code> com todas as 11 variantes tipográficas do protótipo e <code>lineHeight &gt;= 1.5x</code> (WCAG 1.4.8 AAA);</li>
       <li>Constantes de escala <code>TextScale = { normal: 1, large: 1.2 }</code> e função pura <code>getScaledTypography(variant, isLargeText)</code> com teto protetivo para títulos gigantes (<code>display</code> e <code>title</code>);</li>
-      <li>Manutenção de <code>Spacing</code>, <code>Radius</code>, <code>BorderWidth</code> e <code>TouchTarget = 56</code>.</li>
+      <li>Expansão de <code>BorderWidth</code> com <code>hairline: 1</code> e <code>regular: 2</code>, além de <code>thin: 1.5</code> e <code>thick: 2.5</code>;</li>
+      <li>Centralização de dimensões estruturais em <code>ComponentSize</code> (alturas de barras, dimensões do switch, marcador de conclusão e larguras de coluna);</li>
+      <li>Centralização do helper de gradiente <code>Gradients.proximoLembrete</code>;</li>
+      <li>Manutenção de <code>Spacing</code>, <code>Radius</code> e <code>TouchTarget = 56</code>.</li>
     </ul>
   </li>
   <li><strong>Store Reativa de Preferências Visuais (<code>src/stores/useSettingsStore.ts</code>) e Mocks (<code>src/mocks/settings.mock.ts</code>):</strong>
@@ -244,8 +248,11 @@ export const Colors = {
   brand: '#1A1A1A',
 
   tag: '#D5EA9B',
+  tagSaude: '#FF8181',
   chipSelected: '#CCCCCC',
   tabActive: '#DADADA',
+  success: '#A8D5A2',
+  overlay: 'rgba(0, 0, 0, 0.55)',
 } as const;
 
 export type ThemeColor = keyof typeof Colors;
@@ -376,6 +383,50 @@ export function getScaledTypography(variant: TextVariant, isLargeText: boolean):
       : {}),
   };
 }
+
+export const Spacing = {
+  one: 4,
+  two: 8,
+  three: 16,
+  four: 24,
+  five: 32,
+} as const;
+
+export const Radius = {
+  sm: 8,
+  md: 12,
+  lg: 16,
+  full: 999,
+} as const;
+
+export const BorderWidth = {
+  hairline: 1,
+  thin: 1.5,
+  regular: 2,
+  thick: 2.5,
+} as const;
+
+export const TouchTarget = 56;
+
+export const ComponentSize = {
+  topBarHeight: 64,
+  barFrameHeight: 72,
+  bottomBarHeight: 80,
+  switchWidth: 56,
+  switchHeight: 32,
+  switchKnob: 28,
+  marcadorCirculo: 44,
+  horarioMinWidth: 76,
+  strikethroughHeight: 2,
+  topBarButton: 31,
+  topBarBackWidth: 40,
+  topBarHitSlop: 8,
+} as const;
+
+export const Gradients = {
+  proximoLembrete: (feito: boolean, theme: { success: string; accent: string; surface: string }) =>
+    `linear-gradient(-59.4deg, ${feito ? theme.success : theme.accent} 18.9%, ${theme.surface} 114.5%)`,
+} as const;
 </code></pre>
 
 <hr>
