@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDD Front-end — CARD-29: Criar splash screen (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+<h1>SDD Front-end — CARD-29: Criar splash screen</h1>
+
+<div class="meta-block">
+  <p><strong>Tarefa / Funcionalidade:</strong> <code>CARD-29</code> — Criar splash screen (<a href="https://trello.com/c/NkdmxNja">Trello #29</a>)</p>
+  <p><strong>Branch (Gitflow):</strong> <code>feat/criar-splash-screen</code> (criada a partir de <code>main</code> → PR para <code>main</code>) — confirmado pelo desenvolvedor: o projeto não usa <code>develop</code>.</p>
+  <p><strong>Escopo Tecnológico:</strong> React Native (Expo SDK 58), React 19, Zustand + persistência local (AsyncStorage)</p>
+  <p><strong>Módulo:</strong> <code>LEMBRETES</code> (sugerido pelo script) — a tarefa é transversal (abertura do app / configurações)</p>
+  <p><strong>Camada de Dados:</strong> Flag local persistida em <code>useSettingsStore</code>; sem API; sem Wear OS</p>
+  <p><strong>Data:</strong> 2026-10-31</p>
+</div>
+
+<div class="notice-block">
+  <strong>Ponto de partida:</strong> já existe <code>MobileAPP/src/components/splash.tsx</code> montado em <code>src/app/_layout.tsx</code>. Ele fecha sozinho após 2 s (viola WCAG 2.2.3 AAA), não tem botão e aparece em <em>toda</em> abertura. O plano <strong>evolui</strong> esse componente; não cria um novo.
+</div>
+
+<ol class="toc">
+  <li><a href="#s1">Contexto, Objetivo e Escopo Front-end</a></li>
+  <li><a href="#s2">Requisitos e Regras de Negócio (Casos de Borda)</a></li>
+  <li><a href="#s3">Estrutura de Arquivos e Componentes</a></li>
+  <li><a href="#s4">Modelagem de Dados e Tipos TypeScript (src/types/)</a></li>
+  <li><a href="#s5">Gerenciamento de Estado no Zustand e Mocks</a></li>
+  <li><a href="#s6">Front-end — Telas Expo Router e 5 Estados Visuais</a></li>
+  <li><a href="#s7">Acessibilidade Mobile (WCAG 2.2 Nível AAA — TouchTarget = 56)</a></li>
+  <li><a href="#s8">Integração com Wearable (se aplicável)</a></li>
+  <li><a href="#s9">Casos de Teste e Verificação no Emulador</a></li>
+  <li><a href="#s10">Checklist Pré-PR</a></li>
+  <li><a href="#s11">Atualização da Documentação do Módulo</a></li>
+  <li><a href="#s12">Princípios de Desenvolvimento e Restrições</a></li>
+</ol>
+
+<hr>
+
+<h2 id="s1">1. Contexto, Objetivo e Escopo Front-end</h2>
+<p><strong>Objetivo:</strong> na <em>primeira abertura</em> do app, a pessoa vê a tela de boas-vindas (frame <code>inicial</code>: logo “LEMBRI!”, título e texto) e entra na Home <strong>quando tocar no botão “Entrar”</strong>. Nas aberturas seguintes, o app vai direto à Home.</p>
+<h3>Dentro do escopo</h3>
+<ul>
+  <li>Botão “Entrar” (reuso de <code>Botao</code>, variante <code>primario</code>) em <code>splash.tsx</code>.</li>
+  <li>Remoção do auto-fechamento por tempo (decisão do desenvolvedor).</li>
+  <li>Flag <code>hasSeenSplash</code> em <code>useSettingsStore</code>, persistida localmente.</li>
+  <li>Correção do título para “Bem-vindo ao Lembri!”.</li>
+  <li>Controle de ocultação da splash nativa (<code>expo-splash-screen</code>) no layout raiz, sem flash da tela de boas-vindas para quem já a viu.</li>
+</ul>
+<h3>Fora do escopo (YAGNI)</h3>
+<ul>
+  <li>Onboarding em várias páginas, carrossel ou cadastro.</li>
+  <li>Persistir as demais preferências (<code>isLargeText</code>); só <code>hasSeenSplash</code> é persistido.</li>
+  <li>Opção em Ajustes para rever a splash.</li>
+  <li>Alterar a splash nativa (<code>app.json</code>, <code>splash-native.png</code>) ou o módulo Wear.</li>
+</ul>
+
+<hr>
+
+<h2 id="s2">2. Requisitos e Regras de Negócio (Casos de Borda)</h2>
+<p>O card não tem checklist de aceite. Os critérios abaixo derivam da descrição do card e das respostas do desenvolvedor.</p>
+<table>
+  <thead><tr><th>#</th><th>Dado / Quando / Então</th></tr></thead>
+  <tbody>
+    <tr><td>R1</td><td><strong>Dado</strong> instalação nova, <strong>quando</strong> abro o app, <strong>então</strong> vejo logo, título “Bem-vindo ao Lembri!”, texto de apoio e o botão “Entrar”.</td></tr>
+    <tr><td>R2</td><td><strong>Quando</strong> toco em “Entrar”, <strong>então</strong> a splash some (fade de 400 ms) e vejo a Home; <code>hasSeenSplash</code> passa a <code>true</code> e é gravado.</td></tr>
+    <tr><td>R3</td><td><strong>Dado</strong> <code>hasSeenSplash = true</code>, <strong>quando</strong> abro o app de novo, <strong>então</strong> a Home abre direto, sem splash.</td></tr>
+    <tr><td>R4</td><td>A splash <strong>nunca</strong> fecha por tempo (WCAG 2.2.3). Só o botão fecha.</td></tr>
+    <tr><td>R5</td><td><strong>Borda — hidratação:</strong> enquanto a flag não for lida do armazenamento, nada é renderizado e a splash nativa continua visível. Evita piscar a boas-vindas para quem já a viu.</td></tr>
+    <tr><td>R6</td><td><strong>Borda — falha de leitura/gravação:</strong> se o AsyncStorage falhar, a splash é exibida (alternativa mais conservadora) e o app continua usável. Registrar o caso nos testes.</td></tr>
+    <tr><td>R7</td><td><strong>Borda — toque duplo em “Entrar”:</strong> idempotente; <code>markSplashSeen</code> repetido não corrompe o estado.</td></tr>
+    <tr><td>R8</td><td><strong>Borda — “Reduzir movimento” ativo:</strong> o fade é pulado e a splash some de imediato.</td></tr>
+    <tr><td>R9</td><td><strong>Borda — “Texto ampliado” e fontes grandes:</strong> o conteúdo cabe na tela sem cortar o botão (rolagem se necessário).</td></tr>
+    <tr><td>R10</td><td><strong>Decisão registrada:</strong> <code>resetToDefaults()</code> <em>não</em> zera <code>hasSeenSplash</code> (ele restaura só preferências visuais). Alternativa conservadora, a validar na revisão.</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s3">3. Estrutura de Arquivos e Componentes</h2>
+<table>
+  <thead><tr><th>Camada</th><th>Arquivo</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td>Dependência</td><td><code>MobileAPP/package.json</code></td><td>Adicionar <code>@react-native-async-storage/async-storage</code> via <code>npx expo install</code></td></tr>
+    <tr><td>Tipos</td><td><code>src/types/settings.ts</code></td><td>Adicionar <code>hasSeenSplash: boolean</code> a <code>UserSettings</code></td></tr>
+    <tr><td>Mocks</td><td><code>src/mocks/settings.mock.ts</code></td><td><code>hasSeenSplash: false</code> no default (a factory herda)</td></tr>
+    <tr><td>Store</td><td><code>src/stores/useSettingsStore.ts</code></td><td>Ação <code>markSplashSeen</code>, middleware <code>persist</code> com <code>partialize</code></td></tr>
+    <tr><td>Hook</td><td><code>src/hooks/use-settings-hydrated.ts</code></td><td><strong>Novo.</strong> Expõe se a store terminou de hidratar</td></tr>
+    <tr><td>Componente</td><td><code>src/components/splash.tsx</code></td><td>Remover timer e <code>onLayout/hideAsync</code>; adicionar <code>Botao</code> “Entrar”; fade só no toque; respeitar “Reduzir movimento”</td></tr>
+    <tr><td>Rota (layout raiz)</td><td><code>src/app/_layout.tsx</code></td><td>Orquestrar: hidratação → decidir mostrar splash → ocultar splash nativa</td></tr>
+    <tr><td>Testes</td><td><code>src/stores/__tests__/useSettingsStore.test.ts</code></td><td>Estender com casos da flag</td></tr>
+  </tbody>
+</table>
+<p>Nenhum arquivo de <code>modules/</code>, <code>services/</code> ou <code>app.json</code> é tocado. Os nomes de componente em português seguem o precedente dos irmãos (<code>Botao</code>, <code>Splash</code>).</p>
+
+<hr>
+
+<h2 id="s4">4. Modelagem de Dados e Tipos TypeScript (src/types/)</h2>
+<pre><code class="language-typescript">export interface UserSettings {
+  /** Indica se o modo "Texto ampliado" (escala 1.2x) está ativo. */
+  isLargeText: boolean;
+  /** Indica se a tela de boas-vindas já foi vista e dispensada pelo usuário. */
+  hasSeenSplash: boolean;
+}
+</code></pre>
+<p>Campo obrigatório novo → atualizar <code>settings.mock.ts</code> no mesmo passo (retrocompatibilidade com <code>createSettingsMock</code> e testes existentes).</p>
+
+<hr>
+
+<h2 id="s5">5. Gerenciamento de Estado no Zustand e Mocks</h2>
+<pre><code class="language-typescript">export interface SettingsState extends UserSettings {
+  // ...estado e ações existentes
+  /** Marca a tela de boas-vindas como vista. Idempotente. */
+  markSplashSeen: () =&gt; void;
+}
+
+export const useSettingsStore = create&lt;SettingsState&gt;()(
+  persist(
+    (set) =&gt; ({
+      ...defaultSettingsMock,
+      // ...ações existentes
+      markSplashSeen: () =&gt; set(() =&gt; ({ hasSeenSplash: true })),
+      resetToDefaults: () =&gt;
+        set((state) =&gt; ({
+          ...defaultSettingsMock,
+          hasSeenSplash: state.hasSeenSplash,
+          textScaleFactor: /* igual ao atual */,
+        })),
+    }),
+    {
+      name: 'lembri-settings',
+      storage: createJSONStorage(() =&gt; AsyncStorage),
+      partialize: (state) =&gt; ({ hasSeenSplash: state.hasSeenSplash }),
+    },
+  ),
+);
+</code></pre>
+<ul>
+  <li><strong>Persistência estreita:</strong> <code>partialize</code> grava só <code>hasSeenSplash</code>. Não altera o comportamento atual de <code>isLargeText</code> (volta ao padrão a cada abertura).</li>
+  <li><strong>Imutabilidade:</strong> a ação usa <code>set</code> com objeto novo; chamadas repetidas são idempotentes.</li>
+  <li><strong>Seletor atômico:</strong> o layout lê <code>useSettingsStore((s) =&gt; s.hasSeenSplash)</code>.</li>
+  <li><strong>Hook <code>useSettingsHydrated</code>:</strong> inicia com <code>useSettingsStore.persist.hasHydrated()</code> e assina <code>persist.onFinishHydration</code> (retorna a função de cancelamento). Falha de leitura também conclui a hidratação com o padrão <code>false</code> (R6).</li>
+  <li><strong>Mocks:</strong> sem fixtures de lista. Apenas <code>defaultSettingsMock.hasSeenSplash = false</code>; testes usam <code>createSettingsMock({ hasSeenSplash: true })</code>.</li>
+</ul>
+
+<hr>
+
+<h2 id="s6">6. Front-end — Telas Expo Router e 5 Estados Visuais</h2>
+<h3>Navegação</h3>
+<p>Nenhuma rota nova. A splash continua sendo um <em>overlay</em> montado em <code>src/app/_layout.tsx</code> sobre o <code>Stack</code>, e “Entrar” só o desmonta, revelando <code>(tabs)/index</code>. Evita <code>router.replace</code> e mantém o histórico limpo.</p>
+<pre><code class="language-tsx">// _layout.tsx (esboço)
+const hydrated = useSettingsHydrated();
+const hasSeenSplash = useSettingsStore((s) =&gt; s.hasSeenSplash);
+const markSplashSeen = useSettingsStore((s) =&gt; s.markSplashSeen);
+
+useEffect(() =&gt; {
+  if (hydrated) SplashScreen.hideAsync();
+}, [hydrated]);
+
+if (!hydrated) return null;
+
+return (
+  &lt;ThemeProvider ...&gt;
+    &lt;Stack screenOptions={{ headerShown: false }} /&gt;
+    {!hasSeenSplash &amp;&amp; &lt;Splash onFim={markSplashSeen} /&gt;}
+  &lt;/ThemeProvider&gt;
+);
+</code></pre>
+<p>A responsabilidade de <code>hideAsync()</code> sai do <code>Splash</code> e fica em um só lugar (DRY): o layout. O estado local <code>abertura</code> do layout deixa de existir; a flag da store é a fonte única.</p>
+<h3>Layout do <code>Splash</code></h3>
+<ul>
+  <li><code>SafeAreaView</code> + <code>ScrollView</code> (<code>contentContainerStyle</code> com <code>flexGrow: 1</code> e <code>justifyContent: 'center'</code>) para suportar texto ampliado (R9).</li>
+  <li>Logo (<code>splash-logo.png</code>, já existente), <code>ThemedText type="title"</code>, <code>ThemedText themeColor="textSecondary"</code> e <code>Botao rotulo="Entrar"</code> na base.</li>
+  <li>Somente tokens de <code>theme.ts</code> (<code>Spacing</code>); sem cores literais.</li>
+</ul>
+<h3>Os 5 estados visuais</h3>
+<table>
+  <thead><tr><th>Estado</th><th>Tratamento</th></tr></thead>
+  <tbody>
+    <tr><td>Ideal</td><td>Logo, título, texto e botão “Entrar”.</td></tr>
+    <tr><td>Carregando</td><td>Hidratação: nada renderizado e splash nativa ainda visível (sem spinner extra).</td></tr>
+    <tr><td>Vazio</td><td>Não se aplica (sem lista).</td></tr>
+    <tr><td>Erro</td><td>Falha de AsyncStorage: splash é exibida normalmente (R6). Sem mensagem ao usuário, pois não há ação possível.</td></tr>
+    <tr><td>Parcial</td><td>Não se aplica (sem Wear OS).</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s7">7. Acessibilidade Mobile (WCAG 2.2 Nível AAA)</h2>
+<ul class="check">
+  <li><input type="checkbox"> <strong>Contraste Aprimorado (1.4.6):</strong> título em <code>text</code> (21:1 sobre <code>surface</code>) e texto em <code>textSecondary</code> (7,38:1 sobre <code>background</code>). Botão primário reutilizado (<code>primary</code>/<code>onPrimary</code>). Sem <code>textMuted</code>.</li>
+  <li><input type="checkbox"> <strong>Alvo de Toque (2.5.5):</strong> <code>Botao</code> já garante <code>minHeight = TouchTarget (56)</code>; largura total da tela.</li>
+  <li><input type="checkbox"> <strong>Finalidade do Botão (2.4.9):</strong> <code>accessibilityLabel="Entrar no Lembri e abrir a tela inicial"</code> (autônomo), role <code>button</code>.</li>
+  <li><input type="checkbox"> <strong>Sem Limite de Tempo (2.2.3):</strong> o timer de 2 s é removido.</li>
+  <li><input type="checkbox"> <strong>Animação por Interação (2.3.3):</strong> respeitar <code>AccessibilityInfo.isReduceMotionEnabled()</code>; sem movimento se ativo.</li>
+  <li><input type="checkbox"> <strong>Apresentação Visual (1.4.8):</strong> texto à esquerda, <code>lineHeight ≥ 1,5</code> (garantido por <code>ThemedText</code>).</li>
+  <li><input type="checkbox"> <strong>Leitor de tela:</strong> contêiner com <code>accessibilityViewIsModal</code> e <code>importantForAccessibility="yes"</code>, para o TalkBack não navegar na Home escondida atrás da splash. Logo com <code>accessibilityLabel="Lembri!"</code> (1.4.9: logotipo é exceção; o texto da interface é tipográfico).</li>
+  <li><input type="checkbox"> <strong>Prevenção de Erros (3.3.6):</strong> sem exclusão/mutação de dados do usuário; não se aplica.</li>
+</ul>
+
+<hr>
+
+<h2 id="s8">8. Integração com Wearable (se aplicável)</h2>
+<p><strong>Não aplicável.</strong> Nenhum item trafega para o relógio; <code>wear-service.ts</code>, <code>contrato.ts</code> e <code>modules/wear-connector</code> não são tocados.</p>
+
+<hr>
+
+<h2 id="s9">9. Casos de Teste e Verificação no Emulador</h2>
+<h3>Automatizados (<code>useSettingsStore.test.ts</code>)</h3>
+<ul>
+  <li>Estado inicial: <code>hasSeenSplash === false</code>.</li>
+  <li><code>markSplashSeen()</code> → <code>true</code>; chamar duas vezes mantém <code>true</code> (R7).</li>
+  <li><code>resetToDefaults()</code> preserva <code>hasSeenSplash</code> (R10) e restaura <code>isLargeText</code>.</li>
+  <li><code>partialize</code> grava só <code>hasSeenSplash</code> (conferir via mock do AsyncStorage).</li>
+  <li>Mock do AsyncStorage no ambiente de teste (<code>@react-native-async-storage/async-storage/jest/async-storage-mock</code>), a configurar conforme o runner do projeto.</li>
+</ul>
+<h3>Manual (emulador Android / dev-client)</h3>
+<ol>
+  <li>Limpar dados do app. Abrir. A splash aparece e <strong>permanece</strong> por mais de 10 s (R4).</li>
+  <li>Tocar em “Entrar”: fade e Home (R2). Tocar duas vezes rápido: sem erro (R7).</li>
+  <li>Fechar totalmente e reabrir: abre direto na Home, sem piscar a splash (R3, R5).</li>
+  <li>Limpar dados de novo: a splash volta.</li>
+  <li>Ativar “Texto ampliado” e fonte do sistema no máximo: botão alcançável (R9).</li>
+  <li>Ativar “Remover animações” do Android: some sem fade (R8).</li>
+  <li>TalkBack: foco inicia na splash, lê logo, título, texto e botão; não alcança a Home (7).</li>
+  <li>Tema escuro do sistema: verificar contraste do logo sobre <code>theme.background</code>.</li>
+</ol>
+
+<hr>
+
+<h2 id="s10">10. Checklist Pré-PR</h2>
+<ul class="check">
+  <li><input type="checkbox"> Branch <code>feat/criar-splash-screen</code> criada a partir de <code>main</code> atualizada</li>
+  <li><input type="checkbox"> Commits Conventional Commits, ex.: <code>feat(splash): exibir boas-vindas apenas na primeira abertura (CARD-29)</code></li>
+  <li><input type="checkbox"> Tipagem estrita TypeScript (zero <code>any</code>) e sem <code>console.log</code></li>
+  <li><input type="checkbox"> <code>markSplashSeen</code> imutável e idempotente</li>
+  <li><input type="checkbox"> Somente tokens de <code>theme.ts</code>; dependência instalada com <code>npx expo install</code></li>
+  <li><input type="checkbox"> <code>npx tsc --noEmit</code> e <code>node docs/scripts/lembri-check.mjs</code> sem erros</li>
+  <li><input type="checkbox"> Testes da store passando</li>
+  <li><input type="checkbox"> WCAG 2.2 AAA verificada (TalkBack, 56dp, 7:1, sem timer)</li>
+</ul>
+
+<hr>
+
+<h2 id="s11">11. Atualização da Documentação do Módulo</h2>
+<p><strong>Módulo de referência:</strong> <code>docs/modulos/LEMBRETES.html</code></p>
+<blockquote>Esta tarefa <strong>impacta</strong> a documentação técnica de <code>STORES_MOCKS</code> (novo campo <code>hasSeenSplash</code> e persistência) e <strong>não impacta</strong> o módulo LEMBRETES. Rodar <code>/documentar-modulo STORES_MOCKS</code> após a implementação.</blockquote>
+
+<hr>
+
+<h2 id="s12">12. Princípios de Desenvolvimento e Restrições</h2>
+<p>A implementação deste plano segue rigorosamente a skill canônica <code>principios</code> do Projeto Lembri:</p>
+<ol>
+  <li><strong>Padrões do Projeto:</strong> estende <code>useSettingsStore</code> e <code>Splash</code> existentes; reusa <code>Botao</code>, <code>ThemedText</code> e tokens.</li>
+  <li><strong>Escopo de Impacto:</strong> flag compartilhada entre layout e splash → store Zustand; estado de tela transitório (animação) → local.</li>
+  <li><strong>Compatibilidade de Contratos:</strong> campo obrigatório novo, com mock e factory atualizados no mesmo passo.</li>
+  <li><strong>Imutabilidade e Idempotência:</strong> <code>markSplashSeen</code> e <code>resetToDefaults</code> imutáveis.</li>
+  <li><strong>YAGNI:</strong> sem onboarding multipágina, sem persistir outras preferências, sem tela nova.</li>
+  <li><strong>Acessibilidade Inegociável:</strong> WCAG 2.2 AAA, TouchTarget = 56dp, contraste 7:1, sem timeout.</li>
+</ol>
+
+<h3>Decisões confirmadas pelo desenvolvedor</h3>
+<ul>
+  <li>Sem auto-fechamento; só o botão fecha.</li>
+  <li>Persistência com AsyncStorage + <code>persist</code> do Zustand.</li>
+  <li>Flag em <code>useSettingsStore</code> (<code>hasSeenSplash</code>).</li>
+  <li>Texto atual mantido (com “Bem-vindo”) e botão “Entrar”.</li>
+  <li>Branch a partir de <code>main</code>.</li>
+</ul>
+
+</body>
+</html>
