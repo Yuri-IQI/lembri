@@ -1,6 +1,6 @@
-# Claude CLI — rastrear comandos de automação da equipe, ignorar histórico/sessões locais
+# Claude Code — rastrear as skills da equipe, ignorar histórico/sessões locais
 .claude/*
-!.claude/commands/
+!.claude/skills/
 
 # Segredos, chaves e credenciais de integração (NUNCA comitar)
 .credentials
