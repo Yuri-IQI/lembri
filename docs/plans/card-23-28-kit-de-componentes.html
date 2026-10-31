@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDD Front-end — CARD-23/24/26/27/28: Kit de componentes UI (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>SDD Front-end — CARD-23 · 24 · 26 · 27 · 28: Kit de componentes UI</h1>
+
+<div class="meta-block">
+  <p><strong>Tarefas (Trello, lista "Esta semana"):</strong>
+    <code>CARD-23</code> Criar botões ·
+    <code>CARD-24</code> Criar cards ·
+    <code>CARD-26</code> Criar templates de formulários de lembrete ·
+    <code>CARD-27</code> Collapsible de ajustes ·
+    <code>CARD-28</code> Dialog de confirmação</p>
+  <p><strong>Branch (Gitflow):</strong> <code>feat/kit-de-componentes</code>, criada a partir de <code>origin/main</code> com pull de <code>feat/cria-tema-do-prototipo-no</code> (CARD-22), por decisão do desenvolvedor: a <code>develop</code> local está desatualizada e não existe <code>origin/develop</code>. O destino do PR fica para confirmar (ver §13).</p>
+  <p><strong>Escopo Tecnológico:</strong> React Native (Expo SDK 58), React 19, Zustand, <code>expo-symbols</code>. Nenhuma dependência nova.</p>
+  <p><strong>Módulos:</strong> <code>LEMBRETES</code>, <code>EXERCICIOS</code>, <code>CONFIGURACOES</code> (componentes base compartilhados)</p>
+  <p><strong>Camada de Dados:</strong> mockada (<code>src/mocks/</code>) + stores existentes (<code>useExerciciosStore</code>, <code>useSettingsStore</code>, <code>useLembretesStore</code>)</p>
+  <p><strong>Data:</strong> 2026-10-31</p>
+</div>
+
+<div class="notice-block">
+  <strong>Decisões confirmadas pelo desenvolvedor (Regra da Dúvida):</strong>
+  <ol>
+    <li>Um único SDD consolidado para os 5 cartões.</li>
+    <li>Escopo: criar ou evoluir componentes e substituir os equivalentes inline que já existem. <strong>Nenhuma tela nova</strong>.</li>
+    <li>Ajuda/Áudio da TopBar com área de toque de <strong>56dp</strong> (<code>TouchTarget</code>), mantendo o visual compacto. Isso substitui os 48dp citados no cartão.</li>
+    <li>Botão de perigo: novo token <code>Colors.danger = #A50E0E</code> com texto branco (contraste calculado de 7,87:1).</li>
+    <li>Card de exercício com os botões <strong>COMEÇAR</strong> (primário) e <strong>DETALHES</strong> (secundário). A última atividade vem do histórico de tentativas da store.</li>
+    <li>"Templates para finalidades padrão" são modelos mockados que pré-preenchem o rascunho do lembrete (título, tipo, horários e dias).</li>
+    <li>Seletor de horário próprio: HH:MM grande com botões +/− de 56dp, sem dependência nova.</li>
+    <li>Collapsible usado em Configurações: título e switch sempre visíveis, descrição ao expandir. Primeiro item: "Texto ampliado".</li>
+    <li>Toast some sozinho depois de ~6s, tem botão "Fechar" e é anunciado ao leitor de tela. O timer pausa enquanto o leitor de tela está ativo.</li>
+  </ol>
+</div>
+
+<ol class="toc">
+  <li><a href="#s1">Contexto, Objetivo e Escopo Front-end</a></li>
+  <li><a href="#s2">Requisitos e Regras de Negócio (Casos de Borda)</a></li>
+  <li><a href="#s3">Estrutura de Arquivos e Componentes</a></li>
+  <li><a href="#s4">Modelagem de Dados e Tipos TypeScript (src/types/)</a></li>
+  <li><a href="#s5">Gerenciamento de Estado no Zustand e Mocks</a></li>
+  <li><a href="#s6">Front-end — Componentes, Telas Expo Router e 5 Estados Visuais</a></li>
+  <li><a href="#s7">Acessibilidade Mobile (WCAG 2.2 Nível AAA — TouchTarget = 56)</a></li>
+  <li><a href="#s8">Integração com Wearable</a></li>
+  <li><a href="#s9">Casos de Teste e Verificação no Emulador</a></li>
+  <li><a href="#s10">Checklist Pré-PR</a></li>
+  <li><a href="#s11">Atualização da Documentação do Módulo</a></li>
+  <li><a href="#s12">Princípios de Desenvolvimento e Restrições</a></li>
+  <li><a href="#s13">Pendências Registradas (decisões conservadoras)</a></li>
+</ol>
+
+<hr>
+
+<h2 id="s1">1. Contexto, Objetivo e Escopo Front-end</h2>
+<p>O Lembri já tem parte do design system do protótipo: <code>Botao</code> (primário/secundário), <code>DialogoConfirmacao</code>, <code>Interruptor</code>, <code>ProximoLembreteCard</code> (fundo amarelo), <code>OcorrenciaItem</code>, <code>ChipHorario</code>, <code>EtiquetaTipo</code>, <code>MarcadorFeito</code> e <code>AvisoDesfazer</code>. Este plano <strong>completa o kit</strong> pedido pelos cartões 23, 24, 26, 27 e 28, reusando o que já existe e eliminando os botões inline duplicados.</p>
+
+<h3>O que a pessoa usuária passa a conseguir</h3>
+<ul>
+  <li>Reconhecer ações destrutivas (Excluir) pelo botão vermelho de perigo, inclusive no diálogo de confirmação.</li>
+  <li>Tocar em Ajuda, Áudio e Voltar da barra superior com área de 56dp, com menos toques errados.</li>
+  <li>Ver, em Exercícios, quando praticou cada exercício pela última vez e começar ou abrir os detalhes com botões grandes.</li>
+  <li>Ligar e desligar "Texto ampliado" em Configurações e expandir uma explicação do ajuste.</li>
+</ul>
+
+<h3>Mapa cartão → entrega</h3>
+<table>
+  <thead><tr><th>Cartão</th><th>Item pedido</th><th>Situação atual</th><th>Entrega</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="4">23</td><td>Primário preto (Ver, SALVAR, COMEÇAR)</td><td>Existe (<code>Botao variante="primario"</code>)</td><td>Reuso. Substituir Pressables inline em <code>exercicios.tsx</code></td></tr>
+    <tr><td>Secundário com borda (DETALHES, Ajuda, Áudio)</td><td>Existe (<code>variante="secundario"</code>)</td><td>Reuso</td></tr>
+    <tr><td>Perigo (excluir, desconectar)</td><td>Não existe</td><td><strong>Nova</strong> <code>variante="perigo"</code> + token <code>Colors.danger</code></td></tr>
+    <tr><td>Ajuda/Áudio ≥ 48dp</td><td>31px + hitSlop 8 ≈ 47dp</td><td>Área de toque de 56dp na <code>TopBar</code> (inclui Voltar)</td></tr>
+    <tr><td rowspan="4">24</td><td>Card destaque "Próximo lembrete"</td><td>Existe (<code>ProximoLembreteCard</code>)</td><td>Sem alteração. Só verificação</td></tr>
+    <tr><td>Card de lembrete</td><td>Só <code>OcorrenciaItem</code> (agenda)</td><td><strong>Novo</strong> <code>LembreteCard</code> (não integrado, ver §13)</td></tr>
+    <tr><td>Card de exercício</td><td>Inline em <code>exercicios.tsx</code></td><td><strong>Novo</strong> <code>ExercicioCard</code>, integrado na aba Exercícios</td></tr>
+    <tr><td>Item de lista (ícone, título, subtítulo, seta)</td><td>Não existe</td><td><strong>Novo</strong> <code>ItemLista</code>, reusado pelo seletor de modelos</td></tr>
+    <tr><td rowspan="6">26</td><td>Campo de texto com rótulo sempre visível</td><td>Não existe</td><td><strong>Novo</strong> <code>CampoTexto</code></td></tr>
+    <tr><td>Seletor de horário grande</td><td>Não existe</td><td><strong>Novo</strong> <code>SeletorHorario</code> + util <code>ajustarHorario</code></td></tr>
+    <tr><td>Seletor de dias (D S T Q Q S S)</td><td>Só a constante <code>DIAS_SEMANA</code></td><td><strong>Novo</strong> <code>SeletorDias</code></td></tr>
+    <tr><td>Chips de seleção (tipo, horários sugeridos)</td><td><code>ChipHorario</code> não interativo</td><td><strong>Novo</strong> <code>ChipsSelecao</code> genérico</td></tr>
+    <tr><td>Seletor de cor</td><td>Não existe</td><td><strong>Novo</strong> <code>SeletorCor</code> + paleta <code>PaletaTipos</code> (AAA)</td></tr>
+    <tr><td>Templates para finalidades padrão</td><td>Não existe</td><td><strong>Novo</strong> tipo <code>ModeloLembrete</code> + mock + <code>SeletorModelo</code> + util <code>rascunhoDeModelo</code></td></tr>
+    <tr><td>27</td><td>Card colapsável com título, descrição e switch</td><td><code>Interruptor</code> existe. Configurações é um stub</td><td><strong>Novo</strong> <code>CartaoAjuste</code>, integrado em <code>configuracoes.tsx</code> com "Texto ampliado"</td></tr>
+    <tr><td rowspan="2">28</td><td>Diálogo com título, texto e dois botões grandes</td><td>Existe (<code>DialogoConfirmacao</code>)</td><td>Nova prop <code>varianteConfirmar</code> (perigo) + uso em <code>AcoesLembrete</code></td></tr>
+    <tr><td>Toast de sucesso ("Pronto! Seu lembrete foi salvo.")</td><td>Não existe</td><td><strong>Novo</strong> <code>AvisoSucesso</code> + hook <code>useAvisoTemporario</code> (não integrado, ver §13)</td></tr>
+  </tbody>
+</table>
+
+<h3>Fora do escopo (YAGNI / decisão 2)</h3>
+<ul>
+  <li>Tela de criar/editar lembrete. "Editar" continua levando a <code>/em-breve</code>. Os componentes de formulário do CARD-26 e o toast do CARD-28 ficam prontos para o cartão da tela de formulário.</li>
+  <li>Tela de detalhes de exercício. DETALHES leva a <code>/em-breve</code>, como já faz "Editar".</li>
+  <li>Botão "Desconectar" do relógio: a variante de perigo atende, mas não há tela de pareamento hoje.</li>
+  <li>Substituir o <code>OcorrenciaItem</code> da Home pelo novo <code>LembreteCard</code> (pendência §13-2).</li>
+  <li>Mudanças em stores, contratos Wear ou módulo nativo.</li>
+</ul>
+
+<hr>
+
+<h2 id="s2">2. Requisitos e Regras de Negócio (Casos de Borda)</h2>
+
+<h3>RF-01 — Botões (CARD-23)</h3>
+<ul>
+  <li><code>Botao</code> aceita <code>variante: 'primario' | 'secundario' | 'perigo'</code>. Perigo usa fundo e borda <code>danger</code> e texto <code>onPrimary</code>.</li>
+  <li>O rótulo é exibido como recebido (sem <code>textTransform</code>). "Ver", "SALVAR" e "COMEÇAR" vêm com a caixa definida por quem chama.</li>
+  <li><strong>Dado</strong> o detalhe de um lembrete, <strong>quando</strong> a pessoa vê o botão "Excluir", <strong>então</strong> ele aparece na variante perigo.</li>
+  <li>Os botões da <code>TopBar</code> (Voltar, Ajuda e Áudio) têm área tocável real de 56×56dp. O círculo visual de 31px é mantido, sem sobreposição de áreas entre botões vizinhos.</li>
+</ul>
+
+<h3>RF-02 — Cards (CARD-24)</h3>
+<ul>
+  <li><strong>ExercicioCard:</strong> mostra nome, descrição, sequência (streak), nível/duração (mantidos por conservadorismo, ver §13-3), "Última atividade" e os botões COMEÇAR/DETALHES.
+    <ul>
+      <li>Sem tentativas registradas: "Ainda não praticado".</li>
+      <li>Com tentativas: a mais recente por <code>dataHora</code> (não depende da ordem do array), descrita como "Última atividade: ontem às 09:15" (reusa <code>descreverDia</code> + <code>formatarHora</code>).</li>
+      <li>COMEÇAR mantém o comportamento atual (<code>registrarTentativa</code> simulada). Depois do toque, a "Última atividade" vira "hoje às HH:MM" de forma reativa.</li>
+    </ul>
+  </li>
+  <li><strong>LembreteCard:</strong> título, etiqueta do tipo (se houver), descrição curta (máx. 2 linhas), chips de horários, repetição (<code>descreverFrequencia</code>) e estado feito/pendente <em>em texto e ícone</em>, não só cor. Sem tipo ou sem descrição: as seções somem, sem espaço vazio.</li>
+  <li><strong>ItemLista:</strong> ícone (Material Symbol), título, subtítulo opcional e seta <code>chevron_right</code>. A linha inteira é um único alvo de toque.</li>
+</ul>
+
+<h3>RF-03 — Formulário de lembrete (CARD-26)</h3>
+<ul>
+  <li><strong>CampoTexto:</strong> rótulo visível acima do campo (nunca só placeholder), texto de ajuda opcional (WCAG 3.3.5) e mensagem de erro opcional com ícone e texto.</li>
+  <li><strong>SeletorHorario:</strong> valor <code>HH:mm</code>. As horas dão a volta (23→00, 00→23). Os minutos andam em passos de <code>passoMinutos</code> (padrão 5) e dão a volta sem mudar a hora. Exemplo: <code>08:55</code> + 5 min → <code>08:00</code>. Entrada fora do padrão <code>HH:mm</code> é normalizada para <code>00:00</code> pela util.</li>
+  <li><strong>SeletorDias:</strong> seleção múltipla sobre <code>DIAS_SEMANA</code>, letras D S T Q Q S S. O componente não bloqueia desmarcar o último dia: a validação "ao menos um dia" é do formulário futuro.</li>
+  <li><strong>ChipsSelecao:</strong> genérico (<code>multipla?: boolean</code>). Em seleção única, tocar no chip já selecionado não desmarca, evitando estado vazio acidental.</li>
+  <li><strong>SeletorCor:</strong> só oferece cores da <code>PaletaTipos</code>, todas com contraste ≥ 7:1 contra <code>Colors.text</code> (validado em teste). A seleção é indicada por ícone de check, além da cor.</li>
+  <li><strong>Modelos:</strong> <code>rascunhoDeModelo(modelo)</code> devolve um <code>CriarLembreteInput</code> novo (cópia dos arrays, imutável). O <code>tipoId</code> de um modelo só é usado se o tipo existir na store; senão fica <code>undefined</code> (tipos podem ser removidos, RN-04).</li>
+</ul>
+
+<h3>RF-04 — Collapsible de ajustes (CARD-27)</h3>
+<ul>
+  <li>Título e switch sempre visíveis. Tocar no título (ou na seta) expande ou recolhe a descrição. Tocar no switch alterna o ajuste <em>sem</em> expandir.</li>
+  <li>Começa recolhido. O estado de expansão é local (<code>useState</code>) e não persiste.</li>
+  <li>Integração: "Texto ampliado" ↔ <code>useSettingsStore.isLargeText</code> / <code>toggleLargeText</code>. O efeito é imediato em todo o app (já implementado no CARD-22).</li>
+</ul>
+
+<h3>RF-05 — Diálogo e Toast (CARD-28)</h3>
+<ul>
+  <li><code>DialogoConfirmacao</code> ganha a prop <code>varianteConfirmar?: 'primario' | 'perigo'</code> (padrão <code>'primario'</code>, retrocompatível). Os dois botões continuam com <code>minHeight: TouchTarget</code>.</li>
+  <li><code>AvisoSucesso</code>: mensagem + botão "Fechar". Fecha sozinho após <code>AVISO_DURACAO_MS = 6000</code>, <strong>exceto</strong> com leitor de tela ativo. Nesse caso só fecha pelo botão (WCAG 2.2.3).</li>
+  <li>Ao aparecer, a mensagem é anunciada (<code>AccessibilityInfo.announceForAccessibility</code> + <code>accessibilityLiveRegion="polite"</code>).</li>
+  <li>Se outro aviso chegar com o atual visível, o novo substitui a mensagem e o timer reinicia.</li>
+  <li>Ao desmontar, o timer é limpo (sem <code>setState</code> em componente desmontado).</li>
+</ul>
+
+<hr>
+
+<h2 id="s3">3. Estrutura de Arquivos e Componentes</h2>
+<table>
+  <thead><tr><th>Ação</th><th>Arquivo</th><th>Cartão</th></tr></thead>
+  <tbody>
+    <tr><td>Modificar</td><td><code>MobileAPP/src/constants/theme.ts</code> — <code>Colors.danger</code>, cores da paleta, <code>PaletaTipos</code>, <code>ComponentSize.horarioDigitos</code></td><td>23, 26</td></tr>
+    <tr><td>Modificar</td><td><code>MobileAPP/src/components/botao.tsx</code> — variante <code>perigo</code></td><td>23</td></tr>
+    <tr><td>Modificar</td><td><code>MobileAPP/src/components/app-bar/top-bar.tsx</code> — área 56dp</td><td>23</td></tr>
+    <tr><td>Modificar</td><td><code>MobileAPP/src/components/lembrete/acoes-lembrete.tsx</code> — Excluir/confirmar em perigo</td><td>23, 28</td></tr>
+    <tr><td>Modificar</td><td><code>MobileAPP/src/components/dialogo-confirmacao.tsx</code> — <code>varianteConfirmar</code></td><td>28</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/cards/exercicio-card.tsx</code></td><td>24</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/cards/lembrete-card.tsx</code></td><td>24</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/item-lista.tsx</code></td><td>24</td></tr>
+    <tr><td>Modificar</td><td><code>MobileAPP/src/app/(tabs)/exercicios.tsx</code> — usa <code>ExercicioCard</code> e <code>Botao</code> (remove Pressables inline e <code>formatarNivel</code> local)</td><td>23, 24</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/formulario/campo-texto.tsx</code></td><td>26</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/formulario/seletor-horario.tsx</code></td><td>26</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/formulario/seletor-dias.tsx</code></td><td>26</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/formulario/chips-selecao.tsx</code></td><td>26</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/formulario/seletor-cor.tsx</code></td><td>26</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/formulario/seletor-modelo.tsx</code> (lista de <code>ItemLista</code>)</td><td>26</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/types/modelo-lembrete.ts</code></td><td>26</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/mocks/modelos-lembrete.mock.ts</code> (modelos + <code>horariosSugeridosMock</code>)</td><td>26</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/utils/horario.ts</code> — <code>ajustarHorario</code></td><td>26</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/utils/modelo-lembrete.ts</code> — <code>rascunhoDeModelo</code></td><td>26</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/utils/exercicio.ts</code> — <code>ultimaTentativa</code>, <code>descreverUltimaAtividade</code>, <code>formatarNivel</code> (movido da tela)</td><td>24</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/cartao-ajuste.tsx</code></td><td>27</td></tr>
+    <tr><td>Modificar</td><td><code>MobileAPP/src/app/(tabs)/configuracoes.tsx</code> — "Texto ampliado"</td><td>27</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/components/aviso-sucesso.tsx</code></td><td>28</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/hooks/use-aviso-temporario.ts</code></td><td>28</td></tr>
+    <tr><td>Criar</td><td><code>MobileAPP/src/utils/__tests__/kit-componentes.test.ts</code></td><td>todos</td></tr>
+  </tbody>
+</table>
+<p><strong>Ordem de implementação (dependências):</strong> tokens (<code>theme.ts</code>) → CARD-23 (<code>Botao</code>/<code>TopBar</code>) → CARD-28 (diálogo usa perigo; toast) → CARD-24 (<code>ItemLista</code>, cards) → CARD-26 (formulário; <code>SeletorModelo</code> usa <code>ItemLista</code>) → CARD-27.</p>
+<p><strong>Commits sugeridos:</strong> <code>style(theme): adicionar token danger e paleta de tipos aaa</code> · <code>feat(botoes): adicionar variante perigo e area de toque 56dp na top-bar (CARD-23)</code> · <code>feat(dialogo): variante de confirmacao e aviso de sucesso (CARD-28)</code> · <code>feat(cards): criar cards de exercicio, lembrete e item de lista (CARD-24)</code> · <code>feat(formulario): criar campos e modelos de lembrete (CARD-26)</code> · <code>feat(configuracoes): cartao de ajuste colapsavel (CARD-27)</code>.</p>
+
+<hr>
+
+<h2 id="s4">4. Modelagem de Dados e Tipos TypeScript (src/types/)</h2>
+<p>Contratos existentes (<code>Lembrete</code>, <code>CriarLembreteInput</code>, <code>TipoLembrete</code>, <code>Exercicio</code>, <code>TentativaExercicio</code>, <code>UserSettings</code>) <strong>não mudam</strong>. Só há um tipo novo:</p>
+<pre><code class="language-typescript">// src/types/modelo-lembrete.ts
+import type { AndroidSymbol } from 'expo-symbols';
+
+import type { DiaSemana } from '@/types/lembrete';
+
+/** Modelo pré-definido que pré-preenche o rascunho de um lembrete (ex.: "Tomar remédio"). */
+export interface ModeloLembrete {
+  /** Identificador único do modelo. */
+  id: string;
+  /** Nome exibido na lista de modelos. */
+  nome: string;
+  /** Material Symbol (Android) exibido no item da lista. */
+  icone: AndroidSymbol;
+  /** Título sugerido para o lembrete. */
+  titulo: string;
+  /** Tipo sugerido; ignorado se não existir mais na store. */
+  tipoId?: string;
+  /** Horários sugeridos (HH:mm, ordem crescente). */
+  horarios: string[];
+  /** Dias sugeridos. */
+  dias: DiaSemana[];
+  /** Descrição sugerida. */
+  descricao?: string;
+}</code></pre>
+<p>Props-chave dos componentes (todos com props enxutas, sem <code>any</code>):</p>
+<pre><code class="language-typescript">type BotaoVariante = 'primario' | 'secundario' | 'perigo';
+
+type ExercicioCardProps = {
+  exercicio: Exercicio;
+  ultimaAtividade: string;          // texto já descrito pela util
+  onComecar: () =&gt; void;
+  onDetalhes: () =&gt; void;
+};
+
+type LembreteCardProps = {
+  lembrete: Lembrete;
+  tipo?: TipoLembrete;
+  feito?: boolean;
+  onAlternarFeito?: () =&gt; void;
+  onAbrir: () =&gt; void;
+};
+
+type ItemListaProps = { icone: AndroidSymbol; titulo: string; subtitulo?: string; onPress: () =&gt; void; accessibilityHint?: string };
+
+type CampoTextoProps = Omit&lt;TextInputProps, 'style' | 'value' | 'onChangeText'&gt; &amp; {
+  rotulo: string; valor: string; onAlterar: (texto: string) =&gt; void; ajuda?: string; erro?: string;
+};
+
+type SeletorHorarioProps = { rotulo: string; valor: string; onAlterar: (horario: string) =&gt; void; passoMinutos?: number };
+type SeletorDiasProps = { selecionados: DiaSemana[]; onAlterar: (dias: DiaSemana[]) =&gt; void };
+type OpcaoChip&lt;T extends string&gt; = { valor: T; rotulo: string };
+type ChipsSelecaoProps&lt;T extends string&gt; = {
+  rotulo: string; opcoes: OpcaoChip&lt;T&gt;[]; selecionados: T[]; onAlterar: (valores: T[]) =&gt; void; multipla?: boolean;
+};
+type SeletorCorProps = { rotulo: string; valor: string; onAlterar: (corHex: string) =&gt; void };
+type SeletorModeloProps = { modelos: ModeloLembrete[]; onEscolher: (modelo: ModeloLembrete) =&gt; void };
+
+type CartaoAjusteProps = { titulo: string; descricao: string; ligado: boolean; onAlternar: () =&gt; void };
+
+type DialogoConfirmacaoProps = { /* props atuais */ varianteConfirmar?: 'primario' | 'perigo' };
+type AvisoSucessoProps = { mensagem: string | null; onFechar: () =&gt; void };</code></pre>
+
+<hr>
+
+<h2 id="s5">5. Gerenciamento de Estado no Zustand e Mocks</h2>
+<h3>Stores — nenhuma store nova ou alterada</h3>
+<ul>
+  <li><strong>Exercícios:</strong> a tela lê <code>exercicios</code> e <code>historico</code> de <code>useExerciciosStore</code> via <code>useShallow</code>. A última atividade é derivada por função pura (<code>utils/exercicio.ts</code>), seguindo o padrão de <code>stores/agenda-lembretes.ts</code>, sem duplicar estado.</li>
+  <li><strong>Configurações:</strong> seletores atômicos <code>useSettingsStore((s) =&gt; s.isLargeText)</code> e <code>useSettingsStore((s) =&gt; s.toggleLargeText)</code>.</li>
+  <li><strong>Toast:</strong> estado local via <code>useAvisoTemporario()</code> → <code>{ mensagem, mostrar(texto), fechar() }</code>. Não há store global de toast enquanto não houver dois consumidores (YAGNI). Ver §13-5.</li>
+  <li><strong>Expansão do collapsible e valores dos campos:</strong> estado local (<code>useState</code>) de quem usa o componente.</li>
+</ul>
+
+<h3>Funções puras novas</h3>
+<pre><code class="language-typescript">// utils/horario.ts
+/** Soma `delta` passos à hora ou ao minuto de um horário HH:mm, com volta (wrap) sem afetar o outro campo. */
+export const ajustarHorario = (horario: string, campo: 'hora' | 'minuto', delta: number, passoMinutos = 5): string;
+
+// utils/exercicio.ts
+export const ultimaTentativa = (historico: TentativaExercicio[], exercicioId: string): TentativaExercicio | undefined;
+/** "Ainda não praticado" | "Última atividade: ontem às 09:15" (reusa descreverDia + formatarHora). */
+export const descreverUltimaAtividade = (tentativa: TentativaExercicio | undefined, agora: Date): string;
+export const formatarNivel = (nivel: NivelExercicio): string;
+
+// utils/modelo-lembrete.ts
+export const rascunhoDeModelo = (modelo: ModeloLembrete, tiposExistentes: TipoLembrete[]): CriarLembreteInput;</code></pre>
+
+<h3>Mocks — <code>src/mocks/modelos-lembrete.mock.ts</code></h3>
+<table>
+  <thead><tr><th>Modelo</th><th>Ícone</th><th>Tipo</th><th>Horários</th><th>Dias</th></tr></thead>
+  <tbody>
+    <tr><td>Tomar remédio</td><td><code>medication</code></td><td><code>tipo-saude</code></td><td>08:00, 20:00</td><td>Todos</td></tr>
+    <tr><td>Beber água</td><td><code>water_drop</code></td><td><code>tipo-saude</code></td><td>09:00, 12:00, 15:00, 18:00</td><td>Todos</td></tr>
+    <tr><td>Fazer exercício</td><td><code>directions_walk</code></td><td><code>tipo-saude</code></td><td>08:00</td><td>Seg, Qua, Sex</td></tr>
+    <tr><td>Lavar roupa</td><td><code>local_laundry_service</code></td><td><code>tipo-tarefas-domesticas</code></td><td>10:00</td><td>Sáb</td></tr>
+    <tr><td><em>Borda:</em> Consulta médica de acompanhamento cardiológico</td><td><code>event</code></td><td><code>tipo-removido</code> (inexistente)</td><td>14:30</td><td>Ter</td></tr>
+  </tbody>
+</table>
+<p><code>horariosSugeridosMock = ['08:00', '12:00', '18:00', '21:00']</code>. O modelo de borda testa título longo (quebra em 2 linhas) e <code>tipoId</code> inexistente → <code>undefined</code>.</p>
+
+<hr>
+
+<h2 id="s6">6. Front-end — Componentes, Telas Expo Router e 5 Estados Visuais</h2>
+
+<h3>6.1 Tokens (<code>theme.ts</code>)</h3>
+<pre><code class="language-typescript">export const Colors = {
+  // ...existentes
+  /** Ações destrutivas (Excluir, Desconectar). Branco sobre danger: 7,87:1 (AAA). */
+  danger: '#A50E0E',
+  tagAzul: '#9FD3F5',      // preto sobre: ~13:1
+  tagLilas: '#CDB8F5',     // preto sobre: ~11,6:1
+  tagLaranja: '#FFB870',   // preto sobre: ~12,3:1
+} as const;
+
+/** Cores oferecidas no seletor de cor de tipos. Todas com contraste ≥ 7:1 contra Colors.text. */
+export const PaletaTipos = [
+  { nome: 'Vermelho', corHex: Colors.tagSaude },
+  { nome: 'Verde', corHex: Colors.tag },
+  { nome: 'Amarelo', corHex: Colors.accent },
+  { nome: 'Azul', corHex: Colors.tagAzul },
+  { nome: 'Lilás', corHex: Colors.tagLilas },
+  { nome: 'Laranja', corHex: Colors.tagLaranja },
+] as const;</code></pre>
+<p>A paleta é provisória até a confirmação do Figma (§13-4). A área de toque da <code>TopBar</code> passa a usar <code>TouchTarget</code> no lugar de <code>topBarHitSlop</code>. Se o token deixar de ter uso, ele é removido.</p>
+
+<h3>6.2 Componentes</h3>
+<ul>
+  <li><strong>Botao:</strong> mapa <code>variante → { fundo, borda, texto }</code> para evitar ternários encadeados (KISS).</li>
+  <li><strong>TopBar:</strong> cada ação vira um <code>Pressable</code> de 56×56 transparente com o círculo de 31px dentro (mesmo padrão de <code>MarcadorFeito</code>: área 56, visual 44). O grupo perde o padding interno para que o contorno abrace os alvos sem que as áreas se sobreponham (hitSlop sobreposto com gap de 9px causaria toques ambíguos). Voltar recebe a mesma área 56. Diferença visual pequena a validar com o protótipo.</li>
+  <li><strong>ExercicioCard:</strong> <code>Card</code> + <code>ThemedText</code> + dois <code>Botao</code> em linha (<code>flex: 1</code>, gap <code>Spacing.two</code>): COMEÇAR (primário) e DETALHES (secundário).</li>
+  <li><strong>LembreteCard:</strong> reusa <code>EtiquetaTipo</code>, <code>ChipHorario</code>, <code>MarcadorFeito</code>, <code>TextoRiscado</code> e <code>descreverFrequencia</code>. A área principal é um <code>Pressable</code> (abre o lembrete). O marcador é um alvo separado.</li>
+  <li><strong>ItemLista:</strong> <code>Pressable</code> com <code>minHeight: TouchTarget</code>, <code>SymbolView</code> à esquerda e <code>chevron_right</code> em <code>textSecondary</code> à direita.</li>
+  <li><strong>CampoTexto:</strong> <code>TextInput</code> com <code>minHeight: TouchTarget</code>, borda <code>border</code> (muda para <code>primary</code> com <code>BorderWidth.thick</code> no foco), tipografia via <code>getScaledTypography('default', isLargeText)</code> para respeitar o Texto Ampliado. O placeholder pode usar <code>textMuted</code> (isento). Ajuda e erro em <code>textSecondary</code>/<code>danger</code> com ícone.</li>
+  <li><strong>SeletorHorario:</strong> duas colunas (hora | minuto) com dígitos em <code>Typography.display</code>, botão + acima e − abaixo (<code>BotaoIcone</code>/56dp).</li>
+  <li><strong>SeletorDias:</strong> 7 toggles em linha com <code>flex: 1</code>, <code>minHeight: TouchTarget</code>, largura mínima de 44dp e quebra de linha automática (<code>flexWrap</code>) se a largura não couber. Ver §13-1.</li>
+  <li><strong>ChipsSelecao:</strong> chips com <code>minHeight: TouchTarget</code>, <code>Radius.full</code>, selecionado com fundo <code>chipSelected</code> + borda <code>primary</code> + ícone <code>check</code>.</li>
+  <li><strong>SeletorCor:</strong> círculos de 56dp com a cor, borda <code>border</code>. O selecionado tem borda <code>primary</code> grossa + ícone <code>check</code> em <code>corDeTextoLegivel</code>.</li>
+  <li><strong>SeletorModelo:</strong> lista de <code>ItemLista</code> (subtítulo = horários · frequência).</li>
+  <li><strong>CartaoAjuste:</strong> <code>Card</code> com uma linha [Pressable (título + <code>expand_more</code>/<code>expand_less</code>, flex 1) | <code>Interruptor</code>] e a descrição renderizada quando expandido.</li>
+  <li><strong>DialogoConfirmacao:</strong> repassa <code>varianteConfirmar</code> ao <code>Botao</code> de confirmar.</li>
+  <li><strong>AvisoSucesso:</strong> <code>Card</code> com ícone <code>check_circle</code>, mensagem e <code>Botao</code> compacto secundário "Fechar". Retorna <code>null</code> quando <code>mensagem</code> é <code>null</code>.</li>
+</ul>
+
+<h3>6.3 Telas alteradas (sem rotas novas)</h3>
+<ul>
+  <li><code>(tabs)/exercicios.tsx</code>: <code>renderItem</code> → <code>ExercicioCard</code>. DETALHES → <code>router.push({ pathname: '/em-breve', params: { titulo: 'Detalhes do exercício' } })</code>. "Restaurar Exercícios" do estado vazio → <code>Botao</code>. O <code>formatarNivel</code> local vai para <code>utils/exercicio.ts</code>. O agora vem do hook <code>useAgora</code> existente.</li>
+  <li><code>(tabs)/configuracoes.tsx</code>: "Em breve." → <code>CartaoAjuste</code> "Texto ampliado". Descrição: "Aumenta em 20% o tamanho de todos os textos do Lembri."</li>
+  <li><code>lembrete/[id].tsx</code> (via <code>AcoesLembrete</code>): Excluir e confirmar em perigo.</li>
+</ul>
+
+<h3>6.4 Os 5 estados visuais</h3>
+<table>
+  <thead><tr><th>Estado</th><th>Tratamento</th></tr></thead>
+  <tbody>
+    <tr><td>Ideal</td><td>Cards e campos renderizados com dados das stores/mocks.</td></tr>
+    <tr><td>Carregando</td><td>N/A: as stores são síncronas e não há latência simulada nesta entrega.</td></tr>
+    <tr><td>Vazio</td><td>Exercícios: estado vazio atual mantido, agora com <code>Botao</code>. Exercício sem histórico: "Ainda não praticado". <code>SeletorModelo</code> com lista vazia: não renderiza nada (quem usa decide a mensagem).</td></tr>
+    <tr><td>Erro</td><td><code>CampoTexto</code> com prop <code>erro</code>: texto + ícone + <code>accessibilityHint</code> com o erro. Nos demais componentes não há fonte de erro.</td></tr>
+    <tr><td>Parcial</td><td>N/A: nenhum fluxo novo envia dados ao relógio.</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s7">7. Acessibilidade Mobile (WCAG 2.2 Nível AAA)</h2>
+<ul class="check">
+  <li><input type="checkbox"> <strong>Contraste (1.4.6):</strong> branco/danger 7,87:1. Paleta de tipos ≥ 7:1 com texto preto (teste automatizado). Ajuda e erro sem <code>textMuted</code>.</li>
+  <li><input type="checkbox"> <strong>Alvo de toque (2.5.5):</strong> todos os novos interativos com 56dp (<code>TouchTarget</code>). TopBar sem hitSlops sobrepostos. Exceção possível: <code>SeletorDias</code> com 44dp de largura mínima (§13-1).</li>
+  <li><input type="checkbox"> <strong>Rótulos autônomos (2.4.9):</strong> <code>"Começar exercício Sequências"</code>, <code>"Ver detalhes do exercício Sequências"</code>, <code>"Excluir lembrete Tomar remédio"</code>, <code>"Mostrar explicação de Texto ampliado"</code>, <code>"Fechar aviso: Pronto! Seu lembrete foi salvo."</code>.</li>
+  <li><input type="checkbox"> <strong>Papéis e estados:</strong> SeletorDias/Chips → <code>accessibilityRole="checkbox"</code> + <code>accessibilityState.checked</code> e rótulo por extenso ("Segunda-feira"). Chips de seleção única → <code>"radio"</code> + <code>selected</code>. SeletorCor → <code>"radio"</code> com nome da cor. CartaoAjuste → título com <code>accessibilityState.expanded</code> e switch com <code>checked</code>.</li>
+  <li><input type="checkbox"> <strong>SeletorHorario:</strong> hora e minuto com <code>accessibilityRole="adjustable"</code>, <code>accessibilityValue={{ text: '8 horas' }}</code> e <code>accessibilityActions</code> <code>increment</code>/<code>decrement</code> (gesto de deslizar no TalkBack), além dos botões +/−.</li>
+  <li><input type="checkbox"> <strong>Prevenção de erros (3.3.6):</strong> exclusão continua com confirmação + desfazer na Home. Agora o botão de confirmação usa perigo.</li>
+  <li><input type="checkbox"> <strong>Sem limite de tempo (2.2.3):</strong> o toast tem botão "Fechar", fica aberto enquanto o leitor de tela está ativo e só informa, sem carregar ação essencial.</li>
+  <li><input type="checkbox"> <strong>Mensagens de status (4.1.3):</strong> toast anunciado com <code>announceForAccessibility</code> + <code>accessibilityLiveRegion="polite"</code>.</li>
+  <li><input type="checkbox"> <strong>Apresentação (1.4.8):</strong> textos à esquerda e <code>lineHeight</code> ≥ 1,5 via <code>ThemedText</code>/<code>getScaledTypography</code>. Layouts testados com Texto Ampliado (1,2×).</li>
+  <li><input type="checkbox"> <strong>Status sem depender de cor (1.4.1):</strong> feito/pendente com texto + check. Cor e chip selecionados com ícone check.</li>
+</ul>
+
+<hr>
+
+<h2 id="s8">8. Integração com Wearable</h2>
+<blockquote><strong>Não aplicável.</strong> Nenhum contrato (<code>contrato.ts</code>), serviço (<code>wear-service.ts</code>) ou módulo nativo é alterado. Os componentes de formulário não disparam envio ao relógio nesta entrega.</blockquote>
+
+<hr>
+
+<h2 id="s9">9. Casos de Teste e Verificação no Emulador</h2>
+<h3>9.1 Testes automatizados — <code>src/utils/__tests__/kit-componentes.test.ts</code></h3>
+<p>Seguem o padrão de asserções leves de <code>stores/__tests__/stores.test.ts</code> (sem dependência de runner).</p>
+<table>
+  <thead><tr><th>ID</th><th>Cenário</th><th>Esperado</th></tr></thead>
+  <tbody>
+    <tr><td>T01</td><td><code>razaoDeContraste(Colors.onPrimary, Colors.danger)</code></td><td>≥ 7</td></tr>
+    <tr><td>T02</td><td>Toda cor de <code>PaletaTipos</code> contra <code>Colors.text</code></td><td>≥ 7</td></tr>
+    <tr><td>T03</td><td><code>ajustarHorario('23:00','hora',1)</code> / <code>('00:00','hora',-1)</code></td><td><code>00:00</code> / <code>23:00</code></td></tr>
+    <tr><td>T04</td><td><code>ajustarHorario('08:55','minuto',1)</code> / <code>('08:00','minuto',-1)</code></td><td><code>08:00</code> / <code>08:55</code> (hora intacta)</td></tr>
+    <tr><td>T05</td><td><code>ajustarHorario('abc','hora',1)</code></td><td><code>01:00</code> (normaliza a partir de 00:00)</td></tr>
+    <tr><td>T06</td><td><code>ultimaTentativa</code> com histórico fora de ordem</td><td>Retorna a de maior <code>dataHora</code></td></tr>
+    <tr><td>T07</td><td><code>descreverUltimaAtividade(undefined, agora)</code></td><td>"Ainda não praticado"</td></tr>
+    <tr><td>T08</td><td><code>descreverUltimaAtividade</code> com tentativa de ontem às 09:15 (hora local)</td><td>"Última atividade: ontem às 09:15"</td></tr>
+    <tr><td>T09</td><td><code>rascunhoDeModelo</code> com tipo inexistente</td><td><code>tipoId === undefined</code></td></tr>
+    <tr><td>T10</td><td><code>rascunhoDeModelo</code> e depois mutar o rascunho</td><td>Mock original intacto (imutabilidade)</td></tr>
+  </tbody>
+</table>
+
+<h3>9.2 Roteiro manual no emulador Android (Expo dev-client)</h3>
+<ol>
+  <li><strong>Exercícios:</strong> cada card mostra a última atividade dos mocks. Toque em COMEÇAR → muda para "hoje às HH:MM" e o streak aumenta. DETALHES → tela "Em breve".</li>
+  <li><strong>Exercícios vazio:</strong> zere a store (dev) → aparece o estado vazio. "Restaurar Exercícios" funciona.</li>
+  <li><strong>Detalhe do lembrete:</strong> Excluir aparece em vermelho → o diálogo mostra "Excluir" em vermelho → confirmar volta à Home com o aviso de desfazer.</li>
+  <li><strong>TopBar:</strong> com "Mostrar limites de layout" (Opções do desenvolvedor), confirme alvos de 56dp em Voltar, Ajuda e Áudio sem sobreposição.</li>
+  <li><strong>Configurações:</strong> o switch "Texto ampliado" muda o tamanho dos textos do app na hora. Tocar no título expande a descrição sem alternar o switch.</li>
+  <li><strong>Componentes não integrados</strong> (formulário, <code>LembreteCard</code>, <code>AvisoSucesso</code>): validar temporariamente numa rota local de desenvolvimento <em>não commitada</em>, ou na revisão (<code>/testar</code>).</li>
+  <li><strong>TalkBack:</strong> percorrer Exercícios e Configurações e confirmar os rótulos de §7, a ação ajustável do seletor de horário e o anúncio do toast.</li>
+  <li><strong>Texto Ampliado ligado:</strong> repetir 1–5 e conferir que botões, cards e seletor de dias não cortam texto.</li>
+</ol>
+
+<hr>
+
+<h2 id="s10">10. Checklist Pré-PR</h2>
+<ul class="check">
+  <li><input type="checkbox"> Branch <code>feat/kit-de-componentes</code> (base <code>origin/main</code> + CARD-22) — destino do PR confirmado (§13-6)</li>
+  <li><input type="checkbox"> Commits no formato Conventional Commits, um por cartão (§3)</li>
+  <li><input type="checkbox"> Tipagem estrita TypeScript (zero <code>any</code>) e sem <code>console.log</code></li>
+  <li><input type="checkbox"> Nenhuma store alterada. Derivações em funções puras</li>
+  <li><input type="checkbox"> Nenhuma cor ou dimensão literal nova fora de <code>theme.ts</code></li>
+  <li><input type="checkbox"> <code>npx tsc --noEmit</code>, <code>npx expo lint</code> e <code>node docs/scripts/lembri-check.mjs</code> sem erros</li>
+  <li><input type="checkbox"> Testes T01–T10 passando</li>
+  <li><input type="checkbox"> WCAG 2.2 AAA (§7) verificado com TalkBack e Texto Ampliado</li>
+  <li><input type="checkbox"> Pendências do §13 respondidas ou registradas no PR</li>
+</ul>
+
+<hr>
+
+<h2 id="s11">11. Atualização da Documentação do Módulo</h2>
+<blockquote>Esta tarefa <strong>impacta</strong> a documentação: atualizar <code>docs/modulos/LEMBRETES.html</code> (variante perigo, diálogo, componentes de formulário e modelos) via <code>/documentar-modulo LEMBRETES</code>. Exercícios e Configurações ainda não têm documento de módulo. A criação fica a critério do desenvolvedor.</blockquote>
+
+<hr>
+
+<h2 id="s12">12. Princípios de Desenvolvimento e Restrições</h2>
+<ol>
+  <li><strong>Padrões do Projeto:</strong> evolui <code>Botao</code>/<code>DialogoConfirmacao</code> existentes em vez de criar paralelos. Componentes em <code>src/components/</code>, derivações em <code>src/utils/</code> e tokens em <code>theme.ts</code>.</li>
+  <li><strong>Escopo de Impacto:</strong> estado local para expansão, campos e toast. Stores existentes só para leitura e ações já existentes.</li>
+  <li><strong>Compatibilidade de Contratos:</strong> props novas opcionais com padrão retrocompatível (<code>variante</code>, <code>varianteConfirmar</code>). Nenhum tipo de domínio alterado.</li>
+  <li><strong>Imutabilidade:</strong> <code>rascunhoDeModelo</code> copia arrays. Seletores devolvem novos arrays.</li>
+  <li><strong>YAGNI:</strong> sem tela de formulário, sem store de toast, sem dependência de date picker.</li>
+  <li><strong>DRY:</strong> <code>ItemLista</code> reusado pelo <code>SeletorModelo</code>. <code>descreverDia</code>/<code>formatarHora</code>/<code>descreverFrequencia</code> reusados. <code>formatarNivel</code> sai da tela.</li>
+  <li><strong>SOLID / KISS:</strong> componentes apresentacionais com callbacks. Regra de horário e última atividade testáveis sem montar tela.</li>
+  <li><strong>Acessibilidade Inegociável:</strong> WCAG 2.2 AAA, TouchTarget 56dp e contraste 7:1.</li>
+</ol>
+
+<hr>
+
+<h2 id="s13">13. Pendências Registradas (decisões conservadoras)</h2>
+<div class="notice-block">Estes pontos não bloqueiam o início da implementação. Cada um segue a alternativa mais conservadora até a resposta do desenvolvedor.</div>
+<ol>
+  <li><strong>SeletorDias × 56dp:</strong> 7 alvos de 56dp + espaçamento 8dp precisam de ~440dp, mas a largura útil em telas de 360dp é ~312dp. <em>Conservador:</em> uma linha com <code>flex: 1</code>, largura mínima de 44dp (mínimo AAA), altura 56dp e quebra automática. Alternativas: duas linhas (4 + 3) com 56dp, ou aceitar 44dp de largura.</li>
+  <li><strong>LembreteCard × OcorrenciaItem:</strong> o novo card fica sem uso na Home para não mudar a agenda. Confirmar se ele deve substituir o <code>OcorrenciaItem</code> ou ficar para uma futura listagem de lembretes.</li>
+  <li><strong>ExercicioCard:</strong> o cartão lista "nome, última atividade, botões". <em>Conservador:</em> manter descrição, streak, nível e duração atuais. Confirmar se devem sair para seguir o protótipo.</li>
+  <li><strong>Paleta do SeletorCor:</strong> as cores Azul, Lilás e Laranja são propostas (todas AAA). Substituir pelas do Figma, se houver.</li>
+  <li><strong>Toast e formulário sem consumidor:</strong> <code>AvisoSucesso</code> e os campos do CARD-26 ficam prontos, mas só serão integrados no cartão da tela de criar/editar lembrete (decisão 2: sem telas novas).</li>
+  <li><strong>Destino do PR:</strong> com a <code>develop</code> desatualizada, confirmar se o PR vai para <code>main</code> ou se a <code>develop</code> será recriada a partir da <code>main</code> antes.</li>
+</ol>
+
+</body>
+</html>

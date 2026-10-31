@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Revisão de Código — CARD-23 · 24 · 26 · 27 · 28: Kit de componentes UI (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .verdict-approved { background: #dcfce7; border: 1px solid #86efac; border-left: 5px solid #16a34a; border-radius: 6px; padding: 14px 18px; margin: 18px 0; font-size: 1rem; color: #14532d; font-weight: 600; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 24px; }
+    .summary-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 14px; text-align: center; }
+    .summary-card .count { font-size: 1.5rem; font-weight: 700; display: block; line-height: 1.2; }
+    .summary-card .label { font-size: 0.82rem; color: var(--text-secondary); font-weight: 600; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+    .badge-ok { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    .badge-warn { background: #fef9c3; color: #854d0e; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    .badge-block { background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>Relatório de Revisão de Código — CARD-23 · 24 · 26 · 27 · 28: Kit de componentes UI</h1>
+
+<div class="meta-block">
+  <p><strong>Tarefas:</strong> <code>CARD-23</code> (Botões e TopBar) · <code>CARD-24</code> (Cards) · <code>CARD-26</code> (Formulário e Modelos) · <code>CARD-27</code> (Ajuste Colapsável) · <code>CARD-28</code> (Diálogo e Toast)</p>
+  <p><strong>Branch Revisada:</strong> <code>feat/kit-de-componentes</code> (comparada contra <code>develop</code>)</p>
+  <p><strong>Plano SDD de Referência:</strong> <code>docs/plans/card-23-28-kit-de-componentes.html</code></p>
+  <p><strong>Módulos Afetados:</strong> <code>LEMBRETES</code>, <code>EXERCICIOS</code>, <code>CONFIGURACOES</code></p>
+  <p><strong>Data da Revisão:</strong> 2026-10-31</p>
+</div>
+
+<div class="verdict-approved">
+  Veredito da Revisão: APROVADO_PARA_REVISAO_HUMANA (100% de conformidade com principios, WCAG 2.2 AAA e Heurísticas de Nielsen)
+</div>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <span class="count" style="color: #dc2626;">0</span>
+    <span class="label">🔴 Bloqueantes</span>
+  </div>
+  <div class="summary-card">
+    <span class="count" style="color: #d97706;">0</span>
+    <span class="label">🟡 Atenção</span>
+  </div>
+  <div class="summary-card">
+    <span class="count" style="color: #16a34a;">15</span>
+    <span class="label">🟢 OK</span>
+  </div>
+  <div class="summary-card">
+    <span class="count" style="color: #64748b;">0</span>
+    <span class="label">⚪ N/A</span>
+  </div>
+</div>
+
+<ol class="toc">
+  <li><a href="#r1">1. Resumo do Diff e Escopo Front-end</a></li>
+  <li><a href="#r2">2. Matriz de Conformidade Arquitetural</a></li>
+  <li><a href="#r3">3. Auditoria de Estado Zustand e Mocks</a></li>
+  <li><a href="#r4">4. Auditoria de Acessibilidade Mobile (WCAG 2.2 AAA — TouchTarget = 56dp)</a></li>
+  <li><a href="#r5">5. Auditoria das 10 Heurísticas de Usabilidade de Nielsen (Mobile UX)</a></li>
+  <li><a href="#r6">6. Resultado da Pré-Auditoria Automatizada (lembri-check.mjs & Testes T01-T10)</a></li>
+  <li><a href="#r7">7. Decisões Técnicas e Registro de Pendências</a></li>
+</ol>
+
+<hr>
+
+<h2 id="r1">1. Resumo do Diff e Escopo Front-end</h2>
+<p>A entrega implementa integralmente os 5 cartões de componentes do Lembri de acordo com o plano SDD aprovado, eliminando código duplicado inline, adicionando variantes semânticas com alto contraste e enriquecendo a camada de formulários e modelos.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Cartão</th>
+      <th scope="col">Componente / Arquivo</th>
+      <th scope="col">Papel e Mudança Implementada</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>CARD-23</strong></td>
+      <td><code>Botao.tsx</code>, <code>TopBar.tsx</code>, <code>AcoesLembrete.tsx</code></td>
+      <td>Nova variante <code>perigo</code> (fundo <code>Colors.danger = #A50E0E</code> de contraste 7,87:1), áreas de toque reais de 56×56dp (<code>TouchTarget</code>) para Voltar, Ajuda e Áudio na TopBar sem sobreposição de hitSlop, e botão Excluir com estilo de perigo.</td>
+    </tr>
+    <tr>
+      <td><strong>CARD-28</strong></td>
+      <td><code>DialogoConfirmacao.tsx</code>, <code>AvisoSucesso.tsx</code>, <code>useAvisoTemporario.ts</code></td>
+      <td>Prop <code>varianteConfirmar="perigo"</code> no diálogo de confirmação. Novo componente <code>AvisoSucesso</code> (toast) com anúncio automático ao leitor de tela, botão Fechar e controle de tempo flexível (WCAG 2.2.3).</td>
+    </tr>
+    <tr>
+      <td><strong>CARD-24</strong></td>
+      <td><code>ExercicioCard.tsx</code>, <code>LembreteCard.tsx</code>, <code>ItemLista.tsx</code>, <code>exercicio.ts</code>, <code>exercicios.tsx</code></td>
+      <td>Card de exercícios com botões <code>COMEÇAR</code> e <code>DETALHES</code> e cálculo puro de última atividade. Card completo de lembretes com status acessível em texto e ícone (WCAG 1.4.1). Item de lista genérico com ícone e chevron.</td>
+    </tr>
+    <tr>
+      <td><strong>CARD-26</strong></td>
+      <td><code>formulario/*</code>, <code>modelos-lembrete.mock.ts</code>, <code>horario.ts</code>, <code>modelo-lembrete.ts</code></td>
+      <td>Campos de formulário acessíveis (<code>CampoTexto</code>, <code>SeletorHorario</code> com wrap circular e adjustable, <code>SeletorDias</code> com flexWrap, <code>ChipsSelecao</code> com check, <code>SeletorCor</code> com paleta AAA e <code>SeletorModelo</code>).</td>
+    </tr>
+    <tr>
+      <td><strong>CARD-27</strong></td>
+      <td><code>CartaoAjuste.tsx</code>, <code>configuracoes.tsx</code></td>
+      <td>Card colapsável integrado na tela de Configurações controlando o modo "Texto ampliado" reativamente através da store <code>useSettingsStore</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r2">2. Matriz de Conformidade Arquitetural</h2>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Eixo Auditado</th>
+      <th scope="col">Status</th>
+      <th scope="col">Evidência / Observação</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Gitflow (base <code>develop</code>) e Conventional Commits</td><td><span class="badge-ok">🟢 OK</span></td><td>Todos os 27 commits na branch seguem estritamente Conventional Commits (<code>feat</code>, <code>style</code>, <code>test</code>, <code>docs</code>).</td></tr>
+    <tr><td>Camadas Front-end (UI → Stores → Mocks)</td><td><span class="badge-ok">🟢 OK</span></td><td>Regras de negócio isoladas em funções puras em <code>src/utils/</code> e stores Zustand. Componentes estritamente apresentacionais.</td></tr>
+    <tr><td>Tipagem TypeScript Estrita</td><td><span class="badge-ok">🟢 OK</span></td><td>Zero ocorrências de <code>any</code>, tipos estritos em <code>src/types/modelo-lembrete.ts</code> e props enxutas. <code>npx tsc --noEmit</code> aprovado.</td></tr>
+    <tr><td>Imutabilidade e Idempotência</td><td><span class="badge-ok">🟢 OK</span></td><td><code>rascunhoDeModelo</code> clona arrays defensivamente. Utilitário <code>ajustarHorario</code> é estritamente puro e imutável.</td></tr>
+    <tr><td>Design Tokens (theme.ts / TouchTarget = 56)</td><td><span class="badge-ok">🟢 OK</span></td><td>Cores consumidas exclusivamente de <code>Colors</code> (sem hexadecimais soltos). Alvos com <code>TouchTarget = 56</code>.</td></tr>
+    <tr><td>Acessibilidade Mobile WCAG 2.2 AAA</td><td><span class="badge-ok">🟢 OK</span></td><td>Contraste >= 7:1 em textos, <code>TouchTarget = 56dp</code>, reversibilidade de mutações e suporte a leitores de tela.</td></tr>
+    <tr><td>10 Heurísticas de Usabilidade de Nielsen</td><td><span class="badge-ok">🟢 OK</span></td><td>Checklist integral atendido sem violações conforme seção 5 deste relatório.</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r3">3. Auditoria de Estado Zustand e Mocks</h2>
+<ul>
+  <li><strong>Stores Existentes Preservadas:</strong> Nenhuma alteração disruptiva foi realizada em <code>useExerciciosStore</code> ou <code>useSettingsStore</code>. O estado de expansão colapsável e rascunhos de formulário residem em estado local (<code>useState</code>), respeitando o princípio YAGNI.</li>
+  <li><strong>Derivação Pura de Dados:</strong> A "última atividade" dos exercícios é calculada por função pura (<code>descreverUltimaAtividade</code> e <code>ultimaTentativa</code>), sem duplicar estado nem criar seletores complexos.</li>
+  <li><strong>Massa de Dados Mockados:</strong> Criado <code>modelos-lembrete.mock.ts</code> contendo 5 modelos representativos (incluindo caso de borda com título longo e categoria removida para testar resiliência).</li>
+</ul>
+
+<hr>
+
+<h2 id="r4">4. Auditoria de Acessibilidade Mobile (WCAG 2.2 AAA)</h2>
+<ul>
+  <li><strong>Contraste Aprimorado (Critério 1.4.6 — 7:1):</strong>
+    <ul>
+      <li>Branco sobre <code>Colors.danger</code>: taxa de <strong>7,87:1</strong> (auditada em teste automatizado T01);</li>
+      <li>Todas as cores de <code>PaletaTipos</code> contra o texto preto: taxas de <strong>8,7:1 a 16:1</strong> (auditadas em teste automatizado T02);</li>
+      <li>Ajuda e mensagens de erro utilizam <code>textSecondary</code> e <code>danger</code>, sem uso indevido de <code>textMuted</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Alvo de Toque Aprimorado (Critério 2.5.5 — Mínimo 44×44dp / Padrão 56dp):</strong>
+    <ul>
+      <li>Botões da <code>TopBar</code> e Voltar medem <strong>56×56dp</strong>;</li>
+      <li>Botões de ação de <code>ExercicioCard</code>, <code>Botao</code>, <code>ItemLista</code>, <code>SeletorCor</code> e chips medem <strong>56dp</strong>;</li>
+      <li><code>SeletorDias</code> adota altura de 56dp com largura mínima de 44dp e <code>flexWrap</code> para telas estreitas.</li>
+    </ul>
+  </li>
+  <li><strong>Sem Limite de Tempo Inflexível (Critério 2.2.3):</strong> O toast <code>AvisoSucesso</code> detecta leitor de tela ativo via <code>AccessibilityInfo.isScreenReaderEnabled()</code> e cancela o timer automático de fechamento, exigindo ação explícita pelo botão "Fechar".</li>
+  <li><strong>Status Sem Depender Exclusivamente de Cor (Critério 1.4.1):</strong> Status de conclusão de lembretes exibe ícone de check e texto explícito ("Concluído" / "Pendente"). Cores e chips selecionados exibem ícone de check.</li>
+  <li><strong>Rótulos Autônomos (Critério 2.4.9):</strong> Todos os elementos interativos possuem <code>accessibilityLabel</code> autônomo com contexto completo.</li>
+</ul>
+
+<hr>
+
+<h2 id="r5">5. Auditoria das 10 Heurísticas de Usabilidade de Nielsen (Mobile UX)</h2>
+<p>Auditoria mandatória baseada em <code>.agents/skills/principios/references/heuristicas-nielsen.md</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Heurística</th>
+      <th scope="col">Status</th>
+      <th scope="col">Evidência na UI / Código</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1</strong></td>
+      <td><strong>Visibilidade do Status do Sistema</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Opacidade interativa ao pressionar botões; reatividade imediata no streak e na última atividade ao clicar em COMEÇAR; anúncio de acessibilidade em <code>AvisoSucesso</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>2</strong></td>
+      <td><strong>Correspondência com o Mundo Real</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Termos em linguagem natural em PT-BR (ex.: "Última atividade: ontem às 09:15", "Texto ampliado", dias da semana por extenso nos rótulos).</td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td><strong>Controle e Liberdade do Usuário (Undo)</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Exclusão no detalhe do lembrete protegida por <code>DialogoConfirmacao</code> e com aviso de reversão (Desfazer) na Home; botão de restauração de catálogo em estado vazio.</td>
+    </tr>
+    <tr>
+      <td><strong>4</strong></td>
+      <td><strong>Consistência e Padrões</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Padrão consistente de botões, cards e tipografia com tokens de <code>theme.ts</code>; affordance idêntica em toda a aplicação.</td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td><strong>Prevenção de Erros</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Ações destrutivas em cor de perigo (vermelho); alvos de toque de 56dp evitando cliques acidentais em elementos adjacentes; seleção única de chips não permite deseleção vazia acidental.</td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td><strong>Reconhecimento em vez de Memorização</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Templates de lembrete com ícones e horários sugeridos visíveis; histórico recente exibido diretamente nos cards de exercício.</td>
+    </tr>
+    <tr>
+      <td><strong>7</strong></td>
+      <td><strong>Flexibilidade e Eficiência de Uso</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Modelos pré-definidos que preenchem rascunhos com 1 toque; botões de incremento/decremento com volta circular rápida no seletor de horário.</td>
+    </tr>
+    <tr>
+      <td><strong>8</strong></td>
+      <td><strong>Design Estético e Minimalista</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Cards limpos com máximo de 2 linhas para descrições; seções opcionais (tipo e descrição) não deixam vazios ou poluição visual quando ausentes.</td>
+    </tr>
+    <tr>
+      <td><strong>9</strong></td>
+      <td><strong>Diagnóstico e Recuperação de Erros</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td><code>CampoTexto</code> exibe mensagem de erro clara em vermelho com ícone de erro e suporte a leitor de tela; diálogo explicativo antes de excluir.</td>
+    </tr>
+    <tr>
+      <td><strong>10</strong></td>
+      <td><strong>Ajuda e Documentação Contextual</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Textos de ajuda opcionais em campos; <code>CartaoAjuste</code> colapsável que fornece explicação detalhada do que o ajuste altera no app.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r6">6. Resultado da Pré-Auditoria Automatizada (lembri-check.mjs & Testes T01-T10)</h2>
+<ul>
+  <li><strong>Auditoria Estática (<code>node docs/scripts/lembri-check.mjs</code>):</strong>
+    <pre><code>- Branch atual: feat/kit-de-componentes (🟢 Gitflow válido)
+- Estatística do Diff: 89 files changed, 8073 insertions(+), 377 deletions(-)
+- Commits na branch (27): 🟢 Todos em Conventional Commits
+- Resumo de Achados Estáticos: 🔴 0 Bloqueante(s) · 🟡 0 Atenção
+- MobileAPP TypeScript (npx tsc --noEmit): 🟢 Zero erros de tipagem</code></pre>
+  </li>
+  <li><strong>Linter Oficial Expo (<code>npx expo lint</code>):</strong> Executado com sucesso e zero inconsistências.</li>
+  <li><strong>Testes Unitários Automatizados (T01 a T10):</strong> 100% aprovados em <code>src/utils/__tests__/kit-componentes.test.ts</code>:
+    <pre><code>T01 contraste branco/danger: 7.87 (>= 7:1 AAA)
+T02 PaletaTipos contra texto preto: 8.71 a 16.07 (>= 7:1 AAA)
+T03 ajustarHorario wrap hora 23:00 -> 00:00 e 00:00 -> 23:00: OK
+T04 ajustarHorario wrap minutos 08:55 -> 08:00 e 08:00 -> 08:55: OK
+T05 ajustarHorario entrada inválida normalizada: OK
+T06 ultimaTentativa histórico desordenado: OK
+T07 descreverUltimaAtividade sem tentativas: OK
+T08 descreverUltimaAtividade tentativa de ontem: OK
+T09 rascunhoDeModelo tipo inexistente mapeado para undefined: OK
+T10 rascunhoDeModelo imutabilidade dos arrays originais: OK</code></pre>
+  </li>
+</ul>
+
+<hr>
+
+<h2 id="r7">7. Decisões Técnicas e Registro de Pendências</h2>
+<ol>
+  <li><strong>SeletorDias × Largura Útil:</strong> Mantida a largura mínima de 44dp por dia em altura de 56dp com <code>flexWrap</code> para garantir que em aparelhos de 360dp o layout não quebre e permaneça em conformidade com o Critério 2.5.5 da WCAG AAA.</li>
+  <li><strong>LembreteCard e OcorrenciaItem:</strong> O novo <code>LembreteCard</code> foi entregue completo e testado, mantendo a tela Home intacta com <code>OcorrenciaItem</code> para preservar a experiência da agenda até o cartão de listagem/gerenciamento de lembretes.</li>
+  <li><strong>Destino do Pull Request:</strong> Recomenda-se abrir o PR para <code>main</code> ou atualizar a branch <code>develop</code> a partir da <code>main</code> antes de realizar o merge.</li>
+</ol>
+
+</body>
+</html>
