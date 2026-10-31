@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Revisão de Código — CARD-22: Cria tema do protótipo no app (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .verdict-approved { background: #dcfce7; border: 1px solid #86efac; border-left: 5px solid #16a34a; border-radius: 6px; padding: 14px 18px; margin: 18px 0; font-size: 1rem; color: #14532d; font-weight: 600; }
+    .verdict-blocked { background: #fee2e2; border: 1px solid #fca5a5; border-left: 5px solid #dc2626; border-radius: 6px; padding: 14px 18px; margin: 18px 0; font-size: 1rem; color: #7f1d1d; font-weight: 600; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 24px; }
+    .summary-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 14px; text-align: center; }
+    .summary-card .count { font-size: 1.5rem; font-weight: 700; display: block; line-height: 1.2; }
+    .summary-card .label { font-size: 0.82rem; color: var(--text-secondary); font-weight: 600; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+    .badge-ok { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    .badge-warn { background: #fef9c3; color: #854d0e; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    .badge-block { background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>Relatório de Revisão de Código — CARD-22: Cria tema do protótipo no app</h1>
+
+<div class="meta-block">
+  <p><strong>Tarefa:</strong> <code>CARD-22</code> — Cria tema do protótipo no app (<a href="https://trello.com/c/vOIQQxCI" target="_blank">Trello</a>)</p>
+  <p><strong>Plano Técnico SDD:</strong> <code>docs/plans/card-22-cria-tema-do-prototipo-no.html</code></p>
+  <p><strong>Branch Revisada:</strong> <code>feat/cria-tema-do-prototipo-no</code> (comparada contra <code>develop</code>)</p>
+  <p><strong>Módulo Afetado:</strong> <code>CONFIGURACOES</code> (Design System Global &amp; Acessibilidade Visual)</p>
+  <p><strong>Data da Revisão:</strong> 2026-10-30</p>
+</div>
+
+<div class="verdict-approved">
+  Parecer Geral da Revisão: APROVADO (APROVADO_PARA_REVISAO_HUMANA) — 100% aderente ao SDD, à skill canônica <code>principios</code>, às 10 Heurísticas de Usabilidade de Nielsen e à WCAG 2.2 Nível AAA
+</div>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <span class="count" style="color: #dc2626;">0</span>
+    <span class="label">🔴 Bloqueantes</span>
+  </div>
+  <div class="summary-card">
+    <span class="count" style="color: #d97706;">0</span>
+    <span class="label">🟡 Atenção</span>
+  </div>
+  <div class="summary-card">
+    <span class="count" style="color: #16a34a;">14</span>
+    <span class="label">🟢 OK</span>
+  </div>
+  <div class="summary-card">
+    <span class="count" style="color: #64748b;">1</span>
+    <span class="label">⚪ N/A (Wear OS)</span>
+  </div>
+</div>
+
+<ol class="toc">
+  <li><a href="#r1">1. Resumo da Revisão, Diff e Escopo Front-end</a></li>
+  <li><a href="#r2">2. Conformidade com os Princípios de Desenvolvimento</a></li>
+  <li><a href="#r3">3. Auditoria de Arquitetura e Camadas Front-end</a></li>
+  <li><a href="#r4">4. Auditoria de Estado Zustand e Mocks</a></li>
+  <li><a href="#r5">5. Auditoria de Acessibilidade Mobile (WCAG 2.2 Nível AAA / TouchTarget = 56 / Contraste 7:1)</a></li>
+  <li><a href="#r6">6. Auditoria das 10 Heurísticas de Usabilidade de Nielsen (Mobile UX)</a></li>
+  <li><a href="#r7">7. Relatório das Ferramentas Automatizadas de QA (lembri-check.mjs, tsc, lint)</a></li>
+  <li><a href="#r8">8. Apontamentos e Sugestões de Melhoria (em Diff)</a></li>
+  <li><a href="#r9">9. Parecer Final e Assinatura Técnica</a></li>
+</ol>
+
+<hr>
+
+<h2 id="r1">1. Resumo da Revisão, Diff e Escopo Front-end</h2>
+<p>A implementação do <code>CARD-22</code> consolida os tokens de Design System do protótipo Figma (<code>node-id=47-1139</code>) em <code>MobileAPP/src/constants/theme.ts</code>, mantendo o tema monocromático de alto contraste (preto sobre branco/cinza com detalhes em amarelo <code>#EAE28A</code>) como referência única do aplicativo e introduzindo a arquitetura reativa para o modo <strong>"Texto ampliado"</strong> (fator <code>1.2x</code> com teto protetivo em variantes de topo).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Arquivo</th>
+      <th scope="col">Camada</th>
+      <th scope="col">Operação</th>
+      <th scope="col">Resumo Técnico da Alteração</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>MobileAPP/src/types/settings.ts</code></td>
+      <td>Tipos &amp; Contratos (<code>src/types/</code>)</td>
+      <td>Novo</td>
+      <td>Define a interface estrita <code>UserSettings</code> (<code>isLargeText: boolean</code>) documentada em TSDoc.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/mocks/settings.mock.ts</code></td>
+      <td>Mocks &amp; Fixtures (<code>src/mocks/</code>)</td>
+      <td>Novo</td>
+      <td>Define a fixture inicial <code>defaultSettingsMock</code> (<code>isLargeText: false</code>) e a factory <code>createSettingsMock(overrides)</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/constants/theme.ts</code></td>
+      <td>Design Tokens (<code>src/constants/</code>)</td>
+      <td>Modificado</td>
+      <td>Consolida <code>Colors</code>, <code>TextScale</code> (<code>1.0</code> e <code>1.2</code>), <code>Typography</code> (11 variantes com <code>lineHeight &gt;= 1.5x</code> e <code>maxFontSize</code> em <code>display</code>/<code>title</code>) e a função pura <code>getScaledTypography</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/stores/useSettingsStore.ts</code></td>
+      <td>Gerenciamento de Estado (<code>src/stores/</code>)</td>
+      <td>Novo</td>
+      <td>Cria a store Zustand <code>useSettingsStore</code> com estado reativo (<code>isLargeText</code>, <code>textScaleFactor</code>) e ações imutáveis (<code>toggleLargeText</code>, <code>setLargeText</code>, <code>resetToDefaults</code>).</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/hooks/use-theme.ts</code></td>
+      <td>Custom Hooks (<code>src/hooks/</code>)</td>
+      <td>Modificado</td>
+      <td>Conecta <code>Colors</code> e <code>Typography</code> aos seletores atômicos de <code>useSettingsStore</code>, preservando todas as cores na raiz do retorno para retrocompatibilidade total.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/themed-text.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Modificado</td>
+      <td>Consome <code>getScaledTypography(type, theme.isLargeText)</code>, alinha textos à esquerda e adota <code>textSecondary</code> (8.33:1) como cor padrão da variante <code>label</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/stores/__tests__/useSettingsStore.test.ts</code></td>
+      <td>Testes Unitários (<code>src/stores/__tests__/</code>)</td>
+      <td>Novo</td>
+      <td>Suíte de testes unitários cobrindo transições imutáveis da store, idempotência, teto de escala em <code>display</code>/<code>title</code> e proporção <code>lineHeight &gt;= 1.5x</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/app-bar/top-bar.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>ComponentSize.topBarHeight</code>, <code>topBarBackWidth</code>, <code>topBarHitSlop</code> e <code>BorderWidth.hairline</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/app-bar/bar-frame.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>ComponentSize.barFrameHeight</code> (72dp) eliminando altura mágica.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/app-bar/bottom-bar.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>ComponentSize.bottomBarHeight</code> (80dp) eliminando altura mágica.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/chip-horario.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>BorderWidth.hairline</code> eliminando espessura de borda solta.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/bloco-rotulado.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>BorderWidth.regular</code> eliminando cálculo manual <code>BorderWidth.thick - 0.5</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/interruptor.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>ComponentSize.switchWidth</code>, <code>switchHeight</code> e <code>switchKnob</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/marcador-feito.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>ComponentSize.marcadorCirculo</code> (44dp - WCAG AAA) eliminando dimensão local.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/cards/ocorrencia-item.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>ComponentSize.horarioMinWidth</code> (76dp) eliminando largura mágica.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/texto-riscado.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>ComponentSize.strikethroughHeight</code> eliminando espessura mágica de linha.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/components/cards/proximo-lembrete-card.tsx</code></td>
+      <td>Componentes UI (<code>src/components/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>Gradients.proximoLembrete(feito, theme)</code> centralizado em <code>theme.ts</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MobileAPP/src/mocks/tipos-lembrete.mock.ts</code></td>
+      <td>Mocks &amp; Fixtures (<code>src/mocks/</code>)</td>
+      <td>Refatorado</td>
+      <td>Consome <code>Colors.tagSaude</code> (<code>#FF8181</code>) e <code>Colors.tag</code> formalizados no tema.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r2">2. Conformidade com os Princípios de Desenvolvimento</h2>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Princípio (<code>principios/SKILL.md</code>)</th>
+      <th scope="col">Status</th>
+      <th scope="col">Evidência no Código Entregue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Regra da Dúvida (Zero Premissas)</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Fator de escala <code>1.2x</code> com teto em <code>display</code>/<code>title</code>, centralização de <code>Typography</code> com <code>lineHeight &gt;= 1.5x</code> e branch Gitflow confirmados com o usuário antes da codificação e registrados no SDD.</td>
+    </tr>
+    <tr>
+      <td><strong>1. Padrões do Projeto (Mobile Front-end First)</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Tokens isolados em <code>src/constants/theme.ts</code>, estado global em <code>src/stores/useSettingsStore.ts</code>, fixture em <code>src/mocks/settings.mock.ts</code> e contrato em <code>src/types/settings.ts</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>2. Escopo de Impacto no Front-end</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Como o modo "Texto ampliado" afeta todas as telas e componentes do app, o estado foi corretamente modelado em store Zustand global e exposto via <code>useTheme()</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>3. Compatibilidade de Contratos e Tipos</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td><code>useTheme()</code> mantém o spread <code>...Colors</code> na raiz do retorno, garantindo que <code>ThemedView</code>, <code>Card</code>, <code>MainContainer</code>, <code>TopBar</code>, <code>BottomBar</code> e <code>Splash</code> funcionem sem alterações.</td>
+    </tr>
+    <tr>
+      <td><strong>4. Idempotência e Imutabilidade</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td><code>setLargeText</code>, <code>toggleLargeText</code> e <code>resetToDefaults</code> retornam novos objetos de estado sem mutação direta; <code>getScaledTypography</code> é função pura e determinística.</td>
+    </tr>
+    <tr>
+      <td><strong>5. YAGNI &amp; 8. KISS</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Implementação enxuta com cálculo matemático direto (<code>Math.round</code> + <code>Math.min</code> para <code>maxFontSize</code>), sem dependências externas desnecessárias nem telas fora do escopo do cartão.</td>
+    </tr>
+    <tr>
+      <td><strong>6. DRY &amp; 7. SOLID</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Eliminada a duplicação de estilos tipográficos hardcoded que antes ficava oculta dentro de <code>themed-text.tsx</code>; responsabilidade única respeitada em cada camada.</td>
+    </tr>
+    <tr>
+      <td><strong>9. Clean Code, Inglês no Código e TSDoc em PT-BR</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Identificadores em inglês (<code>UserSettings</code>, <code>useSettingsStore</code>, <code>getScaledTypography</code>, <code>isLargeText</code>), TSDoc completo em português, zero <code>any</code>, zero <code>console.log</code> e zero código comentado.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r3">3. Auditoria de Arquitetura e Camadas Front-end</h2>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Eixo Arquitetural Auditado</th>
+      <th scope="col">Status</th>
+      <th scope="col">Evidência / Observação</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Gitflow (base <code>develop</code>)</td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Branch <code>feat/cria-tema-do-prototipo-no</code> criada a partir de <code>develop</code> seguindo a convenção de nomenclatura do repositório.</td>
+    </tr>
+    <tr>
+      <td>Direção de Dependência (<code>UI → Hooks/Stores → Mocks/Types</code>)</td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td><code>ThemedText</code> → <code>useTheme</code> → <code>useSettingsStore</code> → <code>settings.mock.ts</code> → <code>settings.ts</code>. Nenhuma store ou mock importa componentes React/JSX.</td>
+    </tr>
+    <tr>
+      <td>Tipagem TypeScript Estrita (<code>npx tsc --noEmit</code>)</td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Compilação limpa com zero erros. Uso de <code>as const</code> em <code>Colors</code> e <code>TextScale</code>, union type <code>TextVariant</code> e interface <code>TypographyToken</code>.</td>
+    </tr>
+    <tr>
+      <td>Linter Expo (<code>npx expo lint</code>)</td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Executado em <code>MobileAPP</code> sem erros ou warnings.</td>
+    </tr>
+    <tr>
+      <td>Centralização de Design Tokens (<code>theme.ts</code>)</td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Nenhuma cor hexadecimal ou tamanho de fonte mágico fora de <code>MobileAPP/src/constants/theme.ts</code>.</td>
+    </tr>
+    <tr>
+      <td>Isolamento do Módulo Nativo Wear OS</td>
+      <td><span class="badge-ok">⚪ N/A</span></td>
+      <td>Conforme Seção 8 do SDD, a estilização nativa do relógio pertence ao <code>CARD-43</code>. Nenhum arquivo em <code>modules/wear-connector</code> foi tocado indevidamente.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r4">4. Auditoria de Estado Zustand e Mocks</h2>
+<ul class="check">
+  <li><input type="checkbox" checked disabled> <strong>Seletores Atômicos em <code>useTheme()</code>:</strong> Em <code>MobileAPP/src/hooks/use-theme.ts</code> (linhas 12-13), o hook consome <code>useSettingsStore((state) =&gt; state.isLargeText)</code> e <code>useSettingsStore((state) =&gt; state.textScaleFactor)</code> separadamente via seletores primitivos atômicos, evitando re-renderizações desnecessárias ou loops de renderização no React 19.</li>
+  <li><input type="checkbox" checked disabled> <strong>Imutabilidade das Ações:</strong> Todas as ações de <code>useSettingsStore</code> (<code>toggleLargeText</code>, <code>setLargeText</code> e <code>resetToDefaults</code>) criam e retornam novos objetos de estado sincronizando <code>isLargeText</code> e <code>textScaleFactor</code> em uma única transição atômica.</li>
+  <li><input type="checkbox" checked disabled> <strong>Desacoplamento de Mocks:</strong> <code>defaultSettingsMock</code> e <code>createSettingsMock</code> residem em <code>MobileAPP/src/mocks/settings.mock.ts</code> e seguem estritamente o contrato <code>UserSettings</code>, permitindo testes isolados sem efeitos colaterais no estado padrão.</li>
+</ul>
+
+<hr>
+
+<h2 id="r5">5. Auditoria de Acessibilidade Mobile (WCAG 2.2 Nível AAA / TouchTarget = 56 / Contraste 7:1)</h2>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Critério WCAG 2.2 Nível AAA</th>
+      <th scope="col">Status</th>
+      <th scope="col">Verificação Técnica no Código</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1.4.6 Contraste Aprimorado (&gt;= 7:1)</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td><code>Colors.text</code> (<code>#000000</code>) sobre <code>surface</code> (<code>#FFFFFF</code>) atinge <strong>21:1</strong>; sobre <code>background</code> (<code>#F2F2F2</code>) atinge <strong>18.88:1</strong>; sobre <code>accent</code> (<code>#EAE28A</code>) atinge <strong>15.92:1</strong>. <code>Colors.textSecondary</code> (<code>#4E4E4E</code>) atinge <strong>8.33:1</strong> sobre branco e <strong>7.49:1</strong> sobre o fundo.</td>
+    </tr>
+    <tr>
+      <td><strong>1.4.6 Restrição de <code>textMuted</code> (RN-06)</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Em <code>themed-text.tsx</code> (linha 26), a variante <code>label</code> utiliza <code>textSecondary</code> (8.33:1) em vez de <code>textMuted</code> (3.06:1), garantindo legibilidade AAA em todos os rótulos de seção.</td>
+    </tr>
+    <tr>
+      <td><strong>1.4.8 Apresentação Visual (Line-Height &gt;= 1.5x e Alinhamento)</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Todas as 10 variantes de leitura possuem <code>lineHeight / fontSize &gt;= 1.5</code> tanto em <code>1.0x</code> quanto em <code>1.2x</code> (ex.: <code>default</code> 19sp/29sp → 23sp/35sp; <code>title</code> 30sp/45sp → 34sp/51sp). <code>styles.base</code> define <code>textAlign: 'left'</code> (sem texto justificado).</td>
+    </tr>
+    <tr>
+      <td><strong>1.4.8 Escala "Texto Ampliado" (1.2x com Teto de Segurança)</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td><code>getScaledTypography</code> aplica <code>TextScale.large = 1.2</code> e respeita <code>maxFontSize: 56</code> em <code>display</code> e <code>maxFontSize: 34</code> em <code>title</code>, prevenindo corte de texto na <code>TopBar</code> e cards principais.</td>
+    </tr>
+    <tr>
+      <td><strong>2.5.5 Tamanho do Alvo Aprimorado (<code>TouchTarget = 56</code>)</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Constante <code>TouchTarget = 56</code> (56x56dp, superando o mínimo AAA de 44x44dp) preservada e exportada em <code>MobileAPP/src/constants/theme.ts</code> (linha 196).</td>
+    </tr>
+    <tr>
+      <td><strong>2.4.9 / 3.3.6 Semântica e Reversibilidade</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td><code>ThemedText</code> repassa integralmente <code>...rest</code> (<code>accessibilityRole</code>, <code>accessibilityLabel</code>, <code>accessibilityHint</code>, <code>accessibilityState</code>), e a alternância de <code>isLargeText</code> na store é instantaneamente reversível via <code>toggleLargeText()</code> e <code>resetToDefaults()</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r6">6. Auditoria das 10 Heurísticas de Usabilidade de Nielsen (Mobile UX)</h2>
+<p>Auditoria mandatória baseada no documento canônico de referência <code>.agents/skills/principios/references/heuristicas-nielsen.md</code> aplicada aos temas e ao modo "Texto ampliado":</p>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Heurística de Jakob Nielsen</th>
+      <th scope="col">Status</th>
+      <th scope="col">Evidência e Avaliação Técnica no CARD-22</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1</strong></td>
+      <td><strong>Visibilidade do status do sistema</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Transição tipográfica instantânea e síncrona em todos os nós da árvore de componentes assim que <code>toggleLargeText()</code> é acionado na store; estado reativo <code>isLargeText</code> e <code>textScaleFactor</code> exposto via hook <code>useTheme()</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>2</strong></td>
+      <td><strong>Correspondência com o mundo real</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Vocabulário natural e compreensível em português ("Texto ampliado"), sem exibição de termos técnicos de código (como <em>TypographyToken</em>, <em>TextScaleFactor</em> ou <em>Zustand state</em>); paleta de cores inspirada em leitura física acessível de alto contraste.</td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td><strong>Controle e liberdade do usuário (Undo)</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>O modo de ampliação tipográfica é 100% reversível de forma imediata via <code>toggleLargeText()</code> ou restauração de fábrica via <code>resetToDefaults()</code>, devolvendo a interface ao tamanho padrão sem fricção ou diálogos obstrutivos.</td>
+    </tr>
+    <tr>
+      <td><strong>4</strong></td>
+      <td><strong>Consistência e padrões</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Centralização irrestrita de todos os tokens visuais em <code>src/constants/theme.ts</code> (cores, tipografia Inter, espaçamentos, raios e <code>TouchTarget = 56</code>); <code>ThemedText</code> atua como ponto único de renderização tipográfica do app.</td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td><strong>Prevenção de erros</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Teto protetivo <code>maxFontSize</code> nas variantes gigantes (<code>display: 56sp</code> e <code>title: 34sp</code>) previne quebra de layout, sobreposição de cards e estouro de tela (overflow) na <code>TopBar</code> quando o texto é ampliado; uso seguro de <code>textSecondary</code> evita perda de legibilidade em <code>label</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td><strong>Reconhecimento em vez de memorização</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Catálogo de 11 variantes tipográficas semanticamente evidentes (<code>display</code>, <code>title</code>, <code>headline</code>, <code>subheading</code>, <code>default</code>, <code>small</code>, <code>label</code>, etc.) cria hierarquia visual nítida que guia a leitura sem sobrecarga cognitiva.</td>
+    </tr>
+    <tr>
+      <td><strong>7</strong></td>
+      <td><strong>Flexibilidade e eficiência de uso</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Suporte flexível tanto à densidade padrão (1.0x) quanto ao modo ampliado (1.2x) sem exigir reinicialização do app ou alteração de configurações do sistema operacional; seletores atômicos otimizados no Zustand.</td>
+    </tr>
+    <tr>
+      <td><strong>8</strong></td>
+      <td><strong>Design estético e minimalista</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Tema monocromático de alto contraste limpo e sem distrações visuais; entrelinha respirável (<code>lineHeight &gt;= 1.5x fontSize</code> em todas as variantes de texto corrido) evitando sensação de texto comprimido ou poluição visual.</td>
+    </tr>
+    <tr>
+      <td><strong>9</strong></td>
+      <td><strong>Diagnóstico e recuperação de erros</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td>Função pura <code>getScaledTypography</code> com cálculos matemáticos robustos (<code>Math.round</code> e fallbacks determinísticos), eliminando riscos de exceções de renderização, valores <code>NaN</code> ou crash em tempo de execução.</td>
+    </tr>
+    <tr>
+      <td><strong>10</strong></td>
+      <td><strong>Ajuda e documentação contextual</strong></td>
+      <td><span class="badge-ok">🟢 OK</span></td>
+      <td><code>ThemedText</code> repassa integralmente todas as propriedades semânticas nativas (<code>accessibilityRole</code>, <code>accessibilityLabel</code>, <code>accessibilityHint</code>, <code>accessibilityState</code>), assegurando suporte de áudio-descrição completo no TalkBack (Android) e VoiceOver (iOS); TSDoc exaustivo em português no código.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r7">7. Relatório das Ferramentas Automatizadas de QA (<code>lembri-check.mjs</code>, <code>tsc</code>, <code>lint</code>)</h2>
+
+<pre><code>## Pré-Auditoria Automatizada Front-end — Projeto Lembri (node docs/scripts/lembri-check.mjs)
+
+- Branch atual: feat/cria-tema-do-prototipo-no (🟢 Gitflow válido)
+- Branch base comparada: develop
+- Arquivos de código auditados no escopo do CARD-22:
+  - MobileAPP/src/constants/theme.ts
+  - MobileAPP/src/types/settings.ts
+  - MobileAPP/src/mocks/settings.mock.ts
+  - MobileAPP/src/stores/useSettingsStore.ts
+  - MobileAPP/src/hooks/use-theme.ts
+  - MobileAPP/src/components/themed-text.tsx
+  - MobileAPP/src/stores/__tests__/useSettingsStore.test.ts
+
+### Resumo de Achados Estáticos: 🔴 0 Bloqueante(s) · 🟡 0 Atenção
+- 🟢 Nenhuma violação estática detectada nos critérios front-end, Zustand, TypeScript ou WCAG.
+
+### Compilação TypeScript &amp; Linter
+- MobileAPP TypeScript (npx tsc --noEmit): 🟢 Zero erros de tipagem
+- MobileAPP Linter (npx expo lint): 🟢 Zero erros ou avisos</code></pre>
+
+<hr>
+
+<h2 id="r8">8. Apontamentos e Sugestões de Melhoria (em Diff)</h2>
+<p><strong>Auditoria de Estilos Soltos (Pós-Merge da Main — PR #2):</strong> Identificamos que a integração da nova Home unificada e agenda trouxe valores e dimensões estruturais declarados localmente em componentes. Todos os pontos foram formalizados e consolidados com sucesso em <code>MobileAPP/src/constants/theme.ts</code>:</p>
+<ul class="check">
+  <li><input type="checkbox" checked disabled> <strong>Bordas (<code>BorderWidth</code>):</strong> Adicionados <code>hairline: 1</code> e <code>regular: 2</code>, eliminando valores literais em <code>top-bar.tsx</code>, <code>chip-horario.tsx</code> e cálculos manuais em <code>bloco-rotulado.tsx</code>.</li>
+  <li><input type="checkbox" checked disabled> <strong>Cores de Categorias (<code>Colors</code>):</strong> Formalizada <code>tagSaude: '#FF8181'</code> do Figma, consumida por <code>tipos-lembrete.mock.ts</code>.</li>
+  <li><input type="checkbox" checked disabled> <strong>Dimensões Estruturais (<code>ComponentSize</code>):</strong> Centralizadas alturas das barras (<code>topBarHeight: 64</code>, <code>barFrameHeight: 72</code>, <code>bottomBarHeight: 80</code>), interruptor (<code>56x32</code> / <code>knob: 28</code>), marcador (<code>44dp</code>) e coluna de horário (<code>76dp</code>).</li>
+  <li><input type="checkbox" checked disabled> <strong>Gradientes (<code>Gradients</code>):</strong> Fórmula do gradiente linear do card de próximo lembrete centralizada em <code>Gradients.proximoLembrete</code>.</li>
+</ul>
+
+<p style="margin-top: 14px;"><em>Recomendação para tarefas futuras:</em> Quando o <code>CARD-27</code> (Tela de Ajustes e Preferências) for implementado, basta conectar o componente de alternância (<code>Switch</code>/<code>Interruptor</code>) diretamente a <code>useSettingsStore((state) =&gt; state.toggleLargeText)</code> para que o usuário final tenha o controle visual da funcionalidade diretamente na interface.</p>
+
+<hr>
+
+<h2 id="r9">9. Parecer Final e Assinatura Técnica</h2>
+<div class="verdict-approved">
+  <strong>Veredito: APROVADO_PARA_REVISAO_HUMANA</strong><br>
+  A branch <code>feat/cria-tema-do-prototipo-no</code> está tecnicamente pronta para abertura de Pull Request para <code>develop</code>.
+</div>
+
+<p style="margin-top: 14px; font-size: 0.9rem; color: var(--text-secondary);">
+  <em>Revisão realizada em conformidade com <code>.agents/skills/principios/SKILL.md</code>, <code>.agents/skills/revisar/SKILL.md</code> e <code>.agents/skills/principios/references/heuristicas-nielsen.md</code>.</em>
+</p>
+
+</body>
+</html>
