@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDD Front-end — CARD-31 · 32 · 33 · 34: Ciclo Completo do Módulo de Lembretes (Figma Apresentação)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .figma-frame-box { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; margin: 16px 0; }
+    .figma-badge { display: inline-block; background: #000; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; font-family: var(--font-mono); }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>SDD Front-end — CARD-31 · 32 · 33 · 34: Ciclo Completo do Módulo de Lembretes</h1>
+
+<div class="meta-block">
+  <p><strong>Tarefas Integradas (Trello, lista "Esta semana"):</strong>
+    <code>CARD-31</code> Lista de lembretes e estado vazio (<a href="https://trello.com/c/I9JGjkYm">#31</a>) ·
+    <code>CARD-32</code> Detalhe do lembrete (<a href="https://trello.com/c/gsNMw5iY">#32</a>) ·
+    <code>CARD-33</code> Criar/editar lembrete com templates (<a href="https://trello.com/c/jrcpa5xy">#33</a>) ·
+    <code>CARD-34</code> Tipos de lembrete (<a href="https://trello.com/c/kP4141rE">#34</a>)</p>
+  <p><strong>Referência Visual Oficial (Figma):</strong> Página <code>Apresentação</code> (<code>node-id=47-1139</code>, arquivo <code>QKjpXmagXvBkc1QU24ryjJ</code>)</p>
+  <p><strong>Frames Mapeados 1:1:</strong>
+    <code>lembretes</code> (id: <code>152:1440</code>) ·
+    <code>detalhe lembrete</code> (id: <code>152:1491</code>) ·
+    <code>lembretes nao encontrados</code> (id: <code>152:1538</code>) ·
+    <code>criar lembrete</code> (id: <code>152:1551</code>) ·
+    <code>criar tipo de lembrete</code> (id: <code>152:1608</code>)</p>
+  <p><strong>Branch de Trabalho:</strong> <code>feat/modulo-lembretes-completo</code> (baseada em <code>main</code> / <code>develop</code> → PR para integração)</p>
+  <p><strong>Escopo Tecnológico:</strong> React Native (Expo SDK 58), React 19, Zustand, Expo Router, Wearable Data Layer API</p>
+  <p><strong>Módulo Primário:</strong> <code>LEMBRETES</code> (referência técnica: <code>docs/modulos/LEMBRETES.html</code>)</p>
+  <p><strong>Padrão de Acessibilidade:</strong> Mandatório <strong>WCAG 2.2 Nível AAA</strong> (TouchTarget = 56dp, contraste reforçado 7:1, prevenção de erros 3.3.6 e controle de gestos 2.5.1)</p>
+  <p><strong>Data:</strong> 2026-10-31</p>
+</div>
+
+<div class="notice-block">
+  <strong>Evidência Visual Canônica (Figma Confirmado):</strong> A inspeção visual dos frames do Figma comprovou que a barra de navegação inferior (BottomBar) possui <strong>4 abas fixas</strong> em todas as telas: <code>Home</code> (ícone casa), <code>Exercícios</code> (ícone prancheta), <code>Lembretes</code> (ícone sino) e <code>Ajustes</code> (ícone engrenagem). A tela de listagem de lembretes é, portanto, a rota oficial da aba <code>/(tabs)/lembretes.tsx</code>.
+</div>
+
+<ol class="toc">
+  <li><a href="#s1">1. Contexto, Objetivo e Mapeamento dos Frames do Figma</a></li>
+  <li><a href="#s2">2. Requisitos e Regras de Negócio (Casos de Borda e Fidelidade Visual)</a></li>
+  <li><a href="#s3">3. Arquitetura de Telas e Navegação no Expo Router (4 Abas)</a></li>
+  <li><a href="#s4">4. Modelagem de Dados e Tipos TypeScript (src/types/)</a></li>
+  <li><a href="#s5">5. Gerenciamento de Estado no Zustand e Camada Mockada</a></li>
+  <li><a href="#s6">6. Componentes UI, Formulários e os 5 Estados Visuais</a></li>
+  <li><a href="#s7">7. Acessibilidade Mobile Mandatória (WCAG 2.2 Nível AAA)</a></li>
+  <li><a href="#s8">8. Sincronização com o Relógio Wear OS</a></li>
+  <li><a href="#s9">9. Casos de Teste e Roteiro no Emulador Android</a></li>
+  <li><a href="#s10">10. Checklist Pré-PR</a></li>
+  <li><a href="#s11">11. Atualização da Documentação Técnica do Módulo</a></li>
+  <li><a href="#s12">12. Princípios de Desenvolvimento e Restrições</a></li>
+</ol>
+
+<hr>
+
+<h2 id="s1">1. Contexto, Objetivo e Mapeamento dos Frames do Figma</h2>
+
+<p>O objetivo deste plano é entregar a experiência completa de gestão de lembretes com fidelidade absoluta aos 5 frames do Figma da página <code>Apresentação</code> (<code>node-id=47-1139</code>):</p>
+
+<div class="figma-frame-box">
+  <span class="figma-badge">FIGMA FRAME: lembretes (152:1440) — CARD-31</span>
+  <p><strong>Tela principal da aba Lembretes:</strong></p>
+  <ul>
+    <li>TopBar com seta de voltar, título centralizado <code>Lembretes</code>, botões <code>?</code> (Ajuda) e áudio (microfone);</li>
+    <li>Título de página <code>Seus Lembretes</code> em tipografia grande;</li>
+    <li>Contador dinâmico à esquerda: <code>`${ativos} de ${total} ativos`</code> (ex: "2 de 2 ativos");</li>
+    <li>Botão à direita: <code>+ Novo</code> (variante primária preta, texto branco);</li>
+    <li>Cards de lembrete com título em negrito, switch (ligar/pausar) no canto superior direito, etiqueta colorida de categoria (ex: "Tarefa Doméstica", "Saúde"), descrição de até 2 linhas com reticências, ícone de relógio com chips de horários (ex: <code>12:00</code>, <code>18:00</code>) e frequência descrita à direita (ex: "Domingo e Quinta", "Todo dia");</li>
+    <li>Gesto horizontal (deslizar o card para o lado) para acionar a exclusão com <code>DialogoConfirmacao</code>, acompanhado de botão acessível alternativo;</li>
+    <li>BottomBar com 4 abas ativas.</li>
+  </ul>
+</div>
+
+<div class="figma-frame-box">
+  <span class="figma-badge">FIGMA FRAME: lembretes nao encontrados (152:1538) — CARD-31</span>
+  <p><strong>Estado vazio (Empty State):</strong></p>
+  <ul>
+    <li>Mesmo cabeçalho: TopBar, título <code>Seus Lembretes</code>, contador <code>0 de 0 ativos</code> e botão <code>+ Novo</code>;</li>
+    <li>Área central com mensagem em tipografia de destaque: <code>Nenhum Lembrete Foi Encontrado</code>;</li>
+    <li>Toque no botão <code>+ Novo</code> navega imediatamente para o fluxo de criação.</li>
+  </ul>
+</div>
+
+<div class="figma-frame-box">
+  <span class="figma-badge">FIGMA FRAME: detalhe lembrete (152:1491) — CARD-32</span>
+  <p><strong>Detalhes completos do lembrete:</strong></p>
+  <ul>
+    <li>Título do lembrete com switch (ativo/pausado) alinhado à direita no mesmo cabeçalho;</li>
+    <li>Etiqueta de categoria logo abaixo do título;</li>
+    <li>Card 1 (<code>PRÓXIMA VEZ</code>): Texto destacado com a próxima execução calculada (ex: <code>Hoje, 18:00</code>);</li>
+    <li>Card 2 (Configuração): Seção <code>HORÁRIOS</code> com chips, divisória, <code>REPETE</code> com texto da frequência, divisória, e <code>DESCRIÇÃO</code> com o texto completo;</li>
+    <li>Card 3 (<code>ÚLTIMAS VEZES</code>): Histórico cronológico das conclusões registradas (ex: <code>Hoje, 12:00</code>, <code>Ontem, 18:00</code>);</li>
+    <li>Barra de ações inferior: Botão <code>Editar</code> (primário preto com ícone de lápis) e Botão <code>Excluir</code> (secundário com borda);</li>
+    <li>Ação rápida "Marcar como feito" reativa na própria tela atualizando a lista de últimas vezes.</li>
+  </ul>
+</div>
+
+<div class="figma-frame-box">
+  <span class="figma-badge">FIGMA FRAME: criar lembrete (152:1551) — CARD-33</span>
+  <p><strong>Formulário de criação e edição com templates:</strong></p>
+  <ul>
+    <li><strong>Passo 1 (Templates):</strong> Cards grandes para escolher o modelo inicial: <strong>Remédio</strong>, <strong>Compromisso</strong> e <strong>Livre</strong>;</li>
+    <li><strong>Passo 2 (Formulário):</strong> Conforme frame <code>152:1551</code>:
+      <ul>
+        <li>Campo <code>Titulo</code>: input com texto placeholder (ex: "Jantar");</li>
+        <li>Seção <code>Tipo</code>: chips de categorias existentes + botão com borda tracejada <code>+ Novo Tipo</code> que abre o gerenciador de tipos;</li>
+        <li>Card aglutinado contendo:
+          <ul>
+            <li><code>Horário</code>: input com ícone de relógio + chips de horários selecionados;</li>
+            <li><code>Repetir Dias</code>: seletores circulares de dias da semana (<code>D S T Q Q S S</code>), com dias selecionados em preto com texto branco;</li>
+          </ul>
+        </li>
+        <li>Campo <code>Descrição:</code>: textarea multiline grande;</li>
+        <li>Template "Remédio": opção "Exige confirmação" vem pré-ativada;</li>
+        <li>Botão de rodapé: <code>SALVAR</code> (preto, largura total);</li>
+        <li>Toast de sucesso acessível (<code>AvisoSucesso</code>) ao salvar, com retorno automático à lista.</li>
+      </ul>
+    </li>
+    <li><strong>Edição:</strong> Ao abrir pelo detalhe do lembrete, vai direto para o Passo 2 pré-preenchido.</li>
+  </ul>
+</div>
+
+<div class="figma-frame-box">
+  <span class="figma-badge">FIGMA FRAME: criar tipo de lembrete (152:1608) — CARD-34</span>
+  <p><strong>Gerenciador de categorias e tipos:</strong></p>
+  <ul>
+    <li>Cabeçalho com título <code>Tipos de Lembretes</code> e subtítulo <code>Gerencie seus tipos de lembretes</code>;</li>
+    <li>Card <code>Criar Tipo</code>:
+      <ul>
+        <li>Input com placeholder (ex: "Saúde");</li>
+        <li>Seletor <code>Cor:</code> com círculos coloridos (paleta com contraste garantido) e botão de adicionar;</li>
+        <li>Botão <code>Adicionar</code> (preto, largura total dentro do card);</li>
+      </ul>
+    </li>
+    <li>Seção <code>MEUS TIPOS</code>: card agrupado com itens cadastrados:
+      <ul>
+        <li>Círculo com a cor da categoria, nome do tipo, subtítulo com contador (<code>1 lembrete</code> ou <code>X lembretes</code>);</li>
+        <li>Ícone de lixeira no canto direito de cada item, que abre o <code>DialogoConfirmacao</code> protetivo (desassocia lembretes sem apagá-los, conforme RN-04).</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<hr>
+
+<h2 id="s2">2. Requisitos e Regras de Negócio (Casos de Borda e Fidelidade Visual)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Requisito &amp; Regra de Negócio</th>
+      <th scope="col">Comportamento Esperado &amp; Caso de Borda</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>RN-01</strong></td>
+      <td>Contador de lembretes ativos (CARD-31)</td>
+      <td>Calcula <code>`${ativos} de ${total} ativos`</code>. Lembretes com o switch pausado não contam como ativos, mas integram o total. Lista com 0 itens exibe <code>0 de 0 ativos</code> e renderiza o frame <code>lembretes nao encontrados</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-02</strong></td>
+      <td>Arrasto para excluir e acessibilidade AAA (CARD-31)</td>
+      <td>Gesto horizontal via <code>PanResponder</code> abre o <code>DialogoConfirmacao</code>. <em>Critério WCAG 2.5.1:</em> Para pessoas que não podem realizar o gesto de deslizar, o card possui botão de exclusão acessível visível ou ação acessível para TalkBack.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-03</strong></td>
+      <td>Switch de ativação nos cards e no detalhe (CARD-31 e 32)</td>
+      <td>Alternar o switch chama <code>alternarAtivo(id)</code> na store, pausando os alertas e atualizando imediatamente o contador de ativos no topo.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-04</strong></td>
+      <td>Marcar como feito e histórico em tempo real (CARD-32)</td>
+      <td>Chama <code>marcarFeito</code> na store, inserindo a ocorrência atual no topo da lista <code>ÚLTIMAS VEZES</code>. Se já marcado, permite desfazer.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-05</strong></td>
+      <td>Atalho "+ Novo Tipo" no formulário (CARD-33 e 34)</td>
+      <td>O botão com borda tracejada <code>+ Novo Tipo</code> no formulário de criação navega para a rota <code>/tipos-lembrete</code>. Ao criar um novo tipo, ele fica disponível de imediato na lista de seleção.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-06</strong></td>
+      <td>Template Remédio com confirmação ativa (CARD-33)</td>
+      <td>Ao selecionar o template "Remédio", inicializa <code>exigeConfirmacao: true</code> e preenche horários sugeridos. No template "Compromisso", <code>exigeConfirmacao: false</code>. No template "Livre", campos vazios.</td>
+    </tr>
+    <tr>
+      <td><strong>RN-07</strong></td>
+      <td>Desassociação protetiva na exclusão de tipo (CARD-34)</td>
+      <td>Excluir uma categoria desassocia todos os lembretes vinculados (atribui <code>tipoId: undefined</code>), sem excluir nenhum lembrete da base.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s3">3. Arquitetura de Telas e Navegação no Expo Router (4 Abas)</h2>
+
+<p>Ajuste no layout de abas <code>MobileAPP/src/app/(tabs)/_layout.tsx</code> para comportar as 4 abas canônicas do Figma:</p>
+
+<pre><code class="language-typescript">
+// MobileAPP/src/app/(tabs)/_layout.tsx
+const ABAS = [
+  { name: 'index', href: '/', Icone: IconeHome, rotulo: 'Home' },
+  { name: 'exercicios', href: '/exercicios', Icone: IconeExercicios, rotulo: 'Exercícios' },
+  { name: 'lembretes', href: '/lembretes', Icone: IconeLembretes, rotulo: 'Lembretes' }, // [NOVA ABA FIGMA]
+  { name: 'configuracoes', href: '/configuracoes', Icone: IconeAjustes, rotulo: 'Ajustes' },
+];
+</code></pre>
+
+<h3>Mapa de Rotas Completo</h3>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Rota</th>
+      <th scope="col">Arquivo</th>
+      <th scope="col">Frame Figma</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>/(tabs)/lembretes</code></td>
+      <td><code>MobileAPP/src/app/(tabs)/lembretes.tsx</code></td>
+      <td><code>lembretes</code> (152:1440) e <code>lembretes nao encontrados</code> (152:1538)</td>
+    </tr>
+    <tr>
+      <td><code>/lembrete/[id]</code></td>
+      <td><code>MobileAPP/src/app/lembrete/[id].tsx</code></td>
+      <td><code>detalhe lembrete</code> (152:1491)</td>
+    </tr>
+    <tr>
+      <td><code>/lembrete/novo</code></td>
+      <td><code>MobileAPP/src/app/lembrete/novo.tsx</code></td>
+      <td>Passo 1 (Templates) e Passo 2: <code>criar lembrete</code> (152:1551)</td>
+    </tr>
+    <tr>
+      <td><code>/lembrete/editar/[id]</code></td>
+      <td><code>MobileAPP/src/app/lembrete/editar/[id].tsx</code></td>
+      <td>Passo 2 direto: <code>criar lembrete</code> (152:1551) com dados pré-preenchidos</td>
+    </tr>
+    <tr>
+      <td><code>/tipos-lembrete</code></td>
+      <td><code>MobileAPP/src/app/tipos-lembrete.tsx</code></td>
+      <td><code>criar tipo de lembrete</code> (152:1608)</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s4">4. Modelagem de Dados e Tipos TypeScript (src/types/)</h2>
+
+<pre><code class="language-typescript">
+// MobileAPP/src/types/lembrete.ts
+export type DiaSemana = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+export interface Lembrete {
+  id: string;
+  titulo: string;
+  descricao?: string;
+  horarios: string[]; // HH:mm ordenados
+  dias: DiaSemana[]; // 0=Dom, 1=Seg...
+  tipoId?: string; // Chave da categoria
+  ativo: boolean; // Controlado pelo switch
+  exigeConfirmacao?: boolean; // Template Remédio liga por padrão
+  templateOrigem?: 'remedio' | 'compromisso' | 'livre';
+  criadoEm: string;
+}
+
+export interface CriarLembreteInput {
+  titulo: string;
+  descricao?: string;
+  horarios: string[];
+  dias: DiaSemana[];
+  tipoId?: string;
+  exigeConfirmacao?: boolean;
+  templateOrigem?: 'remedio' | 'compromisso' | 'livre';
+}
+
+// MobileAPP/src/types/tipo-lembrete.ts
+export interface TipoLembrete {
+  id: string;
+  nome: string;
+  corHex: string;
+  icone?: string;
+}
+
+export interface CriarTipoLembreteInput {
+  nome: string;
+  corHex: string;
+  icone?: string;
+}
+</code></pre>
+
+<hr>
+
+<h2 id="s5">5. Gerenciamento de Estado no Zustand e Camada Mockada</h2>
+
+<h3>Atualizações nas Stores</h3>
+<ul>
+  <li><code>useLembretesStore</code>:
+    <ul>
+      <li>Preserva imutabilidade em <code>adicionarLembrete</code>, <code>editarLembrete</code>, <code>removerLembrete</code>, <code>alternarAtivo</code> e <code>marcarFeito</code>;</li>
+      <li>Seletor otimizado <code>obterContadorAtivos()</code> retorna <code>{ ativos: number, total: number }</code>;</li>
+      <li>Seletor <code>obterContagemPorTipo(tipoId: string)</code> calcula dinamicamente quantos lembretes usam cada categoria para exibir na lista do frame <code>criar tipo de lembrete</code>.</li>
+    </ul>
+  </li>
+  <li><code>useTiposLembreteStore</code>:
+    <ul>
+      <li>Preserva <code>adicionarTipo(input)</code> gerando ID único;</li>
+      <li>Preserva <code>removerTipo(id)</code> chamando automaticamente <code>useLembretesStore.getState().desassociarTipo(id)</code> (RN-04).</li>
+    </ul>
+  </li>
+</ul>
+
+<hr>
+
+<h2 id="s6">6. Componentes UI, Formulários e os 5 Estados Visuais</h2>
+
+<h3>Componentes Especializados</h3>
+<ul>
+  <li><code>ItemLembreteDeslizavel</code>: Envolve o card de lembrete com animação horizontal via <code>PanResponder</code>, expondo a ação de excluir no arrasto e mantendo botão acessível alternativo;</li>
+  <li><code>CardsTemplateSelecao</code>: Passo 1 com cards grandes para Remédio, Compromisso e Livre;</li>
+  <li><code>FormularioLembrete</code>: Componente do Passo 2 (frame <code>152:1551</code>), orquestrando <code>CampoTexto</code>, <code>SeletorHorario</code>, <code>SeletorDias</code>, chips com botão tracejado <code>+ Novo Tipo</code> e botão <code>SALVAR</code> de 56dp;</li>
+  <li><code>ListaVaziaLembretes</code>: Frame <code>152:1538</code> exibindo <code>Nenhum Lembrete Foi Encontrado</code>.</li>
+</ul>
+
+<h3>5 Estados Visuais</h3>
+<ul>
+  <li><strong>1. Ideal:</strong> Lista de lembretes completa ou formulário renderizado;</li>
+  <li><strong>2. Carregando:</strong> <code>ActivityIndicator</code> centrado com feedback acessível;</li>
+  <li><strong>3. Vazio:</strong> Frame <code>lembretes nao encontrados</code> com botão <code>+ Novo</code>;</li>
+  <li><strong>4. Erro:</strong> Mensagens de erro inline abaixo dos campos com alto contraste (<code>Colors.danger = #A50E0E</code>);</li>
+  <li><strong>5. Parcial:</strong> Lembrete salvo localmente com indicador se a sincronização Wear estiver temporariamente offline.</li>
+</ul>
+
+<hr>
+
+<h2 id="s7">7. Acessibilidade Mobile Mandatória (WCAG 2.2 Nível AAA)</h2>
+
+<ul class="check">
+  <li><input type="checkbox" checked disabled> <strong>Alvo de Toque Aprimorado (2.5.5 - 56dp):</strong> Todos os botões (<code>+ Novo</code>, <code>SALVAR</code>, <code>Editar</code>, <code>Excluir</code>, <code>Adicionar</code>), switches, chips de horários e botões de dias medem no mínimo 56dp (<code>TouchTarget</code>).</li>
+  <li><input type="checkbox" checked disabled> <strong>Gestos de Ponteiro (2.5.1):</strong> A ação de arrastar para excluir não é a única forma de exclusão; botão alternativo ou ação acessível disponível em 100% dos cards.</li>
+  <li><input type="checkbox" checked disabled> <strong>Contraste Aprimorado (1.4.6 - 7:1):</strong> Todos os textos possuem relação de contraste &ge; 7:1. Tags de cores usam as constantes verificadas de <code>PaletaTipos</code>.</li>
+  <li><input type="checkbox" checked disabled> <strong>Prevenção de Erros (3.3.6):</strong> Exclusão de lembretes e tipos protegidas por <code>DialogoConfirmacao</code> modal com variante perigo.</li>
+  <li><input type="checkbox" checked disabled> <strong>Sem Limite de Tempo Inflexível (2.2.3):</strong> Toasts de aviso (<code>AvisoSucesso</code>) não expiram automaticamente quando o TalkBack/VoiceOver estiver ativo.</li>
+</ul>
+
+<hr>
+
+<h2 id="s8">8. Sincronização com o Relógio Wear OS</h2>
+
+<p>Qualquer mutação (adicionar, editar, excluir ou marcar como feito) dispara a sincronização reativa através de <code>wear-service.ts</code> notificando o relógio via Wearable Data Layer API.</p>
+
+<hr>
+
+<h2 id="s9">9. Casos de Teste e Roteiro no Emulador Android</h2>
+
+<ol>
+  <li><strong>Teste de Navegação:</strong> Abrir a aba Lembretes pela barra inferior; verificar o cabeçalho e contador "2 de 2 ativos";</li>
+  <li><strong>Teste do Switch:</strong> Pausar um lembrete; verificar se o contador atualiza imediatamente para "1 de 2 ativos";</li>
+  <li><strong>Teste de Exclusão por Arrasto:</strong> Deslizar um card para a esquerda; verificar a abertura do modal de confirmação; confirmar a exclusão;</li>
+  <li><strong>Teste de Estado Vazio:</strong> Excluir todos os itens; verificar se a tela transiciona para o frame "Nenhum Lembrete Foi Encontrado";</li>
+  <li><strong>Teste de Criação com Template:</strong> Clicar em "+ Novo"; escolher "Remédio"; verificar "Exige confirmação" ativo; preencher título e salvar; verificar toast e retorno à lista;</li>
+  <li><strong>Teste de Tipos de Lembrete:</strong> No formulário de criação, clicar em "+ Novo Tipo"; cadastrar um novo tipo com cor; verificar listagem "Meus tipos" com contador de lembretes;</li>
+  <li><strong>Teste de Detalhes:</strong> Tocar em um card para abrir o detalhe; verificar cards de Próxima Vez, Horários e Últimas Vezes; tocar em "Editar" e verificar pré-preenchimento no formulário.</li>
+</ol>
+
+<hr>
+
+<h2 id="s10">10. Checklist Pré-PR</h2>
+
+<ul class="check">
+  <li><input type="checkbox"> Branch <code>feat/modulo-lembretes-completo</code> criada a partir de <code>main</code></li>
+  <li><input type="checkbox"> Commits no formato Conventional Commits</li>
+  <li><input type="checkbox"> 100% de tipagem estrita TypeScript (zero <code>any</code>)</li>
+  <li><input type="checkbox"> Ações da store Zustand estritamente imutáveis</li>
+  <li><input type="checkbox"> <code>npx tsc --noEmit</code> e <code>node docs/scripts/lembri-check.mjs</code> sem erros</li>
+  <li><input type="checkbox"> Padrões WCAG 2.2 AAA verificados (TouchTarget 56dp e contraste 7:1)</li>
+</ul>
+
+<hr>
+
+<h2 id="s11">11. Atualização da Documentação Técnica do Módulo</h2>
+
+<p><strong>Módulo de referência:</strong> <code>docs/modulos/LEMBRETES.html</code></p>
+<blockquote>Esta funcionalidade atualiza a documentação técnica formalizando as rotas da aba de lembretes, criação com templates, detalhes e gerenciamento de categorias.</blockquote>
+
+<hr>
+
+<h2 id="s12">12. Princípios de Desenvolvimento e Restrições</h2>
+
+<p>A implementação deste plano obedece rigorosamente à skill canônica <code>principios</code> do Projeto Lembri:</p>
+<ol>
+  <li><strong>Padrões do Projeto:</strong> Telas organizadas no Expo Router (<code>src/app/</code>), componentes puros em <code>src/components/lembrete/</code>, stores em <code>src/stores/</code> e design tokens exclusivos de <code>theme.ts</code>;</li>
+  <li><strong>Escopo de Impacto:</strong> Estado compartilhado nas stores Zustand e formulário temporário mantido via <code>useState</code> no componente de formulário;</li>
+  <li><strong>Idempotência e Imutabilidade:</strong> Atualizações seguras no Zustand sem efeitos colaterais impuros dentro dos componentes de tela;</li>
+  <li><strong>KISS &amp; YAGNI:</strong> Uso de animações nativas (<code>PanResponder</code>) evitando a inclusão desnecessária de bibliotecas adicionais;</li>
+  <li><strong>Acessibilidade Inegociável:</strong> WCAG 2.2 Nível AAA rigorosamente respeitado com TouchTarget de 56dp e alternativa de clique simples para ações por gesto.</li>
+</ol>
+
+</body>
+</html>

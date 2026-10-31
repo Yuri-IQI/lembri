@@ -12,6 +12,7 @@
 # Pastas e arquivos temporários de automação e scripts (trello-fetch, etc.)
 .tmp/
 *.tmp
+.playwright-mcp/
 
 # Dependências Node
 node_modules/
