@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Revisão de Código — CARD-29: Criar splash screen (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .verdict-approved { background: #dcfce7; border: 1px solid #86efac; border-left: 5px solid #16a34a; border-radius: 6px; padding: 14px 18px; margin: 18px 0; font-size: 1rem; color: #14532d; font-weight: 600; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 24px; }
+    .summary-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 14px; text-align: center; }
+    .summary-card .count { font-size: 1.5rem; font-weight: 700; display: block; line-height: 1.2; }
+    .summary-card .label { font-size: 0.82rem; color: var(--text-secondary); font-weight: 600; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+    .badge-ok { background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>Relatório de Revisão de Código — CARD-29: Criar splash screen</h1>
+
+<div class="meta-block">
+  <p><strong>Tarefa:</strong> <code>CARD-29</code> — Criar splash screen (<a href="https://trello.com/c/NkdmxNja">Trello #29</a>)</p>
+  <p><strong>Branch Revisada:</strong> <code>feat/criar-splash-screen</code> (comparada contra <code>main</code> / <code>develop</code>)</p>
+  <p><strong>Plano SDD de Referência:</strong> <code>docs/plans/card-29-criar-splash-screen.html</code></p>
+  <p><strong>Módulo Afetado:</strong> <code>STORES_MOCKS</code> / Transversal (Abertura do App)</p>
+  <p><strong>Data da Revisão:</strong> 2026-10-31</p>
+</div>
+
+<div class="verdict-approved">
+  Veredito da Revisão: APROVADO_PARA_REVISAO_HUMANA (Conformidade WCAG 2.2 AAA e Nielsen 10/10)
+</div>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <span class="count" style="color: #dc2626;">0</span>
+    <span class="label">🔴 Bloqueantes</span>
+  </div>
+  <div class="summary-card">
+    <span class="count" style="color: #d97706;">0</span>
+    <span class="label">🟡 Atenção</span>
+  </div>
+  <div class="summary-card">
+    <span class="count" style="color: #16a34a;">12</span>
+    <span class="label">🟢 OK</span>
+  </div>
+  <div class="summary-card">
+    <span class="count" style="color: #64748b;">0</span>
+    <span class="label">⚪ N/A</span>
+  </div>
+</div>
+
+<ol class="toc">
+  <li><a href="#r1">Resumo do Diff e Escopo Front-end</a></li>
+  <li><a href="#r2">Matriz de Conformidade Arquitetural</a></li>
+  <li><a href="#r3">Auditoria de Estado Zustand e Mocks</a></li>
+  <li><a href="#r4">Auditoria de Acessibilidade Mobile (WCAG 2.2 AAA)</a></li>
+  <li><a href="#r5">Auditoria das 10 Heurísticas de Usabilidade de Nielsen</a></li>
+  <li><a href="#r6">Resultado da Pré-Auditoria Automatizada e Testes Unitários</a></li>
+</ol>
+
+<hr>
+
+<h2 id="r1">1. Resumo do Diff e Escopo Front-end</h2>
+<p>A implementação atendeu integralmente ao Plano Técnico SDD (CARD-29), evoluindo o componente de boas-vindas sem criar complexidade desnecessária (KISS/YAGNI):</p>
+<ul>
+  <li><code>MobileAPP/package.json</code>: Dependência <code>@react-native-async-storage/async-storage</code> instalada via <code>npx expo install</code> compatível com Expo SDK 58.</li>
+  <li><code>MobileAPP/src/types/settings.ts</code>: Contrato estrito expandido com <code>hasSeenSplash: boolean</code>.</li>
+  <li><code>MobileAPP/src/mocks/settings.mock.ts</code>: Fixture padrão atualizada com <code>hasSeenSplash: false</code>.</li>
+  <li><code>MobileAPP/src/stores/useSettingsStore.ts</code>: Adicionada ação imutável <code>markSplashSeen</code>, middleware <code>persist</code> com armazenamento em AsyncStorage e <code>partialize</code> estrito para gravar unicamente <code>hasSeenSplash</code>.</li>
+  <li><code>MobileAPP/src/hooks/use-settings-hydrated.ts</code>: Novo hook reativo baseado em <code>useSyncExternalStore</code> do React 19 para acompanhar a hidratação da store sem cascading renders.</li>
+  <li><code>MobileAPP/src/components/splash.tsx</code>: Timer de auto-fechamento e chamada de <code>hideAsync</code> removidos; adicionado botão "Entrar" (reuso de <code>Botao</code> variante <code>primario</code> com alvo de toque TouchTarget = 56dp), transição com fade de 400ms idempotente, consulta a <code>AccessibilityInfo.isReduceMotionEnabled()</code> e suporte a rolagem via <code>ScrollView</code> para textos ampliados.</li>
+  <li><code>MobileAPP/src/app/_layout.tsx</code>: Orquestração no layout raiz garantindo que a splash nativa oculte somente após a hidratação, impedindo flashes de tela.</li>
+  <li><code>MobileAPP/src/stores/__tests__/useSettingsStore.test.ts</code>: Suíte estendida cobrindo inicialização, idempotência de <code>markSplashSeen</code>, preservação em <code>resetToDefaults</code> e overrides de fábrica.</li>
+</ul>
+
+<hr>
+
+<h2 id="r2">2. Matriz de Conformidade Arquitetural</h2>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Eixo Auditado</th>
+      <th scope="col">Status</th>
+      <th scope="col">Evidência / Observação</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Gitflow e Conventional Commits</td><td><span class="badge-ok">🟢 OK</span></td><td>Branch <code>feat/criar-splash-screen</code> com commits padronizados (<code>feat(splash): ...</code>, <code>docs(plan): ...</code>).</td></tr>
+    <tr><td>Camadas Front-end</td><td><span class="badge-ok">🟢 OK</span></td><td>Separação estrita: Types → Mocks → Store Zustand → Custom Hook → Componentes UI → Expo Router Layout.</td></tr>
+    <tr><td>Tipagem TypeScript Estrita</td><td><span class="badge-ok">🟢 OK</span></td><td>Zero uso de <code>any</code>, tipos inferidos e explícitos, <code>npx tsc --noEmit</code> concluído sem erros.</td></tr>
+    <tr><td>Imutabilidade no Zustand e Seletores</td><td><span class="badge-ok">🟢 OK</span></td><td>Mutações puras com <code>set(() => ({ ... }))</code>, seletor atômico <code>useSettingsStore((s) => s.hasSeenSplash)</code>.</td></tr>
+    <tr><td>Design Tokens (theme.ts)</td><td><span class="badge-ok">🟢 OK</span></td><td>Uso exclusivo de <code>Spacing</code>, <code>Radius</code>, <code>TouchTarget</code> e paleta semântica; zero cores hexadecimais hardcoded fora de <code>theme.ts</code>.</td></tr>
+    <tr><td>Acessibilidade Mobile WCAG 2.2 AAA</td><td><span class="badge-ok">🟢 OK</span></td><td>Contraste reforçado (21:1 título, 7.38:1 texto secundário), alvo TouchTarget = 56dp, sem limite de tempo (2.2.3), reduce motion (2.3.3).</td></tr>
+    <tr><td>10 Heurísticas de Nielsen</td><td><span class="badge-ok">🟢 OK</span></td><td>Total aderência com conformidade 10/10 detalhada na Seção 5.</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r3">3. Auditoria de Estado Zustand e Mocks</h2>
+<ul>
+  <li><strong>Idempotência:</strong> Chamadas subsequentes a <code>markSplashSeen()</code> não duplicam operações e mantêm <code>hasSeenSplash: true</code> de forma estável.</li>
+  <li><strong>Persistência Estreita (YAGNI):</strong> Apenas <code>hasSeenSplash</code> é serializado no AsyncStorage via <code>partialize</code>, garantindo que preferências visuais não fiquem presas em cache indevido.</li>
+  <li><strong>Preservação em Reset:</strong> <code>resetToDefaults()</code> restaura <code>isLargeText</code> e a escala tipográfica, mas mantém o status de <code>hasSeenSplash</code> intacto, evitando que um reset de configurações reabra a splash para usuários existentes.</li>
+  <li><strong>Isolamento nos Mocks:</strong> <code>defaultSettingsMock</code> permanece com <code>hasSeenSplash: false</code> para permitir testes previsíveis de boas-vindas.</li>
+</ul>
+
+<hr>
+
+<h2 id="r4">4. Auditoria de Acessibilidade Mobile (WCAG 2.2 AAA)</h2>
+<ul>
+  <li><strong>Sem Limites de Tempo Inflexíveis (Critério 2.2.3 AAA):</strong> O auto-fechamento de 2 segundos que violava o critério foi completamente removido. O usuário lê no seu próprio ritmo e avança tocando no botão "Entrar".</li>
+  <li><strong>Tamanho do Alvo de Toque Aprimorado (Critério 2.5.5 AAA):</strong> O botão "Entrar" utiliza o componente <code>Botao</code> do design system, que impõe <code>minHeight: TouchTarget (56dp)</code> e ocupa largura total confortável.</li>
+  <li><strong>Contraste Aprimorado (Critério 1.4.6 AAA):</strong> O título utiliza <code>Colors.text</code> (#000000 sobre #FFFFFF, contraste 21:1) e o subtítulo utiliza <code>Colors.textSecondary</code> (#4E4E4E sobre #FFFFFF, contraste 7.38:1, superando a meta de 7:1).</li>
+  <li><strong>Animação por Interação (Critério 2.3.3 AAA):</strong> A animação de fade é omitida se <code>AccessibilityInfo.isReduceMotionEnabled()</code> for verdadeiro no dispositivo, realizando transição imediata.</li>
+  <li><strong>Apresentação Visual e Legibilidade (Critério 1.4.8 AAA):</strong> Uso de <code>ScrollView</code> com <code>flexGrow: 1</code> garante que usuários com escala de fonte ampliada ou modo idoso possam rolar a tela sem que o botão fique inacessível.</li>
+  <li><strong>Leitores de Tela (TalkBack / VoiceOver):</strong> <code>accessibilityViewIsModal={true}</code> e <code>importantForAccessibility="yes"</code> impedem o foco de vazar para os elementos da tela inicial enquanto a tela de boas-vindas estiver visível. O botão possui <code>accessibilityLabel="Entrar no Lembri e abrir a tela inicial"</code> autônomo e sem ambiguidade.</li>
+</ul>
+
+<hr>
+
+<h2 id="r5">5. Auditoria das 10 Heurísticas de Usabilidade de Nielsen</h2>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Heurística</th>
+      <th scope="col">Status</th>
+      <th scope="col">Evidência na UI / Código</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td>Visibilidade do status do sistema</td><td><span class="badge-ok">🟢 OK</span></td><td>Feedback tátil/visual imediato ao tocar em "Entrar" com atenuação de opacidade e transição suave. Ocultação orquestrada da splash nativa sem flashes.</td></tr>
+    <tr><td>2</td><td>Correspondência com o mundo real</td><td><span class="badge-ok">🟢 OK</span></td><td>Linguagem acolhedora em português ("Bem-vindo ao Lembri!", "Organize seus lembretes e treine sua memória de uma forma simples"). Zero termos técnicos exibidos.</td></tr>
+    <tr><td>3</td><td>Controle e liberdade do usuário</td><td><span class="badge-ok">🟢 OK</span></td><td>O usuário tem controle total sobre o momento de entrar no app; não há contadores forçados nem transições automáticas.</td></tr>
+    <tr><td>4</td><td>Consistência e padrões</td><td><span class="badge-ok">🟢 OK</span></td><td>Reuso estrito de <code>Botao</code>, <code>ThemedText</code> e tokens de <code>theme.ts</code> com a mesma identidade visual do restante do aplicativo.</td></tr>
+    <tr><td>5</td><td>Prevenção de erros</td><td><span class="badge-ok">🟢 OK</span></td><td>Proteção contra múltiplos toques rápidos (idempotência no clique do botão) e alvo de toque de 56dp que impede erros de toque acidental.</td></tr>
+    <tr><td>6</td><td>Reconhecimento em vez de memorização</td><td><span class="badge-ok">🟢 OK</span></td><td>Apresentação concisa do propósito do app em uma única tela de boas-vindas com botão de ação único e óbvio.</td></tr>
+    <tr><td>7</td><td>Flexibilidade e eficiência de uso</td><td><span class="badge-ok">🟢 OK</span></td><td>Na segunda abertura e subsequentes, a tela de boas-vindas é completamente ignorada, levando o usuário imediatamente à sua agenda de tarefas.</td></tr>
+    <tr><td>8</td><td>Design estético e minimalista</td><td><span class="badge-ok">🟢 OK</span></td><td>Layout limpo, espaçamentos generosos, foco na logo e na mensagem central, sem elementos decorativos poluentes ou ruído visual.</td></tr>
+    <tr><td>9</td><td>Diagnóstico e recuperação de erros</td><td><span class="badge-ok">🟢 OK</span></td><td>Tratamento resiliente de falhas de leitura no AsyncStorage: caso haja erro de hardware/armazenamento, a tela de boas-vindas abre como fallback seguro sem travar o app.</td></tr>
+    <tr><td>10</td><td>Ajuda e documentação contextual</td><td><span class="badge-ok">🟢 OK</span></td><td>Texto contextual autônomo no leitor de tela orientando exatamente a função do botão ("Entrar no Lembri e abrir a tela inicial").</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="r6">6. Resultado da Pré-Auditoria Automatizada e Testes Unitários</h2>
+<pre><code>--------------------------------------------------
+TypeScript Check (npx tsc --noEmit): 🟢 0 erros
+ESLint Check (npx expo lint):        🟢 0 erros / 0 avisos
+Lembri Check (lembri-check.mjs):     🟢 0 Bloqueantes / 0 Atenção
+Testes de Stores (Node/TSX):         🟢 100% aprovados (Settings, Lembretes, Exercícios, Kit)
+--------------------------------------------------</code></pre>
+
+</body>
+</html>
