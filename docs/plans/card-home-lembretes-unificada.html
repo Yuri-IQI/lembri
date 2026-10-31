@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDD Front-end — CARD-HOME: Home unificada com lembretes (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>SDD Front-end — CARD-HOME: Home unificada com lembretes</h1>
+
+<div class="meta-block">
+  <p><strong>Tarefa / Funcionalidade:</strong> <code>CARD-HOME</code> — Home unificada com lembretes (cartão do Trello "Home unificada com Lembretes", sem número informado)</p>
+  <p><strong>Branch (Gitflow):</strong> <code>feat/unificacao-home-lembretes</code> (criada a partir de <code>feat/criar-dados-mockados</code>, que contém as stores do card-21; não há <code>develop</code> no repositório)</p>
+  <p><strong>Escopo Tecnológico:</strong> React Native (Expo SDK 58), React 19, Expo Router (abas headless) e Zustand</p>
+  <p><strong>Módulo:</strong> <code>LEMBRETES</code></p>
+  <p><strong>Camada de Dados:</strong> Mockada (<code>src/mocks/lembretes.mock.ts</code>) via <code>useLembretesStore</code> — sem mudança de contrato</p>
+  <p><strong>Figma:</strong> frames <code>home</code> (<code>77:1348</code>) e <code>lembretes</code> (<code>77:1159</code>) de <code>lembri_proto</code></p>
+  <p><strong>Data:</strong> 2026-10-29</p>
+</div>
+
+<div class="notice-block">
+  <strong>Decisões confirmadas com o desenvolvedor antes do plano (Regra da Dúvida):</strong>
+  <ol>
+    <li>Home e Lembretes <strong>viram uma tela só</strong>; a aba Lembretes sai da bottom bar (fica Home, Exercícios, Ajustes).</li>
+    <li>"Próximo lembrete" é calculado <strong>só pelo horário de hoje</strong> — o modelo <code>Lembrete</code> não muda.</li>
+    <li>O card de status do relógio e o formulário "adicionar rápido" <strong>saem</strong> da Home.</li>
+    <li>O botão de <strong>novo lembrete vira um ícone</strong> no cabeçalho da lista.</li>
+    <li>O card "Próximo lembrete" fica <strong>mais baixo</strong> que no Figma (266dp → ~130dp).</li>
+  </ol>
+  Pendências que <strong>ainda bloqueiam partes da implementação</strong>: ver <a href="#s13">seção 13</a>.
+</div>
+
+<ol class="toc">
+  <li><a href="#s1">Contexto, Objetivo e Escopo Front-end</a></li>
+  <li><a href="#s2">Requisitos e Regras de Negócio (Casos de Borda)</a></li>
+  <li><a href="#s3">Estrutura de Arquivos e Componentes</a></li>
+  <li><a href="#s4">Modelagem de Dados e Tipos TypeScript (src/types/)</a></li>
+  <li><a href="#s5">Gerenciamento de Estado no Zustand e Mocks</a></li>
+  <li><a href="#s6">Front-end — Telas Expo Router e 5 Estados Visuais</a></li>
+  <li><a href="#s7">Acessibilidade Mobile (WCAG 2.2 Nível AAA — TouchTarget = 56)</a></li>
+  <li><a href="#s8">Integração com Wearable (se aplicável)</a></li>
+  <li><a href="#s9">Casos de Teste e Verificação no Emulador</a></li>
+  <li><a href="#s10">Checklist Pré-PR</a></li>
+  <li><a href="#s11">Atualização da Documentação do Módulo</a></li>
+  <li><a href="#s12">Princípios de Desenvolvimento e Restrições</a></li>
+  <li><a href="#s13">Dúvidas em Aberto</a></li>
+</ol>
+
+<hr>
+
+<h2 id="s1">1. Contexto, Objetivo e Escopo Front-end</h2>
+<p><strong>Situação atual:</strong> a Home (<code>(tabs)/index.tsx</code>) mostra o status do relógio, um formulário de "adicionar rápido" e os lembretes pendentes; a aba Lembretes (<code>(tabs)/lembretes.tsx</code>) mostra a lista completa com filtros (Todos / Pendentes / Concluídos), concluir/reabrir, excluir com desfazer e "Restaurar Exemplos". As duas telas exibem os mesmos lembretes, o que obriga a pessoa idosa a decorar dois lugares para a mesma coisa.</p>
+<p><strong>Objetivo:</strong> a pessoa abre o app e, numa única tela, vê <strong>o que vem a seguir hoje</strong> e <strong>todos os seus lembretes</strong>, podendo concluir, excluir (com desfazer) e iniciar um novo lembrete, sem trocar de aba.</p>
+
+<h3>Entra no escopo</h3>
+<ul>
+  <li>Nova Home = card "Próximo lembrete" (compacto) + cabeçalho "Seus Lembretes" com contador e ícone de novo lembrete + filtros + aviso de desfazer + lista completa.</li>
+  <li>Remoção da aba e da rota <code>(tabs)/lembretes</code>.</li>
+  <li>Extração de componentes reutilizáveis: <code>ProximoLembreteCard</code>, <code>LembreteCard</code>, <code>BotaoIcone</code>.</li>
+  <li>Seletor puro <code>selecionarProximoLembrete</code> na store, com teste.</li>
+  <li>Remoção do card do relógio e do "adicionar rápido" da Home.</li>
+</ul>
+
+<h3>Fica fora (YAGNI / outros cartões)</h3>
+<ul>
+  <li>Datas e dias de repetição no modelo (cartão <em>Criar/editar lembrete com templates</em>).</li>
+  <li>Tela de criação/edição e tela de detalhe (cartões próprios) — ver dúvidas D1 e D2.</li>
+  <li>Toggle "ativo" e descrição do card do Figma <code>lembretes</code> (o modelo não tem esses campos).</li>
+  <li>Arrastar para excluir (cartão <em>Lista de lembretes e estado vazio</em>).</li>
+  <li>Tela Ajustes › Dispositivos, que passará a usar <code>useWear</code>.</li>
+  <li>Alinhamento global da escala do <code>themed-text.tsx</code> ao Figma (mudança que afeta todas as telas).</li>
+</ul>
+
+<hr>
+
+<h2 id="s2">2. Requisitos e Regras de Negócio (Casos de Borda)</h2>
+
+<table>
+  <thead><tr><th>ID</th><th>Dado / Quando / Então</th></tr></thead>
+  <tbody>
+    <tr><td>RN-01</td><td><strong>Dado</strong> lembretes pendentes com horário ≥ agora, <strong>quando</strong> a Home abre, <strong>então</strong> o card mostra o de <strong>menor horário</strong> entre eles, com o rótulo "Hoje".</td></tr>
+    <tr><td>RN-02</td><td><strong>Dado</strong> dois pendentes no mesmo horário, <strong>então</strong> vence o que aparece primeiro na lista da store (ordem estável).</td></tr>
+    <tr><td>RN-03</td><td><strong>Dado</strong> nenhum pendente com horário ≥ agora (todos concluídos ou só atrasados), <strong>então</strong> o card mostra o estado "Tudo em dia por hoje" com o texto de apoio "Nenhum lembrete pendente para o resto do dia.", sem botão "Ver".</td></tr>
+    <tr><td>RN-04</td><td>Lembretes concluídos <strong>nunca</strong> são "próximo". Pendentes com horário já passado continuam na lista com status "Pendente" e não aparecem no card.</td></tr>
+    <tr><td>RN-05</td><td>Horário inválido (fora de <code>HH:mm</code>) é ignorado pelo seletor e não quebra a tela.</td></tr>
+    <tr><td>RN-06</td><td>"Agora" é lido ao renderizar a Home (sem temporizador). Concluir ou excluir um item recalcula o próximo na hora.</td></tr>
+    <tr><td>RN-07</td><td>O contador do cabeçalho mostra <strong>"X pendentes de Y"</strong> sobre a lista inteira, independente do filtro ativo.</td></tr>
+    <tr><td>RN-08</td><td>Filtros, concluir/reabrir, excluir com desfazer e "Restaurar Exemplos" mantêm o comportamento atual da aba Lembretes.</td></tr>
+    <tr><td>RN-09</td><td>A aba Lembretes não existe mais: a bottom bar mostra 3 abas, e nenhum código navega para <code>/lembretes</code>.</td></tr>
+  </tbody>
+</table>
+
+<p><strong>Requisitos não funcionais:</strong> uma única rolagem na tela (sem <code>ScrollView</code> envolvendo <code>FlatList</code>); seletores via <code>useShallow</code>; nenhum valor visual literal fora de <code>theme.ts</code>.</p>
+
+<hr>
+
+<h2 id="s3">3. Estrutura de Arquivos e Componentes</h2>
+
+<table>
+  <thead><tr><th>Arquivo</th><th>Ação</th><th>O que muda</th></tr></thead>
+  <tbody>
+    <tr><td><code>src/app/(tabs)/index.tsx</code></td><td>Reescrever</td><td>Vira a tela unificada (seção 6). Sai <code>useWear</code>, o card do relógio e o "adicionar rápido".</td></tr>
+    <tr><td><code>src/app/(tabs)/lembretes.tsx</code></td><td>Remover</td><td>O conteúdo migra para a Home via <code>LembreteCard</code>.</td></tr>
+    <tr><td><code>src/app/(tabs)/_layout.tsx</code></td><td>Alterar</td><td>Tirar a entrada <code>lembretes</code> de <code>ABAS</code>.</td></tr>
+    <tr><td><code>src/components/cards/proximo-lembrete-card.tsx</code></td><td>Criar</td><td>Card compacto com degradê; estado "Tudo em dia por hoje".</td></tr>
+    <tr><td><code>src/components/cards/lembrete-card.tsx</code></td><td>Criar</td><td>Item da lista (extraído do <code>renderItem</code> atual de <code>lembretes.tsx</code>), visual do frame <code>lembretes</code>.</td></tr>
+    <tr><td><code>src/components/botao-icone.tsx</code></td><td>Criar</td><td>Botão circular só com ícone (56dp), com <code>accessibilityLabel</code> obrigatório.</td></tr>
+    <tr><td><code>src/stores/useLembretesStore.ts</code></td><td>Alterar</td><td>Exportar o seletor puro <code>selecionarProximoLembrete</code> e <code>contarPendentes</code>. Nenhuma ação nova.</td></tr>
+    <tr><td><code>src/stores/__tests__/stores.test.ts</code></td><td>Alterar</td><td>Acrescentar RN-08 (seletor) — ver seção 9.</td></tr>
+    <tr><td><code>assets/bottom-bar/bell.svg</code></td><td>Manter</td><td>Deixa de ser usado pela bottom bar; o arquivo fica (pode servir ao detalhe). Remover só se o time preferir.</td></tr>
+  </tbody>
+</table>
+
+<h3>Hierarquia da nova Home</h3>
+<pre><code>HomeScreen (MainContainer, sem padding próprio)
+└─ FlatList (lembretesFiltrados)
+   ├─ ListHeaderComponent
+   │  ├─ ProximoLembreteCard  (proximo | null, onVer)
+   │  ├─ Cabeçalho "Seus Lembretes"
+   │  │  ├─ ThemedText title  "Seus Lembretes"
+   │  │  ├─ ThemedText small  "2 pendentes de 4"
+   │  │  └─ BotaoIcone (+)    "Criar novo lembrete"
+   │  ├─ Filtros (Todos / Pendentes / Concluídos)
+   │  └─ Aviso de desfazer (se ultimoExcluido)
+   ├─ renderItem → LembreteCard (lembrete, tipo, onToggle, onExcluir)
+   └─ ListEmptyComponent → card vazio + "Restaurar Exemplos"</code></pre>
+
+<hr>
+
+<h2 id="s4">4. Modelagem de Dados e Tipos TypeScript (src/types/)</h2>
+<p><strong>Sem alteração de contrato.</strong> <code>Lembrete</code>, <code>FiltroLembrete</code> e <code>TipoLembrete</code> continuam como estão, preservando fixtures, testes RN-01…RN-07 e o contrato do Wear (<code>contrato.ts</code>).</p>
+<p>Única tipagem nova, local ao componente:</p>
+<pre><code class="language-typescript">// src/components/cards/proximo-lembrete-card.tsx
+type ProximoLembreteCardProps = {
+  /** Próximo lembrete pendente de hoje, ou null quando não há nenhum. */
+  lembrete: Lembrete | null;
+  /** Ação do botão "Ver" (ver dúvida D2). */
+  onVer: (lembrete: Lembrete) =&gt; void;
+};</code></pre>
+
+<hr>
+
+<h2 id="s5">5. Gerenciamento de Estado no Zustand e Mocks</h2>
+<p><strong>Store:</strong> <code>useLembretesStore</code> sem novas ações nem novo estado. Toda a lógica nova é <strong>derivada</strong>, em funções puras exportadas pelo arquivo da store (testáveis sem React):</p>
+<pre><code class="language-typescript">/** Converte "HH:mm" em minutos do dia; retorna null se o formato for inválido. */
+const paraMinutos = (horario: string): number | null =&gt; { /* ... */ };
+
+/**
+ * Próximo lembrete pendente de hoje: menor horário &gt;= agora (RN-01 a RN-05).
+ * Retorna null quando não houver nenhum.
+ */
+export const selecionarProximoLembrete = (
+  lembretes: Lembrete[],
+  agora: Date,
+): Lembrete | null =&gt; { /* filtra !concluido e horário válido &gt;= agora; ordena estável por horário */ };
+
+/** Quantidade de pendentes na lista inteira (RN-07). */
+export const contarPendentes = (lembretes: Lembrete[]): number =&gt;
+  lembretes.filter((item) =&gt; !item.concluido).length;</code></pre>
+<p><strong>Na tela:</strong> lê <code>lembretes</code>, <code>filtro</code>, <code>ultimoExcluido</code> e as ações com <code>useShallow</code> (como a aba Lembretes já faz); deriva <code>proximo</code>, <code>pendentes</code> e <code>lembretesFiltrados</code> com <code>useMemo</code>. O filtro por estado move-se do componente para a mesma área (sem duplicar a lógica que hoje existe em <code>lembretes.tsx</code> e <code>index.tsx</code>).</p>
+<p><strong>Mocks:</strong> sem alteração. As fixtures atuais já cobrem um concluído (08:00) e três pendentes (10:30, 14:00, 16:00), o que exercita RN-01, RN-03 e RN-04 conforme o horário do dispositivo.</p>
+
+<hr>
+
+<h2 id="s6">6. Front-end — Telas Expo Router e 5 Estados Visuais</h2>
+
+<h3>Rotas</h3>
+<ul>
+  <li><code>(tabs)/index</code> passa a ser a única tela de lembretes. Título da top bar: "Home" (frame <code>home</code>).</li>
+  <li><code>(tabs)/lembretes</code> é removida, e a bottom bar fica com <strong>Home · Exercícios · Ajustes</strong> (RN-09).</li>
+  <li>A seta de voltar e o histórico de abas continuam funcionando com 3 abas (cobrir no teste T-06).</li>
+</ul>
+
+<h3>Card "Próximo lembrete" compacto (pedido do desenvolvedor)</h3>
+<p>O frame <code>home</code> empilha rótulo, horário 64, título 36, dia 24 e o botão "Ver" (266dp de altura). A versão compacta põe horário e título lado a lado e o "Ver" à direita, mirando ~130dp:</p>
+<pre><code>┌──────────────────────────────────────────┐
+│ PRÓXIMO LEMBRETE                         │   label 16 SemiBold
+│ 18:00   Lavar roupas          ┌──────┐   │   horário 40 Regular · título 24 Bold
+│         Hoje                  │ Ver  │   │   dia 16 Regular  · botão 56×88, raio 16
+│                               └──────┘   │
+└──────────────────────────────────────────┘   degradê accent→surface, borda 2, raio 16, padding 12</code></pre>
+<ul>
+  <li>Mantém o degradê <code>linear-gradient(-59.4deg, accent 18.9%, surface 114.5%)</code> via <code>backgroundImage</code>.</li>
+  <li>Título com no máximo 2 linhas (<code>numberOfLines={2}</code>); horário em 40 (não 64) para caber na linha.</li>
+  <li>Estado sem próximo (RN-03): mesmo card, texto "Tudo em dia por hoje" (<code>subheading</code>) + apoio em <code>textSecondary</code>, sem botão.</li>
+</ul>
+
+<h3>Cabeçalho da lista com ícone de novo lembrete</h3>
+<ul>
+  <li>Linha com "Seus Lembretes" (<code>title</code>) e o contador (<code>small</code>, <code>textSecondary</code>) à esquerda; à direita, <code>BotaoIcone</code> 56×56 preto com ícone <code>add</code> (<code>expo-symbols</code>). Substitui o botão "+ Novo" com texto do frame <code>lembretes</code>.</li>
+  <li>Ação do ícone: <strong>pendente (D1)</strong>.</li>
+</ul>
+
+<h3>Item da lista (<code>LembreteCard</code>)</h3>
+<ul>
+  <li>Visual do frame <code>lembretes</code>: card branco, borda 2, raio 16; título 24 Bold; etiqueta de categoria (raio 12, borda 1); horário com ícone de relógio.</li>
+  <li>Ações atuais mantidas: <strong>Concluir/Reabrir</strong> e <strong>Excluir</strong> (com desfazer), botões de 56dp, rótulos com o nome do item.</li>
+  <li>Concluído: título riscado e status em texto ("Concluído no relógio ✓" / "Concluído no celular ✓"), sem depender só de cor.</li>
+</ul>
+
+<h3>Os 5 estados visuais</h3>
+<table>
+  <thead><tr><th>Estado</th><th>Tratamento</th></tr></thead>
+  <tbody>
+    <tr><td>Ideal</td><td>Card do próximo + cabeçalho + filtros + lista.</td></tr>
+    <tr><td>Carregando</td><td>Não se aplica: a store é síncrona (mocks em memória). <code>isLoading</code> existe na store, mas nenhuma ação o liga — não criar spinner (YAGNI).</td></tr>
+    <tr><td>Vazio</td><td>Lista vazia (ou filtro sem resultados): card atual "Nenhum lembrete nesta lista" + "Restaurar Exemplos"; o card do próximo cai no estado RN-03.</td></tr>
+    <tr><td>Erro</td><td>Se <code>erro</code> da store vier preenchido, card de aviso no cabeçalho com o texto. Hoje nenhuma ação define erro: só renderizar se existir.</td></tr>
+    <tr><td>Parcial</td><td>Não se aplica nesta tarefa (o envio ao relógio sai da Home).</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s7">7. Acessibilidade Mobile (WCAG 2.2 Nível AAA)</h2>
+<ul class="check">
+  <li><input type="checkbox"> <strong>Contraste Aprimorado (1.4.6):</strong> textos em <code>text</code>/<code>textSecondary</code> (7,43:1 no fundo). O contador e o "Hoje" não usam os cinzas do Figma (<code>#5E5E5E</code>). Texto preto sobre o degradê ≥ 15:1.</li>
+  <li><input type="checkbox"> <strong>Alvo de Toque Aprimorado (2.5.5):</strong> "Ver", ícone de novo lembrete, chips de filtro e botões do item com 56dp.</li>
+  <li><input type="checkbox"> <strong>Rótulos Acessíveis Autônomos (2.4.9):</strong> ícone (+) com <code>accessibilityLabel="Criar novo lembrete"</code>; "Ver" com <code>Ver lembrete {titulo}</code>; ações do item com o título.</li>
+  <li><input type="checkbox"> <strong>Prevenção de Erros Aprimorada (3.3.6):</strong> exclusão mantém o "Desfazer" atual.</li>
+  <li><input type="checkbox"> <strong>Sem Limite de Tempo Inflexível (2.2.3):</strong> o aviso de desfazer não some sozinho (comportamento atual mantido).</li>
+  <li><input type="checkbox"> <strong>Apresentação Visual (1.4.8):</strong> textos à esquerda; entrelinha ≥ 1,5 em texto corrido.</li>
+  <li><input type="checkbox"> <strong>Status Sem Depender de Cor (1.4.1):</strong> conclusão por texto e ✓.</li>
+  <li><input type="checkbox"> <strong>Leitor de tela:</strong> o card do próximo é lido como um bloco ("Próximo lembrete: Lavar roupas, hoje às 18:00"); cabeçalho "Seus Lembretes" com <code>accessibilityRole="header"</code>.</li>
+</ul>
+
+<hr>
+
+<h2 id="s8">8. Integração com Wearable (se aplicável)</h2>
+<p><strong>Não aplicável nesta tarefa.</strong> A Home deixa de chamar <code>useWear</code> (status do relógio e envio no "adicionar rápido"). <code>useWear</code>, <code>wear-service.ts</code>, <code>contrato.ts</code> e as ações <code>marcarConcluidoWear</code>/<code>sincronizarComRelogio</code> ficam intactos para a tela Ajustes › Dispositivos.</p>
+<blockquote>Impacto conhecido: até a tela de Dispositivos existir, o app não terá um ponto visível para demonstrar o envio ao relógio.</blockquote>
+
+<hr>
+
+<h2 id="s9">9. Casos de Teste e Verificação no Emulador</h2>
+
+<h3>Testes de store (<code>stores.test.ts</code>, RN-08 novo)</h3>
+<ul>
+  <li>Com <code>agora = 09:00</code> e as fixtures: próximo = "Lavar roupas" (10:30).</li>
+  <li>Com <code>agora = 16:30</code>: próximo = <code>null</code> (só restam atrasados).</li>
+  <li>Empate de horário: vence o primeiro da lista.</li>
+  <li>Concluído às 10:30 é ignorado; horário <code>"25:99"</code> é ignorado sem exceção.</li>
+  <li><code>contarPendentes</code> = 3 com as fixtures.</li>
+</ul>
+<p class="notice-block">O <code>package.json</code> não tem script de teste nem Jest/Vitest; o <code>stores.test.ts</code> usa asserções próprias. Rodar o RN-08 da mesma forma que RN-01…RN-07 foram validados no card-21 (ver dúvida D4).</p>
+
+<h3>Roteiro manual no emulador</h3>
+<ol>
+  <li><strong>T-01</strong> Abrir o app: bottom bar com 3 abas; Home com card compacto (~130dp) e a lista abaixo, numa rolagem só.</li>
+  <li><strong>T-02</strong> Concluir o item mostrado no card: o card passa ao próximo pendente na hora.</li>
+  <li><strong>T-03</strong> Concluir todos os pendentes futuros: card "Tudo em dia por hoje", sem "Ver".</li>
+  <li><strong>T-04</strong> Excluir um item → "Desfazer" → item volta; contador correto.</li>
+  <li><strong>T-05</strong> Filtros Pendentes/Concluídos/Todos; filtro vazio mostra o card vazio + "Restaurar Exemplos".</li>
+  <li><strong>T-06</strong> Home → Exercícios → Ajustes → voltar duas vezes: retorna à Home; nenhuma rota <code>/lembretes</code> acessível.</li>
+  <li><strong>T-07</strong> TalkBack: ler card do próximo, ícone (+), ações do item com o nome do lembrete.</li>
+</ol>
+
+<hr>
+
+<h2 id="s10">10. Checklist Pré-PR</h2>
+<ul class="check">
+  <li><input type="checkbox"> Branch da tarefa: <code>feat/unificacao-home-lembretes</code></li>
+  <li><input type="checkbox"> Commits no formato Conventional Commits (<code>tipo(escopo): descrição curta</code>)</li>
+  <li><input type="checkbox"> Tipagem estrita TypeScript (zero <code>any</code>) e sem <code>console.log</code> de debug</li>
+  <li><input type="checkbox"> Ações da store Zustand são estritamente imutáveis (nenhuma ação nova; seletores puros)</li>
+  <li><input type="checkbox"> Design tokens de <code>src/constants/theme.ts</code> respeitados (sem cores mágicas)</li>
+  <li><input type="checkbox"> <code>npx tsc --noEmit</code>, <code>npx expo lint</code> e <code>node docs/scripts/lembri-check.mjs</code> executando sem erros</li>
+  <li><input type="checkbox"> Nenhuma referência restante a <code>/lembretes</code> ou a <code>(tabs)/lembretes.tsx</code></li>
+  <li><input type="checkbox"> Critérios de acessibilidade mobile (WCAG 2.2 AAA / TouchTarget 56dp / Contraste 7:1) atendidos</li>
+  <li><input type="checkbox"> Capturas no emulador da Home com e sem próximo lembrete anexadas ao PR</li>
+</ul>
+
+<hr>
+
+<h2 id="s11">11. Atualização da Documentação do Módulo</h2>
+<p><strong>Módulo de referência:</strong> <code>docs/modulos/LEMBRETES.html</code></p>
+<blockquote>Esta tarefa <strong>impacta</strong> a documentação técnica do módulo: a rota <code>(tabs)/lembretes</code> deixa de existir, a Home passa a ser a tela do módulo e entram os componentes <code>ProximoLembreteCard</code>/<code>LembreteCard</code> e o seletor <code>selecionarProximoLembrete</code>. Atualizar também a menção a <code>lembretes.tsx</code> em <code>.claude/skills/principios/references/camadas.md</code> e o mapa de frames de <code>figma.md</code> (o frame <code>lembretes</code> passa a servir à Home).</blockquote>
+
+<hr>
+
+<h2 id="s12">12. Princípios de Desenvolvimento e Restrições</h2>
+<p>A implementação deste plano segue rigorosamente a skill canônica <code>principios</code> do Projeto Lembri:</p>
+<ol>
+  <li><strong>Padrões do Projeto:</strong> Telas em <code>src/app/</code>, UI em <code>src/components/</code>, Estado em <code>src/stores/</code>, Mocks em <code>src/mocks/</code> e tokens em <code>src/constants/theme.ts</code>.</li>
+  <li><strong>Escopo de Impacto:</strong> só a camada de UI e um seletor puro; store, tipos, mocks e Wear inalterados.</li>
+  <li><strong>Compatibilidade de Contratos:</strong> nenhum tipo muda; fixtures e testes existentes continuam válidos.</li>
+  <li><strong>YAGNI:</strong> sem modelo de datas, sem spinner de loading inexistente, sem temporizador para "agora".</li>
+  <li><strong>DRY:</strong> a lógica de filtro e o card de item hoje duplicados entre <code>index.tsx</code> e <code>lembretes.tsx</code> passam a existir uma vez.</li>
+  <li><strong>Acessibilidade Inegociável:</strong> WCAG 2.2 nível AAA no mobile com TouchTarget = 56dp e contraste 7:1.</li>
+</ol>
+
+<hr>
+
+<h2 id="s13">13. Dúvidas — Decisões Tomadas</h2>
+<table>
+  <thead><tr><th>ID</th><th>Dúvida</th><th>Decisão (2026-10-29)</th></tr></thead>
+  <tbody>
+    <tr><td>D1</td><td>O que o ícone de novo lembrete faz sem a tela de criação?</td><td>Rota genérica <code>/em-breve</code> (<code>src/app/em-breve.tsx</code>) com título por parâmetro e botão "Voltar"; reutilizável por qualquer botão ainda sem destino.</td></tr>
+    <tr><td>D2</td><td>O que o "Ver" faz sem a aba Lembretes?</td><td>Rola a lista até o item e o destaca (borda grossa preta); se o filtro ativo esconde o item, volta para "Todos" antes. O destaque sai ao concluir/excluir o item.</td></tr>
+    <tr><td>D3</td><td>Cores das etiquetas (mocks × Figma)</td><td>Mocks ficam como placeholder. Caminho preparado: <code>EtiquetaTipo</code> pinta com <code>tipo.corHex</code> e escolhe o texto legível por contraste (<code>src/utils/contraste.ts</code>) — trocar as cores dos tipos pelas do Figma não exige mudar a tela. Até lá, alguns mocks não atingem 7:1.</td></tr>
+    <tr><td>D4</td><td>Execução do <code>stores.test.ts</code></td><td>Não testar por esse caminho por enquanto: o RN-08 da seção 9 não foi escrito; validação por <code>tsc</code>, lint e emulador.</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>

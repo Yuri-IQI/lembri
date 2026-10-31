@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDD Front-end — Criar/editar lembrete com templates (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+<h1>SDD Front-end — Criar/editar lembrete com templates</h1>
+<div class="meta-block">
+  <p><strong>Tarefa / Funcionalidade:</strong> Cartão do Trello <em>Criar/editar lembrete com templates</em> (frame <code>criar lembrete</code>, nodeId <code>77:1233</code>)</p>
+  <p><strong>Fonte dos requisitos:</strong> <code>lembri-templates-lembrete.md</code> (especificação recebida em 2026-10-31) + decisões confirmadas com a equipe nesta data</p>
+  <p><strong>Branch:</strong> <code>feat/fluxo-lembretes</code> (branch atual; sem commits durante a implementação, por decisão da equipe)</p>
+  <p><strong>Escopo Tecnológico:</strong> React Native (Expo SDK 58), React 19, Expo Router, Zustand com <code>persist</code> em AsyncStorage</p>
+  <p><strong>Módulo:</strong> <code>LEMBRETES</code></p>
+  <p><strong>Camada de Dados:</strong> Local (AsyncStorage) com fixtures iniciais em <code>src/mocks/</code></p>
+  <p><strong>Data:</strong> 2026-10-31</p>
+</div>
+<ol class="toc">
+  <li><a href="#s1">Contexto, Objetivo e Escopo Front-end</a></li>
+  <li><a href="#s2">Requisitos e Regras de Negócio (Casos de Borda)</a></li>
+  <li><a href="#s3">Estrutura de Arquivos e Componentes</a></li>
+  <li><a href="#s4">Modelagem de Dados e Tipos TypeScript (src/types/)</a></li>
+  <li><a href="#s5">Gerenciamento de Estado no Zustand e Mocks</a></li>
+  <li><a href="#s6">Front-end — Telas Expo Router e 5 Estados Visuais</a></li>
+  <li><a href="#s7">Acessibilidade Mobile (WCAG 2.2 Nível AAA — TouchTarget = 56)</a></li>
+  <li><a href="#s8">Integração com Wearable (se aplicável)</a></li>
+  <li><a href="#s9">Casos de Teste e Verificação no Emulador</a></li>
+  <li><a href="#s10">Checklist Pré-PR</a></li>
+  <li><a href="#s11">Atualização da Documentação do Módulo</a></li>
+  <li><a href="#s12">Princípios de Desenvolvimento e Restrições</a></li>
+</ol>
+<hr>
+
+<h2 id="s1">1. Contexto, Objetivo e Escopo Front-end</h2>
+<p>A pessoa usuária cria lembretes a partir de quatro templates — <strong>Remédio</strong>, <strong>Compromisso</strong>, <strong>Tarefa da casa</strong> e <strong>Livre</strong> — cada um com um formulário próprio que prefere seleção a digitação, e edita lembretes existentes no formulário do mesmo template. Campos de texto recorrentes (nome do remédio, participantes, local, o que levar, o que vou usar) sugerem valores já usados.</p>
+<p>Hoje o botão <strong>+</strong> da Home e o <strong>Editar</strong> do detalhe abrem a tela "Em breve". O lembrete atual é um objeto único com <code>horarios[]</code> e <code>dias[]</code>; os modelos do CARD-26 (<code>modelosLembreteMock</code> + <code>SeletorModelo</code>) só pré-preenchem esse formato.</p>
+<h3>Entra no escopo</h3>
+<ul>
+  <li>Tela "Escolher template" e os quatro formulários (criar e editar), com validação, rolagem até o primeiro erro e diálogo de sair sem salvar.</li>
+  <li>Novo modelo de dados por template (união discriminada) com <code>repeticao</code>, conversão dos dados antigos e agenda com ocorrências de data única.</li>
+  <li>Store de sugestões persistida e persistência dos lembretes em AsyncStorage, com limite explícito de quantidade (padrão 50) ajustável por uma configuração de desenvolvimento.</li>
+  <li>Detalhe e linhas da Home mostrando as informações de cada template (dose, "Tomando desde", data/local/participantes, materiais e passos).</li>
+  <li>Título na <code>TopBar</code> apenas nas telas do formulário e na escolha de template.</li>
+</ul>
+<h3>Fica fora (YAGNI / adiado)</h3>
+<ul>
+  <li>Agendamento real de notificações; reaviso e "Avisar antes" ficam só registrados no lembrete.</li>
+  <li>Sincronização com o relógio.</li>
+  <li><strong>Adiado:</strong> caixas marcáveis de Passos e "O que levar" no detalhe (estado por ocorrência). Por enquanto aparecem como lista simples, só leitura.</li>
+  <li><strong>Adiado:</strong> biblioteca nativa de data/hora (<code>@react-native-community/datetimepicker</code>). Primeiro com componentes do projeto; a biblioteca será avaliada depois.</li>
+  <li><strong>Adiado:</strong> cor configurável do tipo "Compromissos" (por enquanto <code>Colors.tagAzul</code>).</li>
+</ul>
+<hr>
+
+<h2 id="s2">2. Requisitos e Regras de Negócio (Casos de Borda)</h2>
+<h3>2.1 Decisões confirmadas com a equipe (2026-10-31)</h3>
+<table>
+  <tr><th>#</th><th>Ponto</th><th>Decisão</th></tr>
+  <tr><td>D1</td><td>"Não repete" sem data no Livre, Remédio e Tarefa</td><td>Mostrar o campo <strong>Data</strong> (chips Hoje / Amanhã / Outra data), o mesmo do Compromisso, quando o modo for "Não repete".</td></tr>
+  <tr><td>D2</td><td>Efeito de "Exige confirmação"</td><td>Fica salvo no lembrete. O marcador de feito passa a dizer <strong>"Tomei"</strong> no Remédio e <strong>"Fiz"</strong> nos demais (rótulo acessível).</td></tr>
+  <tr><td>D3</td><td>Checklists no detalhe</td><td>Adiado. Passos e "O que levar" aparecem como lista simples, sem marcar.</td></tr>
+  <tr><td>D4</td><td>Modelos do CARD-26</td><td>Os quatro templates substituem <code>SeletorModelo</code> e <code>modelosLembreteMock</code>, mantendo o estilo visual (cards grandes, <code>ItemLista</code>/<code>Card</code>, tokens do tema).</td></tr>
+  <tr><td>D5</td><td>Seletores de hora e data</td><td>Componentes do projeto primeiro (<code>SeletorHorario</code> grande e calendário próprio simples); biblioteca nativa avaliada depois.</td></tr>
+  <tr><td>D6</td><td>Título da tela</td><td><code>TopBar</code> ganha prop opcional <code>titulo</code>, usada só nas telas de template e formulário. Home e detalhe continuam sem título.</td></tr>
+  <tr><td>D7</td><td>Pasta e nomes</td><td>Padrão atual: <code>components/formulario/</code> e nomes em português (a especificação citava <code>components/form/</code> e <code>TipoSelector</code>).</td></tr>
+  <tr><td>D8</td><td>Persistência e limite</td><td>Lembretes e sugestões persistidos em AsyncStorage. Limite explícito de <strong>50 lembretes</strong> por padrão; seção "Desenvolvimento" em Ajustes (só em <code>__DEV__</code>) permite <strong>diminuir ou aumentar</strong> o limite.</td></tr>
+  <tr><td>D9</td><td>Cor do tipo "Compromissos"</td><td><code>Colors.tagAzul</code> por enquanto; ficará configurável depois.</td></tr>
+  <tr><td>D10</td><td>Entrega</td><td>Tudo na branch atual, sem commits.</td></tr>
+</table>
+
+<h3>2.2 Desvios em relação à especificação</h3>
+<ul>
+  <li><strong>Alvo de toque:</strong> a especificação pede 48dp; o projeto usa <code>TouchTarget = 56</code> (mais rigoroso, prevalece).</li>
+  <li><strong>Texto de corpo ≥ 18sp:</strong> o token <code>default</code> já tem 19. Rótulos de apoio usam <code>small</code> (15), acima do mínimo de 14 do projeto; textos de corpo nos formulários usam <code>default</code>.</li>
+  <li><strong>"Voltar para a lista":</strong> a lista de lembretes agora é a Home; salvar volta à Home (criar) ou ao detalhe (editar).</li>
+  <li><strong>Seletor de hora nativo 24h:</strong> substituído pelo <code>SeletorHorario</code> do projeto (D5), já em 24h.</li>
+</ul>
+
+<h3>2.3 Fluxo</h3>
+<ul>
+  <li><strong>Criar:</strong> <strong>+</strong> na Home → "Escolher template" (título "Novo lembrete") → formulário (título "Novo remédio", "Novo compromisso", "Nova tarefa da casa", "Novo lembrete") → <strong>SALVAR</strong>.</li>
+  <li><strong>Salvar válido:</strong> grava o lembrete, registra as sugestões dos campos com sugestão, volta à Home e mostra o toast "Pronto! Seu lembrete foi salvo.".</li>
+  <li><strong>Salvar inválido:</strong> rola até o primeiro erro e mostra as mensagens abaixo de cada campo; nada é salvo.</li>
+  <li><strong>Editar:</strong> abre direto o formulário do template do lembrete, preenchido, título "Editar lembrete", botão <strong>SALVAR ALTERAÇÕES</strong>; o template não pode ser trocado.</li>
+  <li><strong>Sair sem salvar:</strong> com alterações, voltar (seta da <code>TopBar</code> ou botão voltar do Android) abre o diálogo "Sair sem salvar? O que você preencheu será perdido." com <strong>Continuar editando</strong> e <strong>Sair</strong>.</li>
+  <li><strong>Limite atingido:</strong> tocar em <strong>+</strong> com o limite alcançado não abre o fluxo e mostra aviso explicando o limite (texto a definir na implementação, em português simples).</li>
+</ul>
+
+<h3>2.4 Cenários de borda (Dado / Quando / Então)</h3>
+<ul>
+  <li>Dado um compromisso salvo com participante "João", quando criar outro e digitar "jo", então "João" aparece como sugestão.</li>
+  <li>Dado "joão" e "João" registrados, quando salvar, então existe uma única sugestão com a grafia mais recente e <code>vezes</code> somado.</li>
+  <li>Dado o campo de sugestão focado e vazio, então aparecem as 5 sugestões mais recentes; ao digitar algo inexistente, a primeira opção é <strong>Adicionar "texto"</strong>.</li>
+  <li>Dado uma sugestão, quando tocar em <strong>Esquecer</strong> e confirmar, então ela some da lista e do armazenamento; excluir um lembrete não apaga sugestões.</li>
+  <li>Dado 30 sugestões numa fonte, quando registrar uma nova, então a usada há mais tempo é descartada.</li>
+  <li>Dado o Remédio, então não existe toggle de confirmação e o lembrete salva <code>exigeConfirmacao: true</code>.</li>
+  <li>Dado "Iniciado em", então o padrão é hoje e datas futuras são recusadas com mensagem.</li>
+  <li>Dado um compromisso, quando data + horário estiverem no passado, então o formulário recusa com mensagem; depois que a data passa, o lembrete mostra "Concluído" (se houver registro de feito) ou "Não confirmado", e não gera novas ocorrências.</li>
+  <li>Dado "Dias específicos", quando nenhum dia estiver marcado, então o formulário mostra erro; "Fim de semana" (só na Tarefa) marca D e S.</li>
+  <li>Dado "Não repete", então o campo Data aparece e é obrigatório (D1).</li>
+  <li>Dado um horário já adicionado, quando adicioná-lo de novo, então ele não é duplicado; os chips ficam em ordem crescente.</li>
+  <li>Dado a quantidade do Remédio, então varia de 0,5 a 50, com passo 0,5 para comprimido e 1 para as demais unidades (ao trocar de unidade, o valor é arredondado para o passo novo).</li>
+  <li>Dado lembretes antigos sem <code>template</code> (mocks e dados persistidos), então são tratados como <code>livre</code> e <code>dias</code> vira <code>repeticao</code> (7 dias → <code>todo_dia</code>; demais → <code>dias</code>).</li>
+  <li>Dado o tipo padrão do template inexistente na store, quando salvar o primeiro lembrete daquele template, então o tipo é criado (Compromissos com <code>tagAzul</code>).</li>
+  <li>Dado o limite reduzido na configuração de desenvolvimento abaixo da quantidade atual, então nenhum lembrete é apagado; só a criação fica bloqueada até ficar abaixo do limite.</li>
+</ul>
+<hr>
+
+<h2 id="s3">3. Estrutura de Arquivos e Componentes</h2>
+<table>
+  <tr><th>Área</th><th>Arquivo</th><th>Ação</th></tr>
+  <tr><td>Rotas</td><td><code>src/app/lembrete/novo/index.tsx</code></td><td>Criar — escolher template</td></tr>
+  <tr><td>Rotas</td><td><code>src/app/lembrete/novo/[template].tsx</code></td><td>Criar — formulário do template</td></tr>
+  <tr><td>Rotas</td><td><code>src/app/lembrete/[id]/editar.tsx</code></td><td>Criar — edição (move <code>lembrete/[id].tsx</code> para <code>lembrete/[id]/index.tsx</code>)</td></tr>
+  <tr><td>Rotas</td><td><code>src/app/(tabs)/configuracoes.tsx</code></td><td>Alterar — seção "Desenvolvimento" em <code>__DEV__</code></td></tr>
+  <tr><td>Tipos</td><td><code>src/types/lembrete.ts</code>, <code>src/types/sugestao.ts</code></td><td>Alterar / criar</td></tr>
+  <tr><td>Stores</td><td><code>useLembretesStore.ts</code>, <code>useSugestoesStore.ts</code>, <code>useSettingsStore.ts</code>, <code>agenda-lembretes.ts</code></td><td>Alterar / criar</td></tr>
+  <tr><td>Mocks</td><td><code>lembretes.mock.ts</code>, <code>sugestoes.mock.ts</code>, <code>templates-lembrete.mock.ts</code>, <code>tipos-lembrete.mock.ts</code></td><td>Alterar / criar; remover <code>modelos-lembrete.mock.ts</code></td></tr>
+  <tr><td>Utils</td><td><code>utils/repeticao.ts</code>, <code>utils/texto.ts</code> (normalizar sem acento), <code>utils/data.ts</code>, <code>utils/migrar-lembrete.ts</code>, <code>utils/sugestoes.ts</code></td><td>Criar / alterar; remover <code>utils/modelo-lembrete.ts</code></td></tr>
+  <tr><td>Hooks</td><td><code>hooks/formulario/use-formulario-remedio.ts</code> (e um por template), <code>hooks/use-sair-sem-salvar.ts</code></td><td>Criar</td></tr>
+  <tr><td>Componentes</td><td><code>components/formulario/</code>: <code>seletor-tipo</code>, <code>campo-horarios</code>, <code>campo-repeticao</code>, <code>campo-data</code>, <code>calendario</code>, <code>campo-autocompletar</code>, <code>lista-sugestoes</code>, <code>campo-checklist</code>, <code>campo-quantidade</code>, <code>chips-atalho</code></td><td>Criar; remover <code>seletor-modelo.tsx</code></td></tr>
+  <tr><td>Componentes</td><td><code>components/templates/</code>: <code>card-template</code>, <code>formulario-remedio</code>, <code>formulario-compromisso</code>, <code>formulario-tarefa</code>, <code>formulario-livre</code></td><td>Criar</td></tr>
+  <tr><td>Componentes</td><td><code>components/lembrete/</code>: blocos por template no detalhe</td><td>Criar / alterar</td></tr>
+  <tr><td>Componentes</td><td><code>components/app-bar/top-bar.tsx</code></td><td>Alterar — prop opcional <code>titulo</code></td></tr>
+  <tr><td>Tema</td><td><code>src/constants/theme.ts</code></td><td>Alterar — tokens do Figma ainda ausentes (<code>inputBackground</code> <code>#F9F9F9</code>, borda tracejada <code>#787878</code>)</td></tr>
+</table>
+<p>Cada arquivo fica pequeno e com uma responsabilidade; os formulários compõem os campos compartilhados e a lógica de estado/validação mora nos hooks.</p>
+<hr>
+
+<h2 id="s4">4. Modelagem de Dados e Tipos TypeScript (src/types/)</h2>
+<pre><code class="language-typescript">export type TemplateId = 'remedio' | 'compromisso' | 'tarefa' | 'livre';
+
+export type Repeticao =
+  | { modo: 'nao_repete'; data: string }          // 'YYYY-MM-DD' (D1)
+  | { modo: 'todo_dia' }
+  | { modo: 'dias'; dias: DiaSemana[] };          // ao menos 1 dia
+
+interface LembreteBase {
+  id: string;
+  template: TemplateId;
+  titulo: string;
+  tipoId?: string;
+  exigeConfirmacao: boolean;                      // sempre true no remédio
+  ativo: boolean;
+  criadoEm: string;
+  atualizadoEm: string;
+}
+
+export type UnidadeDose = 'comprimido' | 'capsula' | 'gotas' | 'ml';
+
+export interface LembreteRemedio extends LembreteBase {
+  template: 'remedio';
+  quantidade: { valor: number; unidade: UnidadeDose };
+  horarios: string[];
+  repeticao: Repeticao;
+  comoTomar: 'jejum' | 'com_refeicao' | 'tanto_faz';
+  iniciadoEm: string;                             // 'YYYY-MM-DD'
+  reavisoMin: 5 | 10 | 15;
+  observacao?: string;
+}
+
+export interface LembreteCompromisso extends LembreteBase {
+  template: 'compromisso';
+  data: string;
+  horario: string;
+  avisarAntes: ('1h' | '1d')[];
+  participantes: string[];
+  local?: string;
+  oQueLevar: string[];
+  observacao?: string;
+}
+
+export interface LembreteTarefa extends LembreteBase {
+  template: 'tarefa';
+  horarios: string[];
+  repeticao: Repeticao;
+  materiais: string[];
+  passos: string[];                               // até 10, cada um com até 80 caracteres
+}
+
+export interface LembreteLivre extends LembreteBase {
+  template: 'livre';
+  horarios: string[];
+  repeticao: Repeticao;
+  descricao?: string;
+}
+
+export type Lembrete = LembreteRemedio | LembreteCompromisso | LembreteTarefa | LembreteLivre;
+
+/** Dados do formulário: o lembrete sem os campos gerados pela store. */
+export type DadosLembrete = DistributiveOmit&lt;Lembrete, 'id' | 'ativo' | 'criadoEm' | 'atualizadoEm'&gt;;
+
+export type FonteSugestao = 'remedios' | 'participantes' | 'locais' | 'itensLevar' | 'materiais';
+
+export interface Sugestao {
+  valor: string;
+  usadoEm: string;
+  vezes: number;
+}</code></pre>
+<ul>
+  <li><strong>Diferença da especificação:</strong> <code>nao_repete</code> carrega <code>data</code> (D1).</li>
+  <li><strong>Compatibilidade:</strong> <code>migrarLembrete(bruto)</code> converte o formato antigo (sem <code>template</code>, com <code>dias</code>) em <code>LembreteLivre</code>; usado na hidratação do <code>persist</code> (<code>version</code> + <code>migrate</code>) e nos mocks.</li>
+  <li><code>OcorrenciaLembrete</code> e <code>RegistroFeito</code> continuam iguais; a chave da ocorrência mantém o formato <code>&lt;id&gt;@&lt;AAAA-MM-DD&gt;T&lt;HH:mm&gt;</code>.</li>
+  <li><code>CriarLembreteInput</code> e <code>ModeloLembrete</code> são removidos (substituídos por <code>DadosLembrete</code> e pelos templates).</li>
+</ul>
+<hr>
+
+<h2 id="s5">5. Gerenciamento de Estado no Zustand e Mocks</h2>
+<h3>5.1 <code>useLembretesStore</code></h3>
+<ul>
+  <li>Passa a usar <code>persist</code> (AsyncStorage, chave <code>lembri-lembretes</code>, <code>version: 1</code> com <code>migrate</code> via <code>migrarLembrete</code>); persiste <code>lembretes</code> e <code>registros</code>.</li>
+  <li><code>adicionarLembrete(dados: DadosLembrete)</code>: normaliza (trim, horários sem duplicata e ordenados, dias únicos), força <code>exigeConfirmacao: true</code> no remédio, recusa (retorna <code>null</code>) se o limite foi atingido.</li>
+  <li><code>editarLembrete(id, dados)</code>: substitui os dados mantendo <code>id</code>, <code>template</code>, <code>ativo</code> e <code>criadoEm</code>; atualiza <code>atualizadoEm</code>.</li>
+  <li>Seletor <code>podeCriarLembrete</code> derivado de <code>lembretes.length &lt; limiteLembretes</code>.</li>
+  <li>Demais ações (remover/desfazer, alternar ativo, marcar/desmarcar feito, desassociar tipo) permanecem.</li>
+</ul>
+<h3>5.2 <code>useSugestoesStore</code> (novo)</h3>
+<ul>
+  <li>Estado <code>sugestoes: Record&lt;FonteSugestao, Sugestao[]&gt;</code>; ações <code>registrar(fonte, valores)</code> e <code>esquecer(fonte, valor)</code>; persistido em AsyncStorage (<code>lembri-sugestoes</code>).</li>
+  <li><code>buscar</code> vira função pura em <code>utils/sugestoes.ts</code> (seletor), para não depender de <code>get()</code> no render: filtra por "contém" com <code>normalizarBusca</code> (minúsculas, sem acentos), ordena por <code>usadoEm</code> e depois <code>vezes</code>, limite 5.</li>
+  <li><code>registrar</code> só é chamado ao salvar; ignora vazios, deduplica por valor normalizado, guarda a grafia mais recente e mantém no máximo 30 por fonte.</li>
+  <li>Mocks iniciais: participantes "Ana", "Dr. Paulo"; locais "Clínica São José", "UBS do bairro"; alguns remédios, itens e materiais.</li>
+</ul>
+<h3>5.3 <code>useSettingsStore</code></h3>
+<ul>
+  <li>Novo campo <code>limiteLembretes</code> (padrão <code>LIMITE_LEMBRETES_PADRAO = 50</code> em <code>constants</code>) e ação <code>definirLimiteLembretes(n)</code>, persistidos junto com <code>hasSeenSplash</code>.</li>
+  <li>Controle na seção "Desenvolvimento" de Ajustes (só <code>__DEV__</code>): botões − e + para diminuir/aumentar e "Restaurar padrão". Faixa e passo do controle a confirmar na implementação (proposta: 5 a 500, passo 5).</li>
+</ul>
+<h3>5.4 Tipos e templates</h3>
+<ul>
+  <li><code>tiposLembreteIniciaisMock</code> continua com Saúde e Tarefas Domésticas; "Compromissos" (<code>tagAzul</code>) é criado ao salvar o primeiro compromisso, se não existir.</li>
+  <li><code>templatesLembreteMock</code>: id, nome, ícone (Material Symbol), exemplo do card, título do formulário e nome do tipo padrão de cada template.</li>
+  <li>Os mocks de lembretes ganham um exemplo de cada template (Losartana, consulta no cardiologista com local e participantes, lavar roupas com passos, um livre "Não repete").</li>
+</ul>
+<h3>5.5 Agenda (<code>agenda-lembretes.ts</code>)</h3>
+<ul>
+  <li><code>ocorrenciasDoDia</code> passa a usar <code>ocorreNoDia(lembrete, data)</code> por <code>repeticao</code> (<code>todo_dia</code>, <code>dias</code>, <code>nao_repete</code> com data) e a data única do compromisso.</li>
+  <li>Novo derivado <code>statusCompromisso(lembrete, registros, agora)</code>: <code>'agendado' | 'concluido' | 'nao_confirmado'</code>.</li>
+  <li><code>descreverFrequencia</code> passa a receber <code>Repeticao</code> ("Todos os dias", "Segunda a sexta", "Só em 12/11").</li>
+</ul>
+<hr>
+
+<h2 id="s6">6. Front-end — Telas Expo Router e 5 Estados Visuais</h2>
+<h3>6.1 Rotas</h3>
+<ul>
+  <li><code>/lembrete/novo</code>: quatro cards grandes em coluna (ícone, nome, exemplo), reaproveitando o estilo de <code>ItemLista</code>/<code>Card</code>. Toque → <code>router.push('/lembrete/novo/[template]')</code>.</li>
+  <li><code>/lembrete/novo/[template]</code>: formulário do template; ao salvar, <code>router.dismissTo('/')</code> e toast na Home.</li>
+  <li><code>/lembrete/[id]/editar</code>: mesmo formulário preenchido; ao salvar, <code>router.back()</code> para o detalhe com o toast.</li>
+  <li>Home: <strong>+</strong> leva a <code>/lembrete/novo</code> (ou mostra o aviso de limite). Detalhe: <strong>Editar</strong> leva a <code>/lembrete/[id]/editar</code>.</li>
+</ul>
+<h3>6.2 Formulários</h3>
+<ul>
+  <li>Estrutura comum: <code>TopBar</code> com <code>titulo</code> → <code>ScrollView</code> com os campos → botão principal fixo no rodapé (<code>SafeAreaView</code>), como em <code>AcoesLembrete</code>.</li>
+  <li>Cada formulário usa seu hook (<code>useFormularioRemedio</code> etc.): estado local com <code>useState</code>, padrões do template, <code>validar()</code> retornando erros por campo e <code>sujo</code> para o aviso de sair.</li>
+  <li>Rolagem até o primeiro erro: cada campo registra seu <code>onLayout</code>; ao falhar, <code>scrollTo</code> no primeiro e foco de acessibilidade no erro (<code>AccessibilityInfo.setAccessibilityFocus</code>).</li>
+  <li><code>useSairSemSalvar(sujo)</code>: intercepta <code>beforeRemove</code> da navegação e o <code>BackHandler</code>, abrindo <code>DialogoConfirmacao</code>.</li>
+  <li>Placeholders sempre começando com "Ex.:"; rótulo sempre visível (<code>CampoTexto</code> já atende).</li>
+</ul>
+<h3>6.3 Componentes compartilhados (<code>components/formulario/</code>)</h3>
+<table>
+  <tr><th>Componente</th><th>Reaproveita</th><th>Comportamento</th></tr>
+  <tr><td><code>SeletorTipo</code></td><td><code>ChipsSelecao</code>, <code>EtiquetaTipo</code></td><td>Chips com cor do tipo, seleção única opcional, chip "+ Novo tipo" (borda tracejada) que abre a tela de tipos (ou "Em breve" até ela existir).</td></tr>
+  <tr><td><code>CampoHorarios</code></td><td><code>SeletorHorario</code>, <code>ChipHorario</code></td><td>Chips com "Remover 08:00"; "+ Adicionar horário" abre o <code>SeletorHorario</code> num diálogo; sem duplicatas; ordenado; prop <code>atalhos</code>.</td></tr>
+  <tr><td><code>CampoRepeticao</code></td><td><code>ChipsSelecao</code>, <code>SeletorDias</code>, <code>CampoData</code></td><td>Não repete / Todo dia / Dias específicos; prop <code>atalhoFimDeSemana</code>; "Não repete" mostra <code>CampoData</code> (D1).</td></tr>
+  <tr><td><code>CampoData</code> + <code>Calendario</code></td><td><code>ChipsSelecao</code>, <code>DialogoConfirmacao</code></td><td>Chips Hoje / Amanhã / Outra data; calendário mensal simples próprio com alvos de 56dp; props <code>permitirPassado</code>/<code>permitirFuturo</code>.</td></tr>
+  <tr><td><code>CampoAutocompletar</code> + <code>ListaSugestoes</code></td><td><code>CampoTexto</code>, <code>DialogoConfirmacao</code></td><td>Props <code>fonte</code>, <code>modo</code> ('unico' | 'multiplo'), <code>rotulo</code>, <code>placeholder</code>; lista inline (não flutuante) com itens de 56dp, "Adicionar …" e "Esquecer" com confirmação.</td></tr>
+  <tr><td><code>CampoChecklist</code></td><td><code>CampoTexto</code></td><td>Itens ordenados com remover e "+ Adicionar"; limites de quantidade e tamanho por prop.</td></tr>
+  <tr><td><code>CampoQuantidade</code></td><td><code>BotaoIcone</code>, <code>ChipsSelecao</code></td><td>− valor + com unidade; passo por unidade; valor anunciado como "1 comprimido".</td></tr>
+  <tr><td><code>ChipsAtalho</code></td><td><code>ChipsSelecao</code></td><td>Chips que preenchem o campo de texto (Consulta, Exame, Visita; Lavar roupa…).</td></tr>
+</table>
+<h3>6.4 Detalhe e Home</h3>
+<ul>
+  <li>Detalhe: blocos por template — Remédio (dose, como tomar, "Tomando desde dd/mm/aaaa", reaviso); Compromisso (data, local, participantes, o que levar, status); Tarefa (o que vou usar e passos como lista simples, D3); Livre como hoje.</li>
+  <li>Linhas da Home: complemento por template (dose no remédio, local no compromisso).</li>
+  <li><code>MarcadorFeito</code> recebe rótulo "Tomei"/"Fiz" conforme o template (D2).</li>
+</ul>
+<h3>6.5 Estados visuais</h3>
+<ul>
+  <li><strong>Ideal:</strong> formulários com padrões preenchidos.</li>
+  <li><strong>Carregando:</strong> enquanto o <code>persist</code> hidrata, a raiz segura a renderização (padrão já usado por <code>useSettingsHydrated</code>, estendido às novas stores).</li>
+  <li><strong>Vazio:</strong> sem sugestões, a lista não aparece; sem tipos, só o chip "+ Novo tipo".</li>
+  <li><strong>Erro:</strong> mensagens curtas abaixo do campo ("Escreva o nome do remédio.", "Escolha pelo menos um dia.", "Escolha uma data a partir de hoje.").</li>
+  <li><strong>Parcial:</strong> não se aplica (sem envio ao relógio nesta tarefa).</li>
+</ul>
+<hr>
+
+<h2 id="s7">7. Acessibilidade Mobile (WCAG 2.2 Nível AAA)</h2>
+<ul class="check">
+  <li><input type="checkbox"> <strong>Contraste Aprimorado (1.4.6):</strong> texto 7:1; chips de tipo com texto preto sobre as cores da paleta (já ≥ 7:1).</li>
+  <li><input type="checkbox"> <strong>Alvo de Toque (2.5.5):</strong> 56dp em chips, dias, itens de sugestão, botões − e +, remover e "Esquecer".</li>
+  <li><input type="checkbox"> <strong>Rótulos Autônomos (2.4.9):</strong> "Remover 08:00", "Esquecer Ana", "Aumentar quantidade", "Segunda-feira", "Adicionar horário".</li>
+  <li><input type="checkbox"> <strong>Prevenção de Erros (3.3.6):</strong> confirmação para sair sem salvar e para "Esquecer"; validação antes de salvar.</li>
+  <li><input type="checkbox"> <strong>Identificação de erros (3.3.1/3.3.3):</strong> erro em texto abaixo do campo, anunciado e com foco levado ao primeiro erro.</li>
+  <li><input type="checkbox"> <strong>Sem Limite de Tempo (2.2.3):</strong> o toast segue a regra do <code>AvisoSucesso</code> (não some com leitor de tela ativo).</li>
+  <li><input type="checkbox"> <strong>Apresentação Visual (1.4.8):</strong> texto à esquerda, entrelinha ≥ 1.5, funcionando com "Texto ampliado" sem cortar conteúdo.</li>
+  <li><input type="checkbox"> <strong>Status sem depender de cor (1.4.1):</strong> chips selecionados com <code>accessibilityState.selected</code> e diferença de preenchimento + borda; status do compromisso em texto.</li>
+</ul>
+<hr>
+
+<h2 id="s8">8. Integração com Wearable (se aplicável)</h2>
+<p>Não aplicável nesta tarefa (sincronização com o relógio fora do escopo). O contrato em <code>services/wear/contrato.ts</code> não muda; a pendência já registrada (confirmação do relógio gravar registro com origem <code>'relogio'</code>) segue aberta.</p>
+<hr>
+
+<h2 id="s9">9. Casos de Teste e Verificação no Emulador</h2>
+<h3>9.1 Testes unitários (Jest)</h3>
+<ul>
+  <li><code>migrarLembrete</code>: formato antigo → <code>livre</code>; 7 dias → <code>todo_dia</code>.</li>
+  <li><code>useSugestoesStore</code>: deduplicação sem acento/maiúscula, grafia mais recente, limite 30, <code>esquecer</code>; <code>buscarSugestoes</code> com "jo" → "João", ordenação e limite 5.</li>
+  <li><code>useLembretesStore</code>: adicionar por template, remédio sempre com confirmação, edição mantendo <code>template</code>, recusa ao atingir o limite.</li>
+  <li>Agenda: <code>ocorreNoDia</code> para os três modos de repetição e compromisso; <code>statusCompromisso</code>.</li>
+  <li>Validações de cada hook de formulário (obrigatórios, data futura, data passada, dias vazios, limites de passos).</li>
+</ul>
+<h3>9.2 Roteiro manual no emulador</h3>
+<ol>
+  <li><strong>+</strong> na Home → 4 templates com exemplos.</li>
+  <li>Remédio: padrões (1 comprimido, Todo dia, Tanto faz, hoje, 10 min); sem toggle de confirmação; salvar sem nome mostra erro e rola até ele.</li>
+  <li>Compromisso com participante "João" → novo compromisso, digitar "jo" → sugestão "João"; "Esquecer" remove.</li>
+  <li>Tarefa com "Fim de semana" e passos; detalhe mostra materiais e passos em lista.</li>
+  <li>Livre "Não repete" exige data.</li>
+  <li>Editar abre o formulário certo, sem trocar template, com "SALVAR ALTERAÇÕES".</li>
+  <li>Alterar e voltar (seta e botão do Android) → diálogo de sair sem salvar.</li>
+  <li>Fechar e reabrir o app: lembretes e sugestões continuam.</li>
+  <li>Ajustes › Desenvolvimento: baixar o limite abaixo do total → <strong>+</strong> mostra o aviso.</li>
+  <li>Repetir com "Texto ampliado" e com TalkBack.</li>
+</ol>
+<hr>
+
+<h2 id="s10">10. Checklist Pré-PR</h2>
+<ul class="check">
+  <li><input type="checkbox"> Trabalho na branch <code>feat/fluxo-lembretes</code>, sem commits (D10)</li>
+  <li><input type="checkbox"> Tipagem estrita TypeScript (zero <code>any</code>) e sem <code>console.log</code> de debug</li>
+  <li><input type="checkbox"> Ações das stores Zustand estritamente imutáveis; migração do <code>persist</code> testada</li>
+  <li><input type="checkbox"> Design tokens de <code>src/constants/theme.ts</code> respeitados (sem cores ou medidas literais)</li>
+  <li><input type="checkbox"> Arquivos pequenos e componentizados; sem comentários soltos (só avisos e TODOs)</li>
+  <li><input type="checkbox"> <code>npx tsc --noEmit</code>, <code>npx eslint</code>, testes Jest e <code>node docs/scripts/lembri-check.mjs</code> sem erros</li>
+  <li><input type="checkbox"> Critérios de acessibilidade mobile (WCAG 2.2 AAA / TouchTarget 56dp / Contraste 7:1) atendidos</li>
+</ul>
+<hr>
+
+<h2 id="s11">11. Atualização da Documentação do Módulo</h2>
+<p><strong>Módulo de referência:</strong> <code>docs/modulos/LEMBRETES.html</code> (e <code>STORES_MOCKS.html</code>)</p>
+<blockquote>Esta tarefa <strong>impacta</strong> a documentação técnica do módulo: novo modelo por template, <code>repeticao</code>, store de sugestões, persistência e limite de lembretes, rotas de criação/edição e remoção dos modelos do CARD-26.</blockquote>
+<hr>
+
+<h2 id="s12">12. Princípios de Desenvolvimento e Restrições</h2>
+<ol>
+  <li><strong>Padrões do Projeto:</strong> rotas em <code>src/app/</code>, UI em <code>src/components/</code> (formulários em <code>formulario/</code>), estado em <code>src/stores/</code>, mocks em <code>src/mocks/</code>, tokens em <code>theme.ts</code>, nomes em português (D7).</li>
+  <li><strong>Escopo de Impacto:</strong> estado do formulário local nos hooks; lembretes, sugestões e limite em stores globais persistidas.</li>
+  <li><strong>Compatibilidade de Contratos:</strong> migração versionada do formato antigo; chave de ocorrência e registros inalterados.</li>
+  <li><strong>Idempotência e Imutabilidade:</strong> <code>registrar</code> e <code>adicionarLembrete</code> sem duplicar nem mutar estado.</li>
+  <li><strong>YAGNI:</strong> sem notificações, sem relógio, sem biblioteca nativa de data/hora, sem checklist marcável nesta etapa.</li>
+  <li><strong>DRY / KISS:</strong> campos compartilhados reaproveitam <code>CampoTexto</code>, <code>ChipsSelecao</code>, <code>SeletorDias</code>, <code>SeletorHorario</code> e <code>DialogoConfirmacao</code>.</li>
+  <li><strong>Acessibilidade Inegociável:</strong> WCAG 2.2 AAA com TouchTarget = 56dp e contraste 7:1.</li>
+</ol>
+<h3>Ordem de implementação sugerida</h3>
+<ol>
+  <li>Tipos, migração, mocks e agenda (com testes).</li>
+  <li>Stores: lembretes persistidos com limite, sugestões e configuração de desenvolvimento.</li>
+  <li>Campos compartilhados de <code>formulario/</code>.</li>
+  <li>Telas de template e formulários, aviso de sair sem salvar e toast.</li>
+  <li>Detalhe e Home por template; remoção dos modelos do CARD-26; documentação do módulo.</li>
+</ol>
+</body>
+</html>

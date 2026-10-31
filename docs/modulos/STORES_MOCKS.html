@@ -113,27 +113,28 @@
 
 <h3>A. <code>useLembretesStore.ts</code></h3>
 <ul>
-  <li><strong>Estado:</strong> <code>lembretes: Lembrete[]</code>, <code>filtro: FiltroLembrete</code>, <code>ultimoExcluido: Lembrete | null</code>, <code>isLoading: boolean</code>, <code>erro: string | null</code>;</li>
+  <li><strong>Estado:</strong> <code>lembretes: Lembrete[]</code> (união por <code>template</code>: remedio, compromisso, tarefa, livre), <code>registros: RegistroFeito[]</code> e o último item excluído para desfazer;</li>
+  <li><strong>Persistência:</strong> AsyncStorage (<code>lembri-lembretes</code>, versão 1); o <code>migrate</code> converte lembretes antigos em template Livre;</li>
   <li><strong>Ações:</strong>
     <ul>
-      <li><code>adicionarLembrete(inputOrTitulo, horario)</code>: inserção imutável no início da lista;</li>
-      <li><code>editarLembrete(id, input)</code>: atualização mantendo a posição original;</li>
-      <li><code>removerLembrete(id)</code>: remoção imutável com armazenamento em <code>ultimoExcluido</code> para suporte a Undo (WCAG 3.3.6);</li>
-      <li><code>desfazerExclusao()</code>: restauração imediata do último item removido;</li>
-      <li><code>toggleConcluido(id)</code>: alternância reativa do status de conclusão;</li>
-      <li><code>marcarConcluidoWear(id)</code>: marca como concluído com sinalização de origem no Wear OS (<code>concluidoNoWear: true</code>);</li>
-      <li><code>sincronizarComRelogio(id, concluidoNoRelogio)</code>: compatibilidade com respostas da Data Layer API;</li>
-      <li><code>desassociarTipo(tipoId)</code>: remove vínculo de categoria sem deletar os lembretes (RN-04);</li>
-      <li><code>definirFiltro(filtro)</code>: define o critério de exibição (todos, pendentes, concluídos);</li>
-      <li><code>resetarParaMocks()</code>: restaura o estado para as 4 fixtures iniciais do Figma.</li>
+      <li><code>adicionarLembrete(dados)</code>: devolve o lembrete criado ou <code>null</code> quando <code>podeCriarLembrete</code> recusa por causa do limite;</li>
+      <li><code>editarLembrete(id, dados)</code>: atualiza mantendo o template;</li>
+      <li><code>removerLembrete(id)</code> e <code>desfazerExclusao()</code>: exclusão reversível (WCAG 3.3.6);</li>
+      <li><code>alternarAtivo(id)</code>, registro de feito por ocorrência e <code>resetarParaMocks()</code>.</li>
     </ul>
   </li>
 </ul>
 
 <h3>B. <code>useTiposLembreteStore.ts</code></h3>
 <ul>
-  <li><strong>Estado:</strong> <code>tipos: TipoLembrete[]</code>;</li>
-  <li><strong>Ações:</strong> <code>adicionarTipo</code>, <code>removerTipo</code> (desassocia automaticamente os lembretes vinculados via <code>useLembretesStore.getState().desassociarTipo</code>), <code>obterTipoPorId</code> e <code>resetarParaMocks</code>.</li>
+  <li><strong>Estado:</strong> <code>tipos: TipoLembrete[]</code>, persistido em <code>lembri-tipos</code>;</li>
+  <li><strong>Ações:</strong> <code>adicionarTipo</code>, <code>removerTipo</code> (desassocia os lembretes vinculados), <code>garantirTipo</code> (cria o tipo padrão do template ao salvar, se ainda não existir), <code>obterTipoPorId</code> e <code>resetarParaMocks</code>.</li>
+</ul>
+
+<h3>B2. <code>useSugestoesStore.ts</code></h3>
+<ul>
+  <li><strong>Estado:</strong> sugestões por fonte (remédios, participantes, locais, itens a levar, materiais), persistidas em <code>lembri-sugestoes</code>, até 30 por fonte;</li>
+  <li><strong>Ações:</strong> <code>registrar</code> (só ao salvar um lembrete), <code>esquecer</code> e <code>resetarParaMocks</code>. A busca ignora maiúsculas e acentos.</li>
 </ul>
 
 <h3>C. <code>useExerciciosStore.ts</code></h3>
@@ -152,7 +153,8 @@
 <h3>D. <code>useSettingsStore.ts</code></h3>
 <ul>
   <li><strong>Estado:</strong> <code>isLargeText: boolean</code>, <code>textScaleFactor: number</code>, <code>hasSeenSplash: boolean</code>;</li>
-  <li><strong>Persistência:</strong> AsyncStorage com middleware <code>persist</code> do Zustand (<code>partialize</code> grava exclusivamente <code>hasSeenSplash</code>);</li>
+  <li><strong>Persistência:</strong> AsyncStorage com middleware <code>persist</code> do Zustand (<code>partialize</code> grava <code>hasSeenSplash</code> e <code>reminderLimit</code>);</li>
+  <li><strong>Limite de lembretes:</strong> <code>setReminderLimit</code> mantém o valor entre 5 e 500 (passo 5); <code>resetToDefaults</code> não altera o limite.</li>
   <li><strong>Ações:</strong>
     <ul>
       <li><code>toggleLargeText()</code>: alterna o multiplicador entre 1.0 e 1.2;</li>
@@ -181,7 +183,7 @@
       <td><code>lembretes.mock.ts</code></td>
       <td><code>lembretesIniciaisMock</code></td>
       <td><code>criarLembreteMock()</code></td>
-      <td>"Tomar remédio" (08:00 - Concluído no relógio ✓), "Lavar roupas" (10:30), "Beber 500ml de água" (14:00), "Pagar conta de energia" (16:00).</td>
+      <td>Um exemplo de cada template, com datas relativas a hoje: tarefa "Lavar roupas", remédio "Losartana", compromisso "Consulta no cardiologista", livre "Ligar para a Ana" e tarefa pausada "Regar plantas".</td>
     </tr>
     <tr>
       <td><code>tipos-lembrete.mock.ts</code></td>

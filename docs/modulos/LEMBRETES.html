@@ -60,7 +60,7 @@
 <hr>
 
 <h2>1. Visão Geral do Módulo</h2>
-<p>O módulo de <strong>Lembretes</strong> é o núcleo da experiência do aplicativo Lembri. Ele permite que o usuário acompanhe sua rotina na agenda diária, consulte lembretes por categorias, utilize modelos pré-definidos para criação ágil, gerencie confirmações com reversão e visualize o status de sincronização com o relógio Wear OS em tempo real.</p>
+<p>O módulo de <strong>Lembretes</strong> é o núcleo da experiência do aplicativo Lembri. Ele permite que o usuário acompanhe sua rotina na agenda diária, consulte lembretes por categorias, crie lembretes a partir de quatro templates (Remédio, Compromisso, Tarefa da casa e Livre), gerencie confirmações com reversão e visualize o status de sincronização com o relógio Wear OS em tempo real.</p>
 
 <hr>
 
@@ -86,8 +86,23 @@
     </tr>
     <tr>
       <td><code>/lembrete/[id]</code></td>
-      <td><code>MobileAPP/src/app/lembrete/[id].tsx</code></td>
-      <td>Detalhes completos do lembrete, horários, histórico de conclusões e ações de editar ou excluir com confirmação destrutiva (variante perigo)</td>
+      <td><code>MobileAPP/src/app/lembrete/[id]/index.tsx</code></td>
+      <td>Detalhes do lembrete: horários, repetição, campos próprios do template (dose, local, passos…), situação do compromisso, histórico e ações de editar ou excluir com confirmação destrutiva (variante perigo)</td>
+    </tr>
+    <tr>
+      <td><code>/lembrete/novo</code></td>
+      <td><code>MobileAPP/src/app/lembrete/novo/index.tsx</code></td>
+      <td>Escolha do template (Remédio, Compromisso, Tarefa da casa, Livre). Bloqueada com aviso quando o limite de lembretes é atingido</td>
+    </tr>
+    <tr>
+      <td><code>/lembrete/novo/[template]</code></td>
+      <td><code>MobileAPP/src/app/lembrete/novo/[template].tsx</code></td>
+      <td>Formulário do template escolhido, com validação, rolagem até o primeiro erro e confirmação ao sair sem salvar</td>
+    </tr>
+    <tr>
+      <td><code>/lembrete/[id]/editar</code></td>
+      <td><code>MobileAPP/src/app/lembrete/[id]/editar.tsx</code></td>
+      <td>Mesmo formulário do template, preenchido com o lembrete salvo ("SALVAR ALTERAÇÕES")</td>
     </tr>
   </tbody>
 </table>
@@ -108,7 +123,8 @@
       <li><code>SeletorDias</code>: Seleção de dias da semana (D S T Q Q S S) com suporte a flexWrap e leitores de tela;</li>
       <li><code>ChipsSelecao</code>: Seleção única ou múltipla de chips com indicador visual de check e altura 56dp;</li>
       <li><code>SeletorCor</code>: Seletor de cores da <code>PaletaTipos</code> (todas com contraste ≥ 7:1 contra preto) com check contrastante;</li>
-      <li><code>SeletorModelo</code>: Catálogo de modelos pré-definidos baseado no componente <code>ItemLista</code>.</li>
+      <li><code>CampoHorarios</code>, <code>CampoData</code> (com <code>Calendario</code>), <code>CampoRepeticao</code>, <code>CampoQuantidade</code>, <code>CampoAutocompletar</code> (sugestões salvas), <code>CampoChecklist</code>, <code>CampoComAtalhos</code>, <code>CampoConfirmacao</code> e <code>SeletorTipo</code>: campos dos formulários de template;</li>
+      <li><strong>Templates (<code>src/components/templates/</code>):</strong> <code>TelaFormulario</code> (estrutura comum) e um formulário por template (<code>FormularioRemedio</code>, <code>FormularioCompromisso</code>, <code>FormularioTarefa</code>, <code>FormularioLivre</code>), além de <code>CardTemplate</code> e <code>DialogoLimite</code>.</li>
     </ul>
   </li>
 </ul>
@@ -116,7 +132,7 @@
 <hr>
 
 <h2>4. Gerenciamento de Estado no Zustand</h2>
-<p>O estado do módulo é controlado de forma centralizada e imutável pelas stores <code>useLembretesStore</code> e <code>useTiposLembreteStore</code>, com suporte a histórico de exclusão reversível (Undo) e sincronização bidirecional com o relógio Wear OS.</p>
+<p>O estado do módulo é controlado pelas stores <code>useLembretesStore</code>, <code>useTiposLembreteStore</code> e <code>useSugestoesStore</code>, todas persistidas no AsyncStorage. O <code>Lembrete</code> é uma união discriminada por <code>template</code>; lembretes salvos no formato antigo são migrados para o template Livre. A criação respeita o limite de lembretes (<code>reminderLimit</code>, 50 por padrão, ajustável em Ajustes › Desenvolvimento só em <code>__DEV__</code>).</p>
 
 <hr>
 
@@ -124,7 +140,8 @@
 <ul>
   <li><code>MobileAPP/src/mocks/lembretes.mock.ts</code>: Lembretes iniciais com horários, repetições e tipos associados;</li>
   <li><code>MobileAPP/src/mocks/tipos-lembrete.mock.ts</code>: Categorias com cores acessíveis da paleta;</li>
-  <li><code>MobileAPP/src/mocks/modelos-lembrete.mock.ts</code>: Modelos pré-definidos (remédios, água, exercícios, tarefas) e horários sugeridos.</li>
+  <li><code>MobileAPP/src/mocks/templates-lembrete.mock.ts</code>: Os quatro templates, com ícone, exemplo e tipo padrão;</li>
+  <li><code>MobileAPP/src/mocks/sugestoes.mock.ts</code>: Sugestões iniciais de remédios, participantes, locais, itens e materiais.</li>
 </ul>
 
 <hr>
