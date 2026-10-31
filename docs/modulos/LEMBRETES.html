@@ -50,17 +50,17 @@
 <div class="meta-block">
   <p><strong>Módulo:</strong> <code>LEMBRETES</code></p>
   <p><strong>Índice de referência:</strong> <code>docs/manuais/modulos.md</code></p>
-  <p><strong>Telas Expo Router:</strong> <code>MobileAPP/src/app/(tabs)/index.tsx</code>, <code>MobileAPP/src/app/(tabs)/lembretes.tsx</code></p>
-  <p><strong>Componentes UI:</strong> <code>MobileAPP/src/components/</code> (ThemedText, Card, MainContainer, App-bar)</p>
-  <p><strong>Stores Zustand:</strong> <code>MobileAPP/src/stores/useLembretesStore.ts</code></p>
-  <p><strong>Mocks &amp; Fixtures:</strong> <code>MobileAPP/src/mocks/lembretes.mock.ts</code></p>
+  <p><strong>Telas Expo Router:</strong> <code>MobileAPP/src/app/(tabs)/index.tsx</code>, <code>MobileAPP/src/app/(tabs)/lembretes.tsx</code>, <code>MobileAPP/src/app/lembrete/[id].tsx</code></p>
+  <p><strong>Componentes UI:</strong> <code>MobileAPP/src/components/</code> (ThemedText, Card, Botao, TopBar, LembreteCard, DialogoConfirmacao, AvisoSucesso, Formulario)</p>
+  <p><strong>Stores Zustand:</strong> <code>MobileAPP/src/stores/useLembretesStore.ts</code>, <code>MobileAPP/src/stores/useTiposLembreteStore.ts</code></p>
+  <p><strong>Mocks &amp; Fixtures:</strong> <code>MobileAPP/src/mocks/lembretes.mock.ts</code>, <code>MobileAPP/src/mocks/modelos-lembrete.mock.ts</code></p>
   <p><strong>Serviço Wearable:</strong> <code>MobileAPP/src/services/wear/</code> (Wearable Data Layer API)</p>
 </div>
 
 <hr>
 
 <h2>1. Visão Geral do Módulo</h2>
-<p>O módulo de <strong>Lembretes</strong> é o núcleo da experiência do aplicativo Lembri. Ele permite que o usuário crie lembretes de rotina ou medicamentos rapidamente em seu smartphone, visualize o status de conexão com relógios Wear OS, envie os lembretes para o pulso e acompanhe confirmações de conclusão em tempo real.</p>
+<p>O módulo de <strong>Lembretes</strong> é o núcleo da experiência do aplicativo Lembri. Ele permite que o usuário acompanhe sua rotina na agenda diária, consulte lembretes por categorias, utilize modelos pré-definidos para criação ágil, gerencie confirmações com reversão e visualize o status de sincronização com o relógio Wear OS em tempo real.</p>
 
 <hr>
 
@@ -77,71 +77,71 @@
     <tr>
       <td><code>/(tabs)</code></td>
       <td><code>MobileAPP/src/app/(tabs)/index.tsx</code></td>
-      <td>Painel principal: status de conexão com o relógio, formulário de adição rápida e lista recente de lembretes enviados</td>
+      <td>Home unificada: card do próximo lembrete, agenda do dia e histórico recente com ações rápidas e reversão</td>
     </tr>
     <tr>
       <td><code>/(tabs)/lembretes</code></td>
       <td><code>MobileAPP/src/app/(tabs)/lembretes.tsx</code></td>
-      <td>Histórico completo, filtros por status (todos, pendentes, concluídos) e agendamento</td>
+      <td>Listagem completa de lembretes, filtros por categoria/tipo e botão de novo lembrete</td>
+    </tr>
+    <tr>
+      <td><code>/lembrete/[id]</code></td>
+      <td><code>MobileAPP/src/app/lembrete/[id].tsx</code></td>
+      <td>Detalhes completos do lembrete, horários, histórico de conclusões e ações de editar ou excluir com confirmação destrutiva (variante perigo)</td>
     </tr>
   </tbody>
 </table>
 
 <hr>
 
-<h2>3. Gerenciamento de Estado no Zustand</h2>
-<p>O estado do módulo é controlado de forma centralizada e imutável pela store <code>useLembretesStore</code>:</p>
-<pre><code class="language-typescript">interface LembretesState {
-  lembretes: Lembrete[];
-  filtro: 'todos' | 'pendentes' | 'concluidos';
-  isLoading: boolean;
-  erro: string | null;
-
-  adicionarLembrete: (titulo: string, horario?: string) => Lembrete;
-  toggleConcluido: (id: string) => void;
-  removerLembrete: (id: string) => void;
-  definirFiltro: (filtro: 'todos' | 'pendentes' | 'concluidos') => void;
-  sincronizarComRelogio: (id: string, concluidoNoRelogio: boolean) => void;
-  resetarParaMocks: () => void;
-}
-</code></pre>
-
-<hr>
-
-<h2>4. Catálogo de Componentes e Tokens Visuais</h2>
+<h2>3. Kit de Componentes do Módulo (CARD-23 a CARD-28)</h2>
 <ul>
-  <li><code>ThemedText</code>: Variantes <code>title</code>, <code>subheading</code>, <code>label</code>, <code>small</code> e <code>button</code>;</li>
-  <li><code>Card</code>: Superfície branca com bordas arredondadas (<code>Radius.lg = 16</code>) e borda sutil;</li>
-  <li><code>TouchTarget</code>: Alvo mínimo de toque padronizado em <strong>56dp</strong>;</li>
-  <li><code>Colors</code>: Contraste acessível em preto, branco e tons de cinza funcionais.</li>
+  <li><code>Botao</code>: Variantes <code>primario</code> (fundo preto), <code>secundario</code> (borda preta) e <code>perigo</code> (fundo <code>Colors.danger = #A50E0E</code> de alto contraste AAA);</li>
+  <li><code>TopBar</code>: Botões Voltar, Ajuda e Áudio com áreas de toque de <strong>56×56dp</strong> (<code>TouchTarget</code>) sem sobreposição de hitSlop;</li>
+  <li><code>LembreteCard</code>: Card completo com título, etiqueta de categoria, descrição curta, chips de horários, repetição descritiva e status feito/pendente acessível em texto e ícone (WCAG 1.4.1);</li>
+  <li><code>DialogoConfirmacao</code>: Modal acessível com suporte a <code>varianteConfirmar="perigo"</code> para prevenção de erros em ações destrutivas (WCAG 3.3.6);</li>
+  <li><code>AvisoSucesso</code>: Toast acessível com ícone de sucesso, botão Fechar e suporte a leitor de tela (WCAG 2.2.3 e 4.1.3);</li>
+  <li><strong>Componentes de Formulário (<code>src/components/formulario/</code>):</strong>
+    <ul>
+      <li><code>CampoTexto</code>: Caixa de texto com rótulo sempre visível, altura 56dp, foco reforçado e mensagens de ajuda e erro;</li>
+      <li><code>SeletorHorario</code>: Seletor HH:mm em dígitos grandes com botões +/− de 56dp e suporte a ações acessíveis de deslizar (adjustable);</li>
+      <li><code>SeletorDias</code>: Seleção de dias da semana (D S T Q Q S S) com suporte a flexWrap e leitores de tela;</li>
+      <li><code>ChipsSelecao</code>: Seleção única ou múltipla de chips com indicador visual de check e altura 56dp;</li>
+      <li><code>SeletorCor</code>: Seletor de cores da <code>PaletaTipos</code> (todas com contraste ≥ 7:1 contra preto) com check contrastante;</li>
+      <li><code>SeletorModelo</code>: Catálogo de modelos pré-definidos baseado no componente <code>ItemLista</code>.</li>
+    </ul>
+  </li>
 </ul>
 
 <hr>
 
+<h2>4. Gerenciamento de Estado no Zustand</h2>
+<p>O estado do módulo é controlado de forma centralizada e imutável pelas stores <code>useLembretesStore</code> e <code>useTiposLembreteStore</code>, com suporte a histórico de exclusão reversível (Undo) e sincronização bidirecional com o relógio Wear OS.</p>
+
+<hr>
+
 <h2>5. Massa de Dados Mockados e Fixtures</h2>
-<p>Localizada em <code>MobileAPP/src/mocks/lembretes.mock.ts</code>, a fixture inicial provê dados pré-populados para testes no emulador, com itens pendentes e concluídos em diferentes horários do dia.</p>
+<ul>
+  <li><code>MobileAPP/src/mocks/lembretes.mock.ts</code>: Lembretes iniciais com horários, repetições e tipos associados;</li>
+  <li><code>MobileAPP/src/mocks/tipos-lembrete.mock.ts</code>: Categorias com cores acessíveis da paleta;</li>
+  <li><code>MobileAPP/src/mocks/modelos-lembrete.mock.ts</code>: Modelos pré-definidos (remédios, água, exercícios, tarefas) e horários sugeridos.</li>
+</ul>
 
 <hr>
 
 <h2>6. Acessibilidade Mobile (WCAG 2.2 AAA)</h2>
 <ul>
   <li>Contraste aprimorado mínimo de 7:1 para texto normal e 4.5:1 para texto grande (1.4.6);</li>
-  <li>Todos os botões contam com área de toque mínima de 56dp (<code>TouchTarget</code>, superando o mínimo de 44x44dp AAA);</li>
-  <li>Botões com ícones utilizam <code>accessibilityRole="button"</code> e <code>accessibilityLabel</code> autônomo e contextual (2.4.9);</li>
-  <li>Ações de exclusão contam com mecanismo de reversão (*Undo* de 5-10s) ou confirmação explícita (3.3.6);</li>
-  <li>Sem limite de tempo inflexível nos fluxos (2.2.3);</li>
-  <li>Conclusão indicada por texto explicativo ("Concluído no relógio ✓" / "Pendente") além de cor;</li>
-  <li>Compatibilidade integral com TalkBack e VoiceOver.</li>
+  <li>Todos os botões e áreas interativas medem no mínimo 56dp (<code>TouchTarget</code>, superando o mínimo de 44x44dp AAA);</li>
+  <li>Rótulos autônomos contextuais em todos os elementos acionáveis (2.4.9);</li>
+  <li>Ações destrutivas identificadas pela variante perigo e protegidas por diálogo de confirmação (3.3.6);</li>
+  <li>Avisos temporários sem limite rígido de tempo quando o leitor de tela estiver ativo (2.2.3).</li>
 </ul>
 
 <hr>
 
 <h2>7. Sincronização com Relógio Wear OS</h2>
-<p>A sincronização é bidirecional via <code>modules/wear-connector</code>:</p>
-<ul>
-  <li><strong>Celular → Relógio:</strong> Mensagem na rota <code>/lembrete</code> com payload contendo <code>{ id, titulo, horario }</code>;</li>
-  <li><strong>Relógio → Celular:</strong> Mensagem na rota <code>/confirmacao</code> com payload <code>{ id, concluido: true }</code>, disparando atualização imediata na store Zustand.</li>
-</ul>
+<p>A sincronização é bidirecional via <code>modules/wear-connector</code> e orquestrada pelo hook <code>useWear</code> e <code>wear-service.ts</code>.</p>
 
 </body>
 </html>
