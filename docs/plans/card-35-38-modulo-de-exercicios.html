@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDD Front-end — CARD-35-38: Módulo de Exercícios (Projeto Lembri)</title>
+  <style>
+    :root {
+      --brand-strong: #000000;
+      --brand: #1a1a1a;
+      --brand-surface: #f4f4f4;
+      --brand-border: #d0d0d0;
+      --brand-hover: #eaeaea;
+      --text-primary: #000000;
+      --text-secondary: #4e4e4e;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #cbd5e1;
+      --code-inline-bg: #f1f5f9;
+      --code-inline-border: #cbd5e1;
+      --code-block-bg: #0f172a;
+      --code-block-text: #f8fafc;
+      --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); max-width: 960px; margin: 40px auto; padding: 0 28px 60px; color: var(--text-primary); line-height: 1.75; background: var(--bg-page); -webkit-font-smoothing: antialiased; }
+    h1 { font-size: 1.6rem; color: var(--text-primary); border-bottom: 3px solid var(--brand); padding-bottom: 10px; margin: 28px 0 18px; line-height: 1.3; }
+    h2 { font-size: 1.2rem; color: var(--brand); margin: 2.2rem 0 10px; padding-left: 12px; border-left: 4px solid var(--brand); line-height: 1.35; }
+    h3 { font-size: 1.03rem; color: var(--text-secondary); margin: 1.4rem 0 8px; }
+    p { margin: 10px 0; }
+    .meta-block { background: var(--brand-surface); border: 1px solid var(--brand-border); border-radius: 6px; padding: 14px 18px; margin: 18px 0 24px; font-size: 0.93rem; line-height: 1.85; }
+    .notice-block { background: #fefce8; border: 1px solid #fde047; border-left: 4px solid #ca8a04; border-radius: 6px; padding: 12px 16px; margin: 16px 0; font-size: 0.9rem; color: #713f12; }
+    .toc { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 18px 14px 34px; margin: 18px 0 28px; font-size: 0.92rem; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9rem; background: var(--bg-card); }
+    thead th { background: var(--brand); color: #ffffff; padding: 10px 13px; text-align: left; font-weight: 600; }
+    tbody td { padding: 9px 13px; border: 1px solid var(--border-subtle); vertical-align: top; }
+    tbody tr:nth-child(even) td { background: var(--brand-surface); }
+    code { background: var(--code-inline-bg); border: 1px solid var(--code-inline-border); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.86em; color: #000; }
+    pre { background: var(--code-block-bg); color: var(--code-block-text); border-radius: 6px; padding: 14px 18px; margin: 14px 0; overflow-x: auto; }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.85rem; line-height: 1.6; }
+    ul, ol { padding-left: 1.5em; margin: 10px 0; }
+    ul.check { list-style: none; padding-left: 4px; }
+    ul.check li { margin: 7px 0; display: flex; align-items: baseline; gap: 8px; }
+    ul.check input { width: 16px; height: 16px; accent-color: var(--brand); flex-shrink: 0; }
+    blockquote { border-left: 4px solid var(--brand); background: var(--brand-surface); margin: 14px 0; padding: 12px 18px; color: var(--text-secondary); border-radius: 0 6px 6px 0; }
+    hr { border: none; border-top: 1px solid var(--border-subtle); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<h1>SDD Front-end — CARD-35-38: Módulo de Exercícios</h1>
+
+<div class="meta-block">
+  <p><strong>Tarefas:</strong> <code>CARD-35</code> Lista de exercícios · <code>CARD-36</code> Detalhe do exercício · <code>CARD-37</code> Criar fluxo de exercício · <code>CARD-38</code> Resumo de execução</p>
+  <p><strong>Branch (Gitflow):</strong> <code>feat/modulo-exercicios</code> — criada direto da <code>main</code> (decisão do desenvolvedor: a <code>develop</code> local está atrás da <code>main</code>, que já contém o PR #7 do Yuri) → PR para <code>main</code></p>
+  <p><strong>Escopo Tecnológico:</strong> React Native (Expo SDK 58), React 19, Expo Router, Zustand + <code>persist</code> (AsyncStorage)</p>
+  <p><strong>Módulo:</strong> <code>EXERCICIOS</code> (o script do Trello sugeriu LEMBRETES para o CARD-38 por heurística — o frame <code>exercicios_review</code> é do módulo de exercícios)</p>
+  <p><strong>Fonte visual:</strong> Figma <code>LEMBRI!</code> (fileKey <code>QKjpXmagXvBkc1QU24ryjJ</code>), página <em>Apresentação</em> (<code>47:1139</code>): <code>exercicios_lista 152:1143</code>, <code>exercicios_detalhe 152:1213</code>, <code>exercicios_preview 152:1242</code>, <code>exercicios_exec 152:1353</code>, <code>exercicios_res_err 152:1405</code>, <code>exercicios_review 152:1292</code></p>
+  <p><strong>Data:</strong> 2026-11-01</p>
+</div>
+
+<div class="notice-block">
+  <strong>Contexto obrigatório:</strong> o Yuri mudou a forma como os lembretes funcionam (PR #7 — <code>useLembretesStore</code> agora tem <code>persist</code> v4 com migração, notificações e <code>useStoresHidratadas</code>). Este plano <strong>não altera lembretes</strong>, mas reaproveita o padrão de persistência dele. <strong>Pendência registrada:</strong> o desenvolvedor vai testar sozinho, no celular, como os lembretes ficaram (pedido do Yuri) — fora do escopo deste plano.
+</div>
+
+<h3>Decisões confirmadas com o desenvolvedor (Regra da Dúvida)</h3>
+<table>
+  <thead><tr><th>#</th><th>Tema</th><th>Decisão</th></tr></thead>
+  <tbody>
+    <tr><td>D1</td><td>Mecânica (CARD-37 "[faltam detalhes]")</td><td>Um fluxo único <strong>memorizar → responder → corrigir → resumo</strong>, reaproveitado pelos 4 exercícios com conteúdo mockado diferente.</td></tr>
+    <tr><td>D2</td><td>Modo de resposta</td><td>Modelo genérico de <strong>rodadas com casas em ordem</strong>: Sequências usa <strong>teclado numérico</strong>; Ordenação, Associações e Lista de compras usam <strong>chips embaralhados com distratores</strong>.</td></tr>
+    <tr><td>D3</td><td>Tempo de memorização</td><td><strong>Sem cronômetro</strong>: a pessoa toca em "CONTINUAR" quando quiser (WCAG 2.2.3).</td></tr>
+    <tr><td>D4</td><td>Streak</td><td><strong>Streak geral</strong>: dias consecutivos com pelo menos 1 exercício feito, <strong>derivado do histórico</strong> (sai o campo <code>streakDias</code> e a regra "+1 com ≥ 60%").</td></tr>
+    <tr><td>D5</td><td>Histórico</td><td><strong>Persistido</strong> com <code>zustand persist</code> + AsyncStorage, igual à store de lembretes.</td></tr>
+    <tr><td>D6</td><td>Total do resumo</td><td><strong>Acertos por item / total de itens</strong> (o "13/18" do Figma é placeholder; o exemplo dá 11/15) e o % por rodada.</td></tr>
+    <tr><td>D7</td><td>Layout da lista</td><td>Seguir o Figma (ícone + título + última atividade + DETALHES/COMEÇAR) nos <strong>4 cards</strong> (inclui Lista de compras) e mostrar o <strong>streak geral em destaque</strong> abaixo de "Selecione um exercício".</td></tr>
+    <tr><td>D8</td><td>Teclado</td><td>Adicionar a tecla <strong>"Apagar"</strong> ao lado do 0. Tocar numa casa já preenchida seleciona a casa para corrigir.</td></tr>
+    <tr><td>D9</td><td>Feedbacks</td><td>Rodada toda certa: aviso <strong>"Tudo certo!"</strong> (<code>AvisoSucesso</code>) e segue em frente. SAIR (botão, seta ou voltar do Android): diálogo <strong>"Sair sem salvar esta tentativa?"</strong>.</td></tr>
+    <tr><td>D10</td><td>Cores certo/errado</td><td>Tokens por função <code>answerCorrect</code> / <code>answerWrong</code> + ícone ✓/✗ + <code>accessibilityLabel</code> "correto/errado" (WCAG 1.4.1).</td></tr>
+  </tbody>
+</table>
+
+<ol class="toc">
+  <li><a href="#s1">Contexto, Objetivo e Escopo Front-end</a></li>
+  <li><a href="#s2">Requisitos e Regras de Negócio (Casos de Borda)</a></li>
+  <li><a href="#s3">Estrutura de Arquivos e Componentes</a></li>
+  <li><a href="#s4">Modelagem de Dados e Tipos TypeScript (src/types/)</a></li>
+  <li><a href="#s5">Gerenciamento de Estado no Zustand e Mocks</a></li>
+  <li><a href="#s6">Front-end — Telas Expo Router e 5 Estados Visuais</a></li>
+  <li><a href="#s7">Acessibilidade Mobile (WCAG 2.2 Nível AAA — TouchTarget = 56)</a></li>
+  <li><a href="#s8">Integração com Wearable (se aplicável)</a></li>
+  <li><a href="#s9">Casos de Teste e Verificação no Emulador</a></li>
+  <li><a href="#s10">Checklist Pré-PR</a></li>
+  <li><a href="#s11">Atualização da Documentação do Módulo</a></li>
+  <li><a href="#s12">Princípios de Desenvolvimento e Restrições</a></li>
+</ol>
+
+<hr>
+
+<h2 id="s1">1. Contexto, Objetivo e Escopo Front-end</h2>
+<p><strong>Hoje:</strong> a aba <code>(tabs)/exercicios.tsx</code> lista os exercícios com o <code>ExercicioCard</code> antigo (nível, duração, streak por card). "COMEÇAR" só grava uma tentativa simulada (<code>registrarTentativa(id, 5, 5, 120)</code>) e "DETALHES" abre <code>/em-breve</code>. A <code>useExerciciosStore</code> não é persistida.</p>
+<p><strong>Objetivo:</strong> a pessoa usuária passa a conseguir:</p>
+<ol>
+  <li><strong>(CARD-35)</strong> ver o catálogo "Treine sua memória", buscar pelo nome, ver há quantos dias seguidos pratica e abrir Detalhes ou Começar;</li>
+  <li><strong>(CARD-36)</strong> ver a descrição, a última atividade, o tempo médio, a média de acertos, as instruções e o histórico de tentativas (data, acertos e tempo);</li>
+  <li><strong>(CARD-37)</strong> fazer o exercício inteiro: memorizar as rodadas, responder uma rodada por vez, ver a correção quando errar e um aviso quando acertar tudo;</li>
+  <li><strong>(CARD-38)</strong> ver o resumo (tempo gasto, resultado por rodada e total), com a tentativa salva no histórico, e escolher REFAZER ou voltar aos exercícios.</li>
+</ol>
+<h3>Fora do escopo (YAGNI)</h3>
+<ul>
+  <li>Sincronização de exercícios com o relógio Wear OS;</li>
+  <li>Geração procedural/aleatória de conteúdo e níveis de dificuldade adaptativos (as rodadas vêm dos mocks);</li>
+  <li>Retomar um exercício interrompido depois de fechar o app (a sessão fica só em memória);</li>
+  <li>Ações dos botões Ajuda e Microfone da top bar (seguem como <code>semAcao</code>, igual às outras telas);</li>
+  <li>Qualquer mudança na store, nos tipos ou nas telas de lembretes.</li>
+</ul>
+
+<hr>
+
+<h2 id="s2">2. Requisitos e Regras de Negócio (Casos de Borda)</h2>
+
+<h3>Regras</h3>
+<table>
+  <thead><tr><th>ID</th><th>Regra</th></tr></thead>
+  <tbody>
+    <tr><td>RN-EX-01</td><td>A busca filtra por título, sem diferenciar maiúsculas nem acentos (reusa <code>normalizarBusca</code> de <code>utils/texto.ts</code>).</td></tr>
+    <tr><td>RN-EX-02</td><td><strong>Streak geral</strong> = quantidade de dias consecutivos (calendário local) com ≥ 1 tentativa concluída, contando para trás a partir de hoje. <em>Ver dúvida pendente 1 sobre o dia de hoje ainda sem tentativa.</em></td></tr>
+    <tr><td>RN-EX-03</td><td>Só tentativas <strong>concluídas</strong> (que chegaram ao resumo) entram no histórico. Sair no meio descarta a sessão sem gravar nada.</td></tr>
+    <tr><td>RN-EX-04</td><td>Uma rodada está <strong>correta</strong> quando todas as casas batem com os itens, na mesma posição. Acertos da tentativa = soma das casas certas de todas as rodadas; total = soma dos itens.</td></tr>
+    <tr><td>RN-EX-05</td><td>% da rodada = <code>round(acertos / itens × 100)</code>. Pontuação da tentativa = <code>round(acertos / total × 100)</code>.</td></tr>
+    <tr><td>RN-EX-06</td><td>Tempo gasto = do toque em COMEÇAR (início da memorização) até a confirmação da última rodada. Não existe limite de tempo.</td></tr>
+    <tr><td>RN-EX-07</td><td>Tempo médio (detalhe) = média de <code>tempoGastoSegundos</code> do exercício, em minutos arredondados (mínimo "1 min" quando houver tentativa). Média de acertos = média de <code>pontuacaoPercentual</code>.</td></tr>
+    <tr><td>RN-EX-08</td><td>Modo <code>teclado</code>: cada casa recebe exatamente <code>item.length</code> dígitos (2 nos mocks). Completou os dígitos, a casa é preenchida e o foco passa para a próxima casa vazia.</td></tr>
+    <tr><td>RN-EX-09</td><td>Modo <code>opcoes</code>: os chips são <code>itens + distratores</code>, embaralhados <strong>uma vez</strong> ao iniciar a sessão (não reembaralham ao re-renderizar). Cada chip só pode ser usado uma vez. Esvaziar uma casa devolve o chip.</td></tr>
+    <tr><td>RN-EX-10</td><td>CONTINUAR na resposta só fica ativo com todas as casas preenchidas. Quando inativo, aparece o texto "Preencha todas as casas para continuar" (desvio do Figma, seção 6 de <code>figma.md</code>).</td></tr>
+    <tr><td>RN-EX-11</td><td>Gravar a tentativa é <strong>idempotente</strong>: concluir duas vezes a mesma sessão (duplo toque, re-render) gera uma única tentativa.</td></tr>
+  </tbody>
+</table>
+
+<h3>Cenários (Dado / Quando / Então)</h3>
+<table>
+  <thead><tr><th>#</th><th>Dado</th><th>Quando</th><th>Então</th></tr></thead>
+  <tbody>
+    <tr><td>C1</td><td>Lista com 4 exercícios</td><td>Digito "orden"</td><td>Só "Ordenação" aparece.</td></tr>
+    <tr><td>C2</td><td>Busca sem resultado</td><td>Digito "xyz"</td><td>"Nenhum exercício encontrado para "xyz"" + botão "Limpar busca".</td></tr>
+    <tr><td>C3</td><td>Tentativas hoje, ontem e anteontem</td><td>Abro a lista</td><td>Destaque "3 dias seguidos".</td></tr>
+    <tr><td>C4</td><td>Histórico vazio</td><td>Abro a lista</td><td>Destaque "Faça um exercício hoje para começar sua sequência" e cada card mostra "Ainda não praticado".</td></tr>
+    <tr><td>C5</td><td>Exercício nunca feito</td><td>Abro Detalhes</td><td>Indicadores com "—" e o histórico com "Você ainda não fez este exercício".</td></tr>
+    <tr><td>C6</td><td>Rodada 1 com 1 de 5 certos</td><td>Toco CONTINUAR</td><td>Vou para "Resposta Correta" com a sequência certa.</td></tr>
+    <tr><td>C7</td><td>Rodada 2 toda certa</td><td>Toco CONTINUAR</td><td>Aviso "Tudo certo!" e vou direto para a rodada 3.</td></tr>
+    <tr><td>C8</td><td>Última rodada respondida</td><td>CONTINUAR (ou CONTINUAR da correção)</td><td>A tentativa é gravada e abre o Resumo com tempo, % por rodada e "11/15".</td></tr>
+    <tr><td>C9</td><td>Estou respondendo</td><td>Toco SAIR, a seta ou o voltar do Android</td><td>Diálogo "Sair sem salvar esta tentativa?". Cancelar mantém tudo; Sair descarta e volta à tela de origem.</td></tr>
+    <tr><td>C10</td><td>Estou no Resumo</td><td>Toco REFAZER</td><td>Nova sessão do mesmo exercício (memorização) e a anterior continua no histórico.</td></tr>
+    <tr><td>C11</td><td>Estou no Resumo</td><td>Toco voltar aos exercícios</td><td>Abro a aba Exercícios e a "Última atividade" do card fica atualizada.</td></tr>
+    <tr><td>C12</td><td>Rota de execução aberta sem sessão ativa (deep link, app reaberto)</td><td>A tela monta</td><td>Mensagem "Este exercício não está em andamento" + botão "Ver exercícios".</td></tr>
+    <tr><td>C13</td><td>ID inexistente em <code>/exercicio/[id]</code></td><td>A tela monta</td><td>"Exercício não encontrado" (mesmo padrão do detalhe de lembrete).</td></tr>
+    <tr><td>C14</td><td>App fechado e reaberto</td><td>Abro Detalhes</td><td>O histórico continua lá (persistência).</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s3">3. Estrutura de Arquivos e Componentes</h2>
+<table>
+  <thead><tr><th>Ação</th><th>Arquivo</th><th>Responsabilidade</th></tr></thead>
+  <tbody>
+    <tr><td>Alterar</td><td><code>src/types/exercicio.ts</code></td><td>Adicionar <code>ModoResposta</code>, <code>RodadaExercicio</code>, <code>SessaoExercicio</code>; tirar <code>streakDias</code>; adicionar <code>instrucoes</code>, <code>modoResposta</code>, <code>rodadas</code>.</td></tr>
+    <tr><td>Alterar</td><td><code>src/mocks/exercicios.mock.ts</code></td><td>4 exercícios com rodadas, instruções e ícones Material.</td></tr>
+    <tr><td>Alterar</td><td><code>src/mocks/historico-tentativas.mock.ts</code></td><td>Ajustar totais às rodadas novas e cobrir streak/estatísticas.</td></tr>
+    <tr><td>Alterar</td><td><code>src/stores/useExerciciosStore.ts</code></td><td><code>persist</code> do histórico, sessão em memória e ações do fluxo.</td></tr>
+    <tr><td>Alterar</td><td><code>src/hooks/use-stores-hidratadas.ts</code></td><td>Incluir <code>useExerciciosStore</code> em <code>STORES</code>.</td></tr>
+    <tr><td>Alterar</td><td><code>src/utils/exercicio.ts</code></td><td>Funções puras: <code>calcularStreak</code>, <code>estatisticasDoExercicio</code>, <code>historicoDoExercicio</code>, <code>corrigirRodada</code>, <code>resultadoDaSessao</code>, <code>embaralhar</code>, <code>filtrarExercicios</code>.</td></tr>
+    <tr><td>Alterar</td><td><code>src/hooks/formulario/use-sair-sem-salvar.ts</code></td><td>Novo parâmetro opcional <code>aoSair?: () =&gt; void</code> (padrão <code>router.back()</code>), sem quebrar os formulários de lembrete.</td></tr>
+    <tr><td>Alterar</td><td><code>src/constants/theme.ts</code></td><td>Tokens <code>answerCorrect: '#ECF3D9'</code> e <code>answerWrong: '#F3D9D9'</code> (valores do Figma, nos temas claro e escuro).</td></tr>
+    <tr><td>Alterar</td><td><code>src/app/(tabs)/exercicios.tsx</code></td><td>Frame <code>exercicios_lista</code> (CARD-35).</td></tr>
+    <tr><td>Criar</td><td><code>src/app/exercicio/[id]/index.tsx</code></td><td>Frame <code>exercicios_detalhe</code> + histórico (CARD-36).</td></tr>
+    <tr><td>Criar</td><td><code>src/app/exercicio/[id]/memorizar.tsx</code></td><td>Frame <code>exercicios_preview</code> (CARD-37).</td></tr>
+    <tr><td>Criar</td><td><code>src/app/exercicio/[id]/responder.tsx</code></td><td>Frame <code>exercicios_exec</code> (CARD-37).</td></tr>
+    <tr><td>Criar</td><td><code>src/app/exercicio/[id]/correcao.tsx</code></td><td>Frame <code>exercicios_res_err</code> (CARD-37).</td></tr>
+    <tr><td>Criar</td><td><code>src/app/exercicio/[id]/resumo.tsx</code></td><td>Frame <code>exercicios_review</code> (CARD-38).</td></tr>
+    <tr><td>Reescrever</td><td><code>src/components/cards/exercicio-card.tsx</code></td><td>Layout do Figma: ícone 44 em área 64, título, última atividade e linha DETALHES/COMEÇAR.</td></tr>
+    <tr><td>Criar</td><td><code>src/components/exercicio/destaque-streak.tsx</code></td><td>Destaque do streak geral na lista.</td></tr>
+    <tr><td>Criar</td><td><code>src/components/exercicio/campo-busca.tsx</code></td><td>Busca do Figma (ícone Search + "Buscar..."), com rótulo acessível e botão de limpar.</td></tr>
+    <tr><td>Criar</td><td><code>src/components/exercicio/indicadores-exercicio.tsx</code></td><td>Card com Última Atividade / Tempo Médio / Média de Acertos.</td></tr>
+    <tr><td>Criar</td><td><code>src/components/exercicio/historico-tentativas.tsx</code></td><td>Seção "Histórico de tentativas" (data, acertos, tempo).</td></tr>
+    <tr><td>Criar</td><td><code>src/components/exercicio/casa-item.tsx</code></td><td>Célula de item com 4 estados: <code>neutra</code> (cinza da memorização), <code>vazia</code> ("?" tracejada), <code>correta</code>, <code>errada</code>.</td></tr>
+    <tr><td>Criar</td><td><code>src/components/exercicio/cartao-rodada.tsx</code></td><td>Card "SEQUÊNCIA" com a fileira de <code>CasaItem</code> e % opcional (memorizar, correção, resumo).</td></tr>
+    <tr><td>Criar</td><td><code>src/components/exercicio/casas-resposta.tsx</code></td><td>Linha "RESPOSTA" com casas tocáveis e casa ativa destacada.</td></tr>
+    <tr><td>Criar</td><td><code>src/components/exercicio/teclado-numerico.tsx</code></td><td>Teclas 1–9, 0 e Apagar + visor dos dígitos em digitação ("8 ?").</td></tr>
+    <tr><td>Criar</td><td><code>src/components/exercicio/opcoes-resposta.tsx</code></td><td>Chips embaralhados do modo <code>opcoes</code> (reusa o visual de <code>ChipsSelecao</code>/<code>ChipHorario</code> quando couber).</td></tr>
+    <tr><td>Criar</td><td><code>src/components/exercicio/barra-acoes-exercicio.tsx</code></td><td>Rodapé SAIR (secundário) + CONTINUAR (primário).</td></tr>
+    <tr><td>Criar</td><td><code>src/hooks/use-sessao-exercicio.ts</code></td><td>Lê a sessão, trata a ausência dela (C12) e liga o diálogo de saída (<code>useSairSemSalvar</code>).</td></tr>
+    <tr><td>Alterar</td><td><code>src/stores/__tests__/stores.test.ts</code></td><td>Trocar os testes de streak por card pelos testes novos (seção 9).</td></tr>
+  </tbody>
+</table>
+<p><strong>Reuso obrigatório:</strong> <code>TopBar</code>, <code>MainContainer</code>, <code>Card</code>, <code>ThemedText</code>, <code>Botao</code>, <code>CaixaDialogo</code>/<code>DialogoConfirmacao</code>, <code>AvisoSucesso</code> + <code>useAvisoStore</code>, <code>useAgora</code>, <code>formatarData</code>/<code>descreverDia</code>, <code>normalizarBusca</code>, <code>plural</code>.</p>
+
+<hr>
+
+<h2 id="s4">4. Modelagem de Dados e Tipos TypeScript (src/types/)</h2>
+<pre><code class="language-typescript">/** Como a pessoa preenche as casas da rodada. */
+export type ModoResposta = 'teclado' | 'opcoes';
+
+/** Uma rodada: o conjunto de itens memorizado e respondido de uma vez. */
+export interface RodadaExercicio {
+  /** Identificador estável da rodada dentro do exercício. */
+  id: string;
+  /** Rótulo do card (ex.: "SEQUÊNCIA", "ORDEM", "PAR", "LISTA"). */
+  rotulo: string;
+  /** Itens na ordem correta (ex.: ["80", "32", "12", "67", "55"]). */
+  itens: string[];
+  /** Dica mostrada em cada casa na resposta (Associações: a palavra-par). Mesmo tamanho de `itens`. */
+  dicas?: string[];
+  /** Opções erradas misturadas aos itens no modo `opcoes`. */
+  distratores?: string[];
+}
+
+export interface Exercicio {
+  id: string;
+  titulo: string;
+  /** Subtítulo do detalhe ("Pratique memorização com sequências de números."). */
+  descricao: string;
+  /** Parágrafos da caixa INSTRUÇÕES. */
+  instrucoes: string[];
+  /** Nome do símbolo Material do expo-symbols (ex.: "format_list_numbered"). */
+  icone: string;
+  /** Título da memorização ("Lembre-se das Sequências!"). */
+  tituloMemorizacao: string;
+  modoResposta: ModoResposta;
+  rodadas: RodadaExercicio[];
+  nivel: NivelExercicio;                 // mantido (contrato), não exibido no Figma
+  duracaoEstimadaMinutos: number;        // mantido (contrato), não exibido no Figma
+  // streakDias: REMOVIDO — streak agora é geral e derivado do histórico (D4)
+}
+
+/** TentativaExercicio permanece igual (id, exercicioId, dataHora, tempoGastoSegundos,
+ *  acertos, totalQuestoes, pontuacaoPercentual) — é o que vai para o histórico persistido. */
+
+/** Execução em andamento (só em memória, não persistida). */
+export interface SessaoExercicio {
+  exercicioId: string;
+  /** ISO 8601 do toque em COMEÇAR. */
+  inicio: string;
+  /** Índice da rodada sendo respondida/corrigida. */
+  rodadaAtual: number;
+  /** Respostas por rodada, na ordem das casas ('' = vazia). */
+  respostas: string[][];
+  /** Chips embaralhados por rodada (modo `opcoes`), sorteados uma vez em `iniciarSessao`. */
+  opcoes: string[][];
+  /** Preenchido ao concluir; garante idempotência e alimenta o resumo. */
+  tentativaId: string | null;
+}
+
+/** Resultado de uma rodada (derivado, nunca guardado). */
+export interface ResultadoRodada {
+  rodadaId: string;
+  /** true/false por casa, na ordem dos itens. */
+  casas: boolean[];
+  acertos: number;
+  total: number;
+  percentual: number;
+}</code></pre>
+<blockquote><strong>Compatibilidade (princípio 3):</strong> <code>TentativaExercicio</code> e <code>RegistrarTentativaInput</code> não mudam. A remoção de <code>streakDias</code> afeta só <code>ExercicioCard</code>, os mocks e <code>stores.test.ts</code>, todos atualizados nesta tarefa. Exercícios não trafegam para o relógio (<code>contrato.ts</code> intocado).</blockquote>
+
+<hr>
+
+<h2 id="s5">5. Gerenciamento de Estado no Zustand e Mocks</h2>
+
+<h3>5.1 <code>useExerciciosStore</code></h3>
+<pre><code class="language-typescript">export interface ExerciciosState {
+  exercicios: Exercicio[];              // catálogo dos mocks (não persistido)
+  historico: TentativaExercicio[];      // persistido, mais recentes primeiro
+  sessao: SessaoExercicio | null;       // em memória
+
+  /** Abre uma sessão nova (substitui qualquer sessão anterior) e sorteia os chips. */
+  iniciarSessao: (exercicioId: string) =&gt; void;
+  /** Grava as respostas da rodada atual (imutável) e devolve o resultado dela. */
+  responderRodada: (respostas: string[]) =&gt; ResultadoRodada | null;
+  /** Vai para a próxima rodada; devolve false quando não há mais rodadas. */
+  avancarRodada: () =&gt; boolean;
+  /** Calcula o resultado, grava a tentativa UMA vez (guarda por `tentativaId`) e a devolve. */
+  concluirSessao: () =&gt; TentativaExercicio | null;
+  /** Descarta a sessão sem gravar (SAIR). */
+  descartarSessao: () =&gt; void;
+
+  resetarParaMocks: () =&gt; void;        // mantido (usado pela seção de desenvolvimento)
+}</code></pre>
+<ul>
+  <li><strong>Persistência:</strong> <code>persist</code> com <code>name: 'lembri-exercicios'</code>, <code>version: 1</code>, <code>createJSONStorage(() =&gt; AsyncStorage)</code>, <code>partialize: (s) =&gt; ({ historico: s.historico })</code>. Na primeira execução (sem dados salvos), o histórico vem de <code>historicoIniciaisMock</code>, o mesmo comportamento da store de lembretes.</li>
+  <li><strong>Hidratação:</strong> incluir a store em <code>STORES</code> de <code>use-stores-hidratadas.ts</code>, para não mostrar os mocks antes dos dados salvos.</li>
+  <li><strong>Remoções:</strong> <code>registrarTentativa</code> (a regra antiga de streak) vira um helper interno de <code>concluirSessao</code>. <code>obterHistoricoPorExercicio</code> e <code>obterExercicioPorId</code> saem e dão lugar a seletores e utils puros (DRY com o padrão de <code>agenda-lembretes.ts</code>).</li>
+  <li><strong>Imutabilidade:</strong> <code>respostas</code> atualizada com <code>map</code> por índice. <code>historico: [nova, ...state.historico]</code>.</li>
+  <li><strong>Idempotência:</strong> <code>concluirSessao</code> devolve a tentativa já gravada quando <code>sessao.tentativaId</code> estiver preenchido. <code>iniciarSessao</code> com o mesmo id recomeça do zero (REFAZER).</li>
+  <li><strong>Seletores na UI:</strong> atômicos (<code>useExerciciosStore((s) =&gt; s.sessao)</code>). Os derivados (streak, estatísticas, histórico filtrado) ficam em <code>useMemo</code> sobre as funções puras de <code>utils/exercicio.ts</code>.</li>
+</ul>
+
+<h3>5.2 Funções puras (<code>src/utils/exercicio.ts</code>)</h3>
+<table>
+  <thead><tr><th>Função</th><th>Assinatura</th></tr></thead>
+  <tbody>
+    <tr><td><code>calcularStreak</code></td><td><code>(historico, agora: Date) =&gt; number</code> — RN-EX-02, usa <code>chaveData</code>/<code>somarDias</code> de <code>utils/data.ts</code>.</td></tr>
+    <tr><td><code>historicoDoExercicio</code></td><td><code>(historico, exercicioId) =&gt; TentativaExercicio[]</code> — ordenado do mais recente.</td></tr>
+    <tr><td><code>estatisticasDoExercicio</code></td><td><code>(historico, exercicioId) =&gt; { ultima?: Date; tempoMedioMin?: number; mediaAcertos?: number }</code> — RN-EX-07.</td></tr>
+    <tr><td><code>corrigirRodada</code></td><td><code>(rodada, respostas) =&gt; ResultadoRodada</code> — RN-EX-04/05.</td></tr>
+    <tr><td><code>resultadoDaSessao</code></td><td><code>(exercicio, sessao) =&gt; { rodadas: ResultadoRodada[]; acertos; total; percentual }</code></td></tr>
+    <tr><td><code>embaralhar</code></td><td><code>&lt;T&gt;(itens: T[], aleatorio = Math.random) =&gt; T[]</code> — Fisher-Yates sem mutar a entrada. O gerador é injetável para testes.</td></tr>
+    <tr><td><code>filtrarExercicios</code></td><td><code>(exercicios, busca) =&gt; Exercicio[]</code> — RN-EX-01.</td></tr>
+    <tr><td><code>formatarDuracao</code></td><td><code>(segundos) =&gt; string</code> — "5min" / "1 min"; reusada no resumo e no histórico.</td></tr>
+  </tbody>
+</table>
+<p><code>ultimaTentativa</code>, <code>descreverUltimaAtividade</code> e <code>formatarNivel</code> continuam como estão.</p>
+
+<h3>5.3 Mocks (<code>src/mocks/exercicios.mock.ts</code>)</h3>
+<table>
+  <thead><tr><th>Exercício</th><th>Ícone (Material)</th><th>Modo</th><th>Rodadas (resumo)</th></tr></thead>
+  <tbody>
+    <tr><td>Sequências</td><td><code>format_list_numbered</code></td><td><code>teclado</code></td><td>Do Figma: <code>80 32 12 67 55</code> · <code>02 04 05 06 02</code> · <code>01 02 03 05 11</code> (rótulo "SEQUÊNCIA")</td></tr>
+    <tr><td>Ordenação</td><td><code>swap_vert</code></td><td><code>opcoes</code></td><td>3 rodadas de 4 etapas de rotina em ordem (ex.: Acordar → Escovar os dentes → Tomar café → Sair), sem distratores (rótulo "ORDEM")</td></tr>
+    <tr><td>Associações</td><td><code>link</code></td><td><code>opcoes</code></td><td>3 rodadas de 4 pares com <code>dicas</code> (ex.: Pão→Manteiga, Café→Xícara…) + 2 distratores (rótulo "PARES")</td></tr>
+    <tr><td>Lista de compras</td><td><code>shopping_cart</code></td><td><code>opcoes</code></td><td>3 listas de 5 itens de mercado + 3 distratores cada (rótulo "LISTA")</td></tr>
+  </tbody>
+</table>
+<p>Textos do Figma usados literalmente em Sequências: descrição "Pratique memorização com sequências de números.", instruções em 2 parágrafos ("Veja os cartões com as sequências…" / "Após cada erro, será mostrada uma correção…") e título de memorização "Lembre-se das Sequências!". Os outros 3 exercícios ganham textos equivalentes. Casos de borda nos mocks: um item de texto longo ("Sabão em pó para roupas") para testar a quebra de linha e um exercício (Lista de compras) <strong>sem histórico</strong>, para cobrir o estado C5.</p>
+<p><strong>Histórico mock:</strong> tentativas de Sequências, Ordenação e Associações com totais coerentes com as rodadas (15, 12 e 12 itens) e datas relativas (geradas a partir de "hoje" na fábrica, para o streak não "vencer" com o tempo).</p>
+
+<hr>
+
+<h2 id="s6">6. Front-end — Telas Expo Router e 5 Estados Visuais</h2>
+
+<h3>6.1 Navegação</h3>
+<pre><code>(tabs)/exercicios ──DETALHES──▶ /exercicio/[id] ──COMEÇAR──┐
+        │                                                   │
+        └──────────────COMEÇAR──────────────────────────────┤ iniciarSessao(id)
+                                                            ▼
+                         /exercicio/[id]/memorizar  (router.push)
+                                   │ CONTINUAR (router.replace)
+                                   ▼
+                ┌──────▶ /exercicio/[id]/responder   (rodada atual)
+                │                  │ CONTINUAR → responderRodada()
+                │        ┌─────────┴──────────┐
+                │   com erro             toda certa → aviso "Tudo certo!"
+                │        ▼                    │
+                │  /exercicio/[id]/correcao   │
+                │        │ CONTINUAR          │
+                │        └─────────┬──────────┘
+                │      avancarRodada() ? ── sim ──┘(replace)
+                │                  │ não → concluirSessao()
+                │                  ▼
+                │      /exercicio/[id]/resumo (replace)
+                └── REFAZER: iniciarSessao(id) + replace(memorizar)
+                    VOLTAR AOS EXERCÍCIOS: router.dismissTo('/exercicios')</code></pre>
+<ul>
+  <li>As fases usam <code>router.replace</code> para que o "voltar" não refaça etapas. A seta da top bar, o voltar do Android e o SAIR passam por <code>useSairSemSalvar(true, aoSair)</code>, onde <code>aoSair</code> = <code>descartarSessao()</code> + <code>router.back()</code> (volta para a lista ou o detalhe de origem). No Resumo a sessão já foi gravada, então o voltar não pede confirmação.</li>
+  <li>Telas de stack sem bottom bar, seguindo o padrão de <code>lembrete/[id]</code>. <em>Ver dúvida pendente 2.</em> <code>TopBar</code> com <code>titulo="Exercícios"</code>, <code>onVoltar</code>, <code>onAjuda</code> e <code>onAudio</code> (= <code>semAcao</code>).</li>
+</ul>
+
+<h3>6.2 Telas</h3>
+<table>
+  <thead><tr><th>Tela / Frame</th><th>Conteúdo (Figma → código)</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Lista</strong><br><code>exercicios_lista</code></td><td>Título "Treine sua memória" (32 Bold, <code>accessibilityRole="header"</code>) + "Selecione um exercício" (<code>textSecondary</code>) → <code>DestaqueStreak</code> ("🔥 N dias seguidos", fundo <code>accentLight</code>) → <code>CampoBusca</code> (fundo <code>inputBackground</code>, raio 16, borda inferior 1) → <code>FlatList</code> de <code>ExercicioCard</code> (borda 2 <code>borderSubtle</code>, raio 16, DETALHES secundário + COMEÇAR primário, cada um <code>flex: 1</code>, altura ≥ 56). "Última atividade" em 14 (desvio do 12 do Figma).</td></tr>
+    <tr><td><strong>Detalhe</strong><br><code>exercicios_detalhe</code></td><td>Título (32 Bold) + descrição → <code>IndicadoresExercicio</code> (Última Atividade <code>dd/mm/aaaa</code>, chips cinza "6 min" e "80%") → card INSTRUÇÕES (rótulo 16 SemiBold caixa alta + parágrafos 20) → <strong>novo</strong> <code>HistoricoTentativas</code> (rótulo "HISTÓRICO DE TENTATIVAS", linhas "12/08/2026 · 11 de 15 acertos · 5 min", mais recentes primeiro) → COMEÇAR fixo no rodapé (primário, largura total).</td></tr>
+    <tr><td><strong>Memorizar</strong><br><code>exercicios_preview</code></td><td>Título <code>tituloMemorizacao</code> → um <code>CartaoRodada</code> por rodada com <code>CasaItem</code> no estado <code>neutra</code> (fundo <code>chipSelected</code>) → CONTINUAR fixo. <code>ScrollView</code> para quando houver muitas rodadas.</td></tr>
+    <tr><td><strong>Responder</strong><br><code>exercicios_exec</code></td><td>"RESPOSTA" + <code>CasasResposta</code> (casas "?" tracejadas <code>borderDashed</code>; casa ativa com borda 2 <code>primary</code>) + divisória → modo <code>teclado</code>: visor de dígitos + <code>TecladoNumerico</code> (grade 3×4: 1–9, [vazio], 0, Apagar; teclas ≥ 56dp, fundo <code>inputBackground</code>); modo <code>opcoes</code>: dicas acima das casas + <code>OpcoesResposta</code> (chips em <code>flexWrap</code>) → <code>BarraAcoesExercicio</code> (SAIR / CONTINUAR). Mostra também "Rodada 1 de 3" para dar visibilidade ao progresso (Nielsen #1).</td></tr>
+    <tr><td><strong>Correção</strong><br><code>exercicios_res_err</code></td><td>"Resposta Correta" + <code>CartaoRodada</code> com os itens corretos → SAIR / CONTINUAR. Ao abrir, um anúncio para leitor de tela: "Você acertou 1 de 5. Veja a resposta correta."</td></tr>
+    <tr><td><strong>Resumo</strong><br><code>exercicios_review</code></td><td>"Resumo" + "<strong>Tempo Gasto:</strong> 5min" → <code>CartaoRodada</code> por rodada com % à direita e <code>CasaItem</code> <code>correta</code>/<code>errada</code> (fundo <code>answerCorrect</code>/<code>answerWrong</code> + ✓/✗) → total "11/15" (64 Bold, label "11 acertos de 15") → REFAZER (primário) e VOLTAR AOS EXERCÍCIOS (secundário). <em>Ver dúvida pendente 3 sobre o texto do botão.</em></td></tr>
+  </tbody>
+</table>
+
+<h3>6.3 Os 5 estados visuais</h3>
+<table>
+  <thead><tr><th>Estado</th><th>Tratamento</th></tr></thead>
+  <tbody>
+    <tr><td>Ideal</td><td>Telas acima com dados do mock/histórico.</td></tr>
+    <tr><td>Carregando</td><td>Coberto pela hidratação global: o <code>RootLayout</code> segura a splash até <code>useStoresHidratadas()</code>, que passa a incluir exercícios. Nenhum loading falso por tela (YAGNI).</td></tr>
+    <tr><td>Vazio</td><td>Busca sem resultado (C2), catálogo vazio (mantém o card "Restaurar Exercícios" atual), detalhe sem histórico (C5) e streak zero (C4).</td></tr>
+    <tr><td>Erro</td><td>Exercício não encontrado (C13) e fase aberta sem sessão (C12), ambos com texto claro e ação de saída.</td></tr>
+    <tr><td>Parcial</td><td>Não se aplica: não há envio ao relógio nem rede. Declarado para não ficar ambíguo.</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s7">7. Acessibilidade Mobile (WCAG 2.2 Nível AAA)</h2>
+<ul class="check">
+  <li><input type="checkbox"> <strong>Contraste Aprimorado (1.4.6):</strong> texto preto sobre <code>#ECF3D9</code> (~18:1), <code>#F3D9D9</code> (~16:1), <code>#CCCCCC</code> (~13:1) e <code>accentLight</code>. Cinzas do Figma (<code>#5E5E5E</code>) → <code>textSecondary</code>. Placeholder "Buscar..." com <code>textSecondary</code> e rótulo acessível próprio.</li>
+  <li><input type="checkbox"> <strong>Alvo de Toque Aprimorado (2.5.5):</strong> teclas do teclado, casas de resposta, chips, botões e o limpar da busca com ≥ 56dp (<code>TouchTarget</code>). Casas de 48 visuais ganham <code>hitSlop</code> sem sobrepor as vizinhas.</li>
+  <li><input type="checkbox"> <strong>Rótulos Autônomos (2.4.9):</strong> "Começar exercício Sequências", "Ver detalhes do exercício Sequências", "Casa 2 de 5, vazia, selecionada", "Tecla 8", "Apagar último dígito", "Opção Manteiga, já usada" (<code>accessibilityState={{ disabled: true }}</code>).</li>
+  <li><input type="checkbox"> <strong>Prevenção de Erros Aprimorada (3.3.6):</strong> diálogo antes de descartar a tentativa (SAIR, seta e voltar do Android). A resposta pode ser revisada (Apagar / tocar na casa) antes de CONTINUAR.</li>
+  <li><input type="checkbox"> <strong>Sem Limite de Tempo (2.2.3):</strong> memorização e resposta sem cronômetro. O tempo gasto é só medido, nunca limita nada. O aviso "Tudo certo!" não bloqueia a navegação.</li>
+  <li><input type="checkbox"> <strong>Apresentação Visual (1.4.8):</strong> instruções e histórico alinhados à esquerda, <code>lineHeight ≥ 1,5×</code>.</li>
+  <li><input type="checkbox"> <strong>Status Sem Depender de Cor (1.4.1):</strong> cada casa do resumo tem ✓/✗ visível e label "80, errado" / "12, correto". O % da rodada fica em texto.</li>
+  <li><input type="checkbox"> <strong>Mudanças anunciadas (4.1.3):</strong> <code>AccessibilityInfo.announceForAccessibility</code> em "Tudo certo!", ao abrir a correção e ao abrir o resumo ("Você acertou 11 de 15 em 5 minutos").</li>
+  <li><input type="checkbox"> <strong>Título de tela e foco:</strong> títulos com <code>accessibilityRole="header"</code>. A ordem de leitura acompanha a ordem visual (casas → teclado → ações).</li>
+</ul>
+
+<hr>
+
+<h2 id="s8">8. Integração com Wearable (se aplicável)</h2>
+<blockquote><strong>Não aplicável.</strong> Os exercícios e o histórico ficam só no celular. <code>contrato.ts</code>, <code>wear-service.ts</code> e <code>useWear</code> não são alterados.</blockquote>
+
+<hr>
+
+<h2 id="s9">9. Casos de Teste e Verificação no Emulador</h2>
+<h3>9.1 Testes de store e utils (padrão de <code>stores.test.ts</code>)</h3>
+<table>
+  <thead><tr><th>#</th><th>Teste</th><th>Esperado</th></tr></thead>
+  <tbody>
+    <tr><td>T1</td><td><code>calcularStreak</code> com hoje+ontem+anteontem / com buraco / vazio / várias tentativas no mesmo dia</td><td>3 / conta só até o buraco / 0 / o dia conta uma vez</td></tr>
+    <tr><td>T2</td><td><code>corrigirRodada</code> com 1 de 5 certos (exemplo do Figma)</td><td><code>casas=[F,F,T,F,F]</code>, 20%</td></tr>
+    <tr><td>T3</td><td><code>resultadoDaSessao</code> com rodadas 1/5, 5/5, 5/5</td><td>11/15, 73%</td></tr>
+    <tr><td>T4</td><td><code>embaralhar</code> com gerador fixo</td><td>Ordem determinística e entrada intacta</td></tr>
+    <tr><td>T5</td><td><code>iniciarSessao</code> → <code>responderRodada</code> ×3 → <code>concluirSessao</code></td><td>Histórico +1, tentativa com acertos/total/tempo corretos</td></tr>
+    <tr><td>T6</td><td><code>concluirSessao</code> chamada 2×</td><td>Histórico +1 (idempotente)</td></tr>
+    <tr><td>T7</td><td><code>descartarSessao</code> no meio</td><td><code>sessao=null</code>, histórico inalterado</td></tr>
+    <tr><td>T8</td><td><code>estatisticasDoExercicio</code> sem tentativas / com 2</td><td>Campos <code>undefined</code> / médias corretas</td></tr>
+    <tr><td>T9</td><td><code>filtrarExercicios</code> com "ORDENACAO"</td><td>Encontra "Ordenação"</td></tr>
+  </tbody>
+</table>
+<h3>9.2 Roteiro manual (emulador / dispositivo)</h3>
+<ol>
+  <li>Aba Exercícios: conferir com o Figma (4 cards, streak, busca). Buscar "orden", "xyz" e limpar.</li>
+  <li>DETALHES de Sequências: indicadores, instruções e histórico. DETALHES de Lista de compras: estados vazios.</li>
+  <li>COMEÇAR Sequências: memorizar → digitar <code>80 32 99 99 99</code>, testar Apagar e tocar numa casa preenchida → CONTINUAR → correção → CONTINUAR → rodada 2 toda certa → "Tudo certo!" → rodada 3 → resumo com % e total coerentes.</li>
+  <li>REFAZER e depois SAIR no meio → diálogo → Cancelar (mantém) → Sair (volta, sem tentativa nova no histórico).</li>
+  <li>Voltar do Android em cada fase (com diálogo) e no resumo (sem diálogo).</li>
+  <li>Fazer Ordenação, Associações e Lista de compras pelo modo chips (chip usado fica desabilitado; esvaziar casa devolve o chip).</li>
+  <li>Fechar o app à força e reabrir: histórico e streak mantidos.</li>
+  <li>TalkBack ligado: percorrer lista → detalhe → resposta → resumo, conferindo labels e anúncios. Texto Amplificado ligado (<code>useSettingsStore</code>): sem cortes no teclado nem nas casas.</li>
+</ol>
+
+<hr>
+
+<h2 id="s10">10. Checklist Pré-PR</h2>
+<ul class="check">
+  <li><input type="checkbox"> Branch <code>feat/modulo-exercicios</code> criada a partir da <code>main</code> atualizada (decisão D-branch) e PR aberto para a <code>main</code></li>
+  <li><input type="checkbox"> Commits Conventional, por camada: <code>feat(exercicios): ...</code> (types → mocks → store → utils → componentes → telas), <code>style(theme): adicionar tokens answerCorrect e answerWrong</code>, <code>test(exercicios): ...</code></li>
+  <li><input type="checkbox"> Tipagem estrita (zero <code>any</code>), TSDoc em português e nomenclatura conforme a dúvida pendente 4</li>
+  <li><input type="checkbox"> Sem <code>console.log</code>, sem código comentado, sem o <code>registrarTentativa</code> simulado na lista</li>
+  <li><input type="checkbox"> Ações da store imutáveis e <code>concluirSessao</code> idempotente</li>
+  <li><input type="checkbox"> Nenhuma cor literal fora de <code>theme.ts</code> (tokens novos nos temas claro e escuro)</li>
+  <li><input type="checkbox"> <code>npx tsc --noEmit</code>, <code>npx expo lint</code> e <code>node docs/scripts/lembri-check.mjs</code> sem erros</li>
+  <li><input type="checkbox"> Formulários de lembrete continuam funcionando depois da mudança em <code>useSairSemSalvar</code></li>
+  <li><input type="checkbox"> Critérios da seção 7 verificados com TalkBack</li>
+  <li><input type="checkbox"> Prints do emulador lado a lado com os 6 frames no PR</li>
+</ul>
+
+<hr>
+
+<h2 id="s11">11. Atualização da Documentação do Módulo</h2>
+<p><strong>Módulo de referência:</strong> <code>docs/modulos/EXERCICIOS.html</code> (<strong>ainda não existe</strong>)</p>
+<blockquote>Esta tarefa <strong>impacta</strong> a documentação: ao final, rodar <code>/documentar-modulo EXERCICIOS</code> para criar o documento. Atualizar também <code>docs/modulos/STORES_MOCKS.html</code> (nova persistência <code>lembri-exercicios</code> e mocks novos) e <code>.claude/skills/principios/references/figma.md</code>, que aponta para o arquivo antigo (<code>Wmxfr3VnYjHLZtHgbyHhQZ</code>, sem acesso) e deve passar a apontar para <code>QKjpXmagXvBkc1QU24ryjJ</code>.</blockquote>
+
+<hr>
+
+<h2 id="s12">12. Princípios de Desenvolvimento e Restrições</h2>
+<ol>
+  <li><strong>Padrões do Projeto:</strong> rotas Expo Router em <code>src/app/exercicio/[id]/</code> (espelho de <code>lembrete/[id]</code>), store com <code>persist</code> igual à de lembretes, tokens em <code>theme.ts</code>, reuso de <code>useSairSemSalvar</code>, <code>AvisoSucesso</code> e <code>CaixaDialogo</code>.</li>
+  <li><strong>Escopo de Impacto:</strong> histórico e sessão na store (várias telas leem). Dígitos em digitação e casa ativa em <code>useState</code> da tela de resposta. Nada vai para o Wear.</li>
+  <li><strong>Compatibilidade:</strong> <code>TentativaExercicio</code> intacta. Mudança em <code>useSairSemSalvar</code> só com parâmetro opcional.</li>
+  <li><strong>Idempotência e Imutabilidade:</strong> <code>concluirSessao</code> guardada por <code>tentativaId</code>. Chips sorteados uma vez por sessão.</li>
+  <li><strong>YAGNI:</strong> sem retomada de sessão, sem geração aleatória de conteúdo, sem Wear.</li>
+  <li><strong>DRY:</strong> um fluxo e um conjunto de componentes (<code>CartaoRodada</code>/<code>CasaItem</code>) para memorizar, corrigir e resumir. Streak e estatísticas em funções puras.</li>
+  <li><strong>SOLID:</strong> telas orquestram; componentes só apresentam; regras em <code>utils/exercicio.ts</code> e na store.</li>
+  <li><strong>KISS:</strong> streak derivado em vez de contador guardado; uma rota por fase em vez de máquina de estados numa tela só.</li>
+  <li><strong>Acessibilidade Inegociável:</strong> WCAG 2.2 AAA, desvios do Figma registrados na seção 6 de <code>figma.md</code>.</li>
+</ol>
+
+<h3>Dúvidas pendentes (seguindo a alternativa conservadora até a resposta)</h3>
+<ol>
+  <li><strong>Streak quando ainda não fiz nada hoje:</strong> mostrar a sequência até ontem ("3 dias seguidos"), sem zerar antes de o dia acabar? <em>Recomendado: sim (padrão de apps de hábito, evita desmotivar a pessoa de manhã).</em></li>
+  <li><strong>Bottom bar nas telas do exercício:</strong> o Figma mostra a bottom bar em todas, mas no projeto as telas de stack (<code>lembrete/[id]</code>) não têm, e durante a execução ela permitiria sair sem o diálogo. <em>Recomendado: sem bottom bar (padrão atual).</em></li>
+  <li><strong>Texto do botão do resumo:</strong> Figma "VOLTAR AO INICIO" × cartão "Voltar aos exercícios". O destino é a lista de exercícios. <em>Recomendado: "VOLTAR AOS EXERCÍCIOS", para não confundir com a aba Home.</em></li>
+  <li><strong>Idioma dos identificadores:</strong> a skill <code>principios</code> (item 9) exige código em inglês, mas todo o <code>src/</code> atual (incluindo a <code>useExerciciosStore</code> e o PR do Yuri) usa português (<code>registrarTentativa</code>, <code>exercicio-card.tsx</code>). <em>Recomendado: manter o português neste módulo, para ficar consistente com o código vizinho (princípio 1 vence o 9), e tratar uma eventual migração em um cartão próprio.</em></li>
+</ol>
+
+</body>
+</html>
