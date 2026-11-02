@@ -5,7 +5,7 @@ import { TelaFormulario } from '@/components/forms/tela-formulario';
 import { useOpcoesTipo } from '@/hooks/formulario/use-opcoes-tipo';
 import { obterTemplate, templatesLembreteMock } from '@/mocks/templates-lembrete.mock';
 import type { TemplateId } from '@/types/lembrete';
-import { dadosIniciais } from '@/utils/dados-iniciais';
+import { dadosIniciais } from '@/utils/dados/dados-iniciais';
 
 const ehTemplate = (valor?: string): valor is TemplateId =>
   templatesLembreteMock.some((template) => template.id === valor);
